@@ -2,7 +2,7 @@
 
 The official website for **RoV SN Tournament**, a comprehensive eSports tournament management system featuring both a public-facing portal for spectators and a robust backend for tournament administrators.
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live_Website-blue?style=for-the-badge&logo=vercel)](https://rov-sn-tournament-official.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Demo-Live_Website-blue?style=for-the-badge&logo=vercel)](https://ro-v-sn-tournament-official.vercel.app/)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 ![Next.js](https://img.shields.io/badge/Frontend-Next.js_15-black?style=for-the-badge&logo=next.js)
 ![Node.js](https://img.shields.io/badge/Backend-Express-green?style=for-the-badge&logo=nodedotjs)
@@ -12,7 +12,7 @@ The official website for **RoV SN Tournament**, a comprehensive eSports tourname
 
 ## 🌐 Live
 You can view the live application here:  
-👉 **[https://rov-sn-tournament-official.vercel.app/](https://rov-sn-tournament-official.vercel.app/)**
+👉 **[https://rov-sn-tournament-official.vercel.app/](https://ro-v-sn-tournament-official.vercel.app/)**
 
 ---
 
