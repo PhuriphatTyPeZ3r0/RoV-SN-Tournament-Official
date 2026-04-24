@@ -12,7 +12,7 @@ The official website for **RoV SN Tournament**, a comprehensive eSports tourname
 
 ## 🌐 Live
 You can view the live application here:  
-👉 **[https://rov-sn-tournament-official.vercel.app/](https://ro-v-sn-tournament-official.vercel.app/)**
+👉 **[https://ro-v-sn-tournament-official.vercel.app/](https://ro-v-sn-tournament-official.vercel.app/)**
 
 ---
 
