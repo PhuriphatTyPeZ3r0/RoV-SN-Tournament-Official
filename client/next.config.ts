@@ -55,8 +55,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
-  // Fix Turbopack path length issue on Windows (OneDrive deep paths)
-  turbopack: {
+  // Fix Turbopack path length issue on Windows locally, but disable on Vercel
+  turbopack: process.env.VERCEL ? undefined : {
     root: __dirname,
   },
 
