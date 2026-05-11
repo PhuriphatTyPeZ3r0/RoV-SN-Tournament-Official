@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Swal from 'sweetalert2';
-import apiService from '@/lib/api-client';
-import axios from 'axios';
 
 interface Player {
     _id: string;
@@ -94,18 +92,21 @@ export default function GameStatsModal({
         formData.append('image', file);
 
         try {
-            // Using axios directly here to handle FormData and response specifically for this endpoint
-            // Assuming apiService base logic is used but we need specific endpoint
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+            // TODO: Re-implement using Supabase Edge Function for AI stats extraction
+            // The legacy Express endpoint (/extract-rov-stats) has been removed.
+            // For now, show a message to the user.
+            const useAiEndpoint = process.env.NEXT_PUBLIC_AI_STATS_URL;
+            if (!useAiEndpoint) {
+                throw new Error('AI Stats Extraction ยังไม่พร้อมใช้งาน — กรุณากรอกข้อมูลด้วยตนเอง (Coming Soon: Supabase Edge Function)');
+            }
 
-            const res = await axios.post(`${API_URL}/extract-rov-stats`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                withCredentials: true
+            const res = await fetch(useAiEndpoint, {
+                method: 'POST',
+                body: formData,
             });
 
-            const aiData = res.data;
+            if (!res.ok) throw new Error('AI endpoint returned an error');
+            const aiData = await res.json();
             console.log('🤖 AI Extracted Data:', aiData);
 
             if (!Array.isArray(aiData) || aiData.length === 0) {

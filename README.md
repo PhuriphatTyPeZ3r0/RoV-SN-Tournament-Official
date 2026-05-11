@@ -1,184 +1,229 @@
-# 🏆 RoV SN Tournament Official Website
+# 🏆 RoV SN Tournament Official — v3.0
 
-The official website for **RoV SN Tournament**, a comprehensive eSports tournament management system featuring both a public-facing portal for spectators and a robust backend for tournament administrators.
+ระบบจัดการทัวร์นาเมนต์ Arena of Valor (RoV) สำหรับรายการ SN Tournament
+สร้างด้วย **Next.js 15 (App Router)** + **Supabase (PostgreSQL / Auth / Storage)**
 
-[![Live Demo](https://img.shields.io/badge/Demo-Live_Website-blue?style=for-the-badge&logo=vercel)](https://ro-v-sn-tournament-official.vercel.app/)
-![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Frontend-Next.js_15-black?style=for-the-badge&logo=next.js)
-![Node.js](https://img.shields.io/badge/Backend-Express-green?style=for-the-badge&logo=nodedotjs)
-![MongoDB](https://img.shields.io/badge/Database-MongoDB-green?style=for-the-badge&logo=mongodb)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/PhuriphatiZAMU/RoV-SN-Tournament-Official)
 
 ---
 
-## 🌐 Live
-You can view the live application here:  
-👉 **[https://ro-v-sn-tournament-official.vercel.app/](https://ro-v-sn-tournament-official.vercel.app/)**
+## 📸 ฟีเจอร์หลัก
+
+| ฟีเจอร์ | รายละเอียด |
+|---|---|
+| 🏟️ **Tournament Dashboard** | ตารางแข่ง, ผลการแข่ง, อันดับคะแนน (Standings) แบบ Real-time |
+| 📊 **Player & Team Stats** | สถิติผู้เล่นรายบุคคล, MVP, KDA, Win Rate — คำนวณระดับ Database |
+| 🎮 **Hero Analytics** | วิเคราะห์ฮีโร่ยอดนิยม, อัตราชนะ, Pick Rate |
+| 🛡️ **Admin Panel** | จัดการทีม, ผู้เล่น, กำหนดตารางแข่ง, บันทึกผล, อัปโหลดโลโก้ |
+| 🔐 **SSO Authentication** | ระบบยืนยันตัวตนผ่าน Supabase Auth พร้อม Row Level Security |
+| 🌏 **Multi-language** | รองรับภาษาไทยและอังกฤษ |
 
 ---
 
-## 🚀 Key Features
-
-### 👥 Public Portal (Spectators)
-- **Real-time Standings:** Live score updates and group rankings.
-- **Match Schedule:** View upcoming fixtures and past match results.
-- **Player Statistics:** In-depth stats including MVP, Most Kills, Most Assists, and Highest Damage.
-- **Team Information:** Profiles for participating teams and player rosters.
-
-### 🛠️ Admin Dashboard
-- **Match Management:** Record scores, update statuses, and upload match screenshots.
-- **Schedule Manager:** Create, drag-and-drop, and organize tournament schedules.
-- **Data Import/Export:** Bulk import players and teams easily via CSV files.
-- **Game Data:** Manage meta data such as Hero pools and team logos.
-- **Audit Log:** Track result editing history and maintain data integrity.
-
----
-
-## 🛠️ Tech Stack
-
-**Frontend (`/client`):**
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS + Framer Motion
-- **State Management:** React Context API
-- **Icons:** Lucide React
-
-**Backend (`/server`):**
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB (Mongoose)
-- **Authentication:** JWT (JSON Web Token)
-- **File Storage:** Local Storage / Cloudinary (Supported)
-
----
-
-## ⚙️ Installation & Setup
-
-This project follows a **Monorepo** structure (Frontend and Backend in one repository).
-
-### 1. Prerequisites
-- Node.js (v18 or higher)
-- MongoDB Database (Local or Atlas)
-
-### 2. Install Dependencies
-```bash
-# Install Server dependencies
-cd server
-npm install
-
-# Install Client dependencies
-cd ../client
-npm install
+## 🏗️ สถาปัตยกรรมระบบ (Architecture)
 
 ```
-
-### 3. Environment Variables (.env)
-
-Create `.env` files in both `server/` and `client/` directories based on the examples below:
-
-**Server (`server/.env`):**
-
-```env
-PORT=3001
-MONGO_URI=mongodb://localhost:27017/rov-tournament
-JWT_SECRET=your_super_secret_key
-# Optional: Cloudinary for image storage
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-
+┌────────────────────────────────────────────────────┐
+│                    Vercel (Compute)                 │
+│                                                    │
+│   Next.js 15 App Router                            │
+│   ┌──────────┐  ┌──────────┐  ┌────────────────┐  │
+│   │ Public   │  │ Admin    │  │ Edge           │  │
+│   │ Pages    │  │ Pages    │  │ Middleware      │  │
+│   │ (RSC)    │  │ (Client) │  │ (Auth Guard)   │  │
+│   └────┬─────┘  └────┬─────┘  └────────────────┘  │
+│        │             │                             │
+│   ┌────┴─────┐  ┌────┴──────┐                      │
+│   │ Server   │  │ Supabase  │                      │
+│   │ Actions  │  │ Browser   │                      │
+│   │          │  │ Client    │                      │
+│   └────┬─────┘  └────┬──────┘                      │
+└────────┼──────────────┼────────────────────────────┘
+         │              │
+         └──────┬───────┘
+                │  HTTPS (Supabase SDK)
+    ┌───────────┴───────────┐
+    │    Supabase (Data)    │
+    │                       │
+    │  ☐ PostgreSQL (10 tables, 4 RPCs)
+    │  ☐ Auth (SSO + Profiles)
+    │  ☐ Storage (team-logos, hero-images)
+    │  ☐ RLS (40 policies)
+    └───────────────────────┘
 ```
 
-**Client (`client/.env.local`):**
-
-```env
-# For local development
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
-
-# For production (change to your deployed backend URL)
-# NEXT_PUBLIC_API_URL=[https://your-backend-url.com/api](https://your-backend-url.com/api)
-
-```
+> **ไม่มี Express Server, ไม่มี MongoDB, ไม่มี CORS, ไม่มี API Proxy**
+> ทุกอย่างรันเป็น Serverless Functions บน Vercel + Data Layer บน Supabase
 
 ---
 
-## 🖥️ Development Mode
+## 🚀 เริ่มต้นใช้งาน (Quick Start)
 
-To run the project locally, open **two terminal windows**:
+### Prerequisites
 
-**Terminal 1 (Backend):**
+- [Node.js](https://nodejs.org/) v18+
+- [npm](https://www.npmjs.com/) v9+
+- บัญชี [Supabase](https://supabase.com/) (Free Tier ใช้ได้)
+
+### 1. Clone โปรเจกต์
 
 ```bash
-cd server
-npm run dev
-# Server starts at http://localhost:3001
-
+git clone https://github.com/PhuriphatiZAMU/RoV-SN-Tournament-Official.git
+cd RoV-SN-Tournament-Official/client
+npm install
 ```
 
-**Terminal 2 (Frontend):**
+### 2. ตั้งค่า Environment Variables
+
+สร้างไฟล์ `client/.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://[YOUR_PROJECT_ID].supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[YOUR_SUPABASE_ANON_KEY]
+```
+
+> 📍 ค่าเหล่านี้อยู่ที่ **Supabase Dashboard → Project Settings → API**
+
+### 3. ตั้งค่า Supabase Database
+
+รัน Migration SQL ตามลำดับใน **Supabase Dashboard → SQL Editor**:
+
+```
+1. supabase/migrations/001_initial_schema.sql    → สร้าง 10 ตาราง
+2. supabase/migrations/002_rls_policies.sql      → สร้าง 40 RLS policies
+3. supabase/migrations/003_auth_triggers.sql     → สร้าง trigger สำหรับ auto-profile
+4. supabase/migrations/004_core_rpcs.sql         → สร้าง 4 stored procedures
+```
+
+### 4. สร้าง Storage Buckets
+
+ใน **Supabase Dashboard → Storage**:
+
+1. สร้าง bucket ชื่อ `team-logos` (ตั้งเป็น **Public**)
+2. สร้าง bucket ชื่อ `hero-images` (ตั้งเป็น **Public**)
+
+### 5. สร้าง Admin User
+
+1. ไปที่ **Supabase Dashboard → Authentication → Users** → กด **Add user**
+2. ใส่ Email และ Password สำหรับ Admin
+3. หลังจากสร้างแล้ว ไปที่ **Table Editor → profiles** → แก้ `role` ของ user นั้นเป็น `admin`
+
+### 6. รันระบบ
 
 ```bash
 cd client
 npm run dev
-# Client starts at http://localhost:3000
+```
 
+เปิด [http://localhost:3000](http://localhost:3000) 🎉
+
+---
+
+## 📁 โครงสร้างโปรเจกต์
+
+```
+client/
+├── app/
+│   ├── (public)/               # หน้า Public (RSC — ดึงข้อมูลฝั่ง Server)
+│   │   ├── page.tsx            # หน้าแรก
+│   │   ├── standings/          # ตารางคะแนน
+│   │   ├── schedule/           # ตารางแข่งขัน
+│   │   ├── results/            # ผลการแข่งขัน
+│   │   ├── stats/              # สถิติผู้เล่น
+│   │   └── team-stats/         # สถิติทีม
+│   ├── admin/                  # หน้า Admin (ต้อง Login)
+│   │   ├── page.tsx            # Dashboard
+│   │   ├── draw/               # จับฉลากตารางแข่ง
+│   │   ├── game-stats/         # บันทึกสถิติเกม
+│   │   ├── heroes/             # จัดการฮีโร่
+│   │   ├── history/            # ประวัติการแก้ไข
+│   │   ├── logos/              # จัดการโลโก้ทีม
+│   │   ├── players/            # จัดการผู้เล่น
+│   │   ├── results/            # จัดการผลแข่ง
+│   │   ├── schedule/           # จัดการตารางแข่ง
+│   │   └── teams/              # จัดการทีม
+│   └── layout.tsx
+├── components/                 # Shared UI components
+├── features/                   # Server Actions (Business Logic)
+│   ├── analytics/actions.ts    # RPC: standings, leaderboard
+│   ├── auth/actions.ts         # Supabase Auth: login, register, logout
+│   ├── players/actions.ts      # CRUD: players, teams, heroes
+│   └── tournament/actions.ts   # CRUD: matches, schedules, stats
+├── lib/
+│   ├── api.ts                  # Server-side data fetching (RSC)
+│   └── api-client.ts           # Client-side data fetching (Admin)
+├── utils/supabase/
+│   ├── client.ts               # Browser Supabase client
+│   ├── server.ts               # Server Supabase client (cookies)
+│   └── middleware.ts           # Session refresh helper
+├── middleware.ts               # Next.js Edge Middleware (route guard)
+└── supabase/migrations/        # SQL migration files
 ```
 
 ---
 
-## 🚀 Production Deployment
+## 🔐 ความปลอดภัย (Security Model)
 
-### Option 1: VPS (Self-Hosted with PM2)
+ระบบใช้โมเดล **Defense-in-Depth** (ป้องกันหลายชั้น):
 
-The project includes an `ecosystem.config.js` for easy management with PM2.
+| ชั้น | เทคโนโลยี | หน้าที่ |
+|---|---|---|
+| 1️⃣ **Edge Middleware** | Vercel Edge | บล็อก `/admin/*` ก่อนถึง Server |
+| 2️⃣ **Server Actions** | Next.js | ตรวจสอบ Session + Role ก่อน mutation |
+| 3️⃣ **Row Level Security** | PostgreSQL | บังคับสิทธิ์ที่ระดับ Database row |
 
-1. **Build the project:**
-```bash
-cd server && npm run build
-cd ../client && npm run build
-
-```
-
-
-2. **Start with PM2:**
-```bash
-pm2 start ecosystem.config.js
-
-```
-
-
-
-### Option 2: Cloud (Vercel + Render/Railway)
-
-* **Frontend:** Deploy the `client` folder to **Vercel**.
-* **Backend:** Deploy the `server` folder to **Render** or **Railway**.
-* **Database:** Use **MongoDB Atlas**.
+> ⚠️ RLS เป็น **last line of defense** — แม้จะ bypass ได้ทุกชั้น ข้อมูลก็ยังปลอดภัย
 
 ---
 
-## 📂 Folder Structure
+## 🗄️ Database Schema
 
-```
-.
-├── client/                 # Next.js Frontend application
-│   ├── app/                # App Router Pages & Layouts
-│   ├── components/         # Reusable UI Components
-│   ├── lib/                # API Clients & Utility functions
-│   └── public/             # Static Assets (Images, Icons)
-│
-├── server/                 # Express Backend API
-│   ├── src/
-│   │   ├── controllers/    # Business Logic & Request Handlers
-│   │   ├── models/         # MongoDB Mongoose Schemas
-│   │   ├── routes/         # API Route Definitions
-│   │   └── middleware/     # Auth & Validation Middleware
-│   └── uploads/            # Local File Storage Directory
-│
-└── ecosystem.config.js     # PM2 Configuration for VPS deployment
+| ตาราง | คำอธิบาย |
+|---|---|
+| `profiles` | ข้อมูลผู้ใช้ + role (admin/user) |
+| `tournaments` | รายการทัวร์นาเมนต์ |
+| `teams` | ทีมแข่งขัน + โลโก้ |
+| `players` | ผู้เล่น + ชื่อในเกม |
+| `matches` | ผลการแข่งขัน (Bo3/Bo5) |
+| `game_stats` | สถิติรายเกม (K/D/A, MVP, Hero) |
+| `schedules` | ตารางแข่งขัน (JSON) |
+| `heroes` | รายชื่อฮีโร่ + รูปภาพ |
+| `audit_logs` | ประวัติการแก้ไขข้อมูล |
+| `seasons` | ข้อมูลฤดูกาลแข่งขัน |
 
-```
+### Stored Procedures (RPCs)
+
+| RPC | หน้าที่ |
+|---|---|
+| `calculate_tournament_standings` | คำนวณอันดับคะแนน + GD |
+| `get_player_leaderboard` | จัดอันดับผู้เล่น (KDA, MVP, Win%) |
+| `get_team_stats` | สถิติรวมรายทีม |
+| `get_season_overview` | สรุปภาพรวมฤดูกาล |
+
+---
+
+## 🌐 การ Deploy
+
+ดูรายละเอียดฉบับเต็มที่ [**DEPLOYMENT.md**](./DEPLOYMENT.md)
+
+**TL;DR:**
+1. Push ขึ้น GitHub
+2. Import ใน Vercel → ตั้ง Root Directory เป็น `client`
+3. ใส่ 2 Environment Variables (`SUPABASE_URL`, `SUPABASE_ANON_KEY`)
+4. กด Deploy ✅
+
+---
+
+## 📜 Version History
+
+| Version | สถาปัตยกรรม | หมายเหตุ |
+|---|---|---|
+| v1.0 | React + Express + MongoDB | Monolithic API |
+| v2.0 | Next.js + Express + MongoDB | Split-Stack, เพิ่ม SSR |
+| **v3.0** | **Next.js + Supabase** | **Fullstack Serverless, RLS, RPC** |
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+ISC © RoV SN Official

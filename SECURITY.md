@@ -1,21 +1,39 @@
-# Security Policy
+# 🔐 Security Policy — RoV SN Tournament v3.0
 
-## Supported Versions
+## สถาปัตยกรรมความปลอดภัย
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+ระบบใช้โมเดล **Defense-in-Depth** (ป้องกันหลายชั้น):
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+### ชั้นที่ 1: Edge Middleware (Vercel)
+- Route `/admin/*` ถูกปกป้องด้วย Next.js Middleware
+- ใช้ `supabase.auth.getUser()` (ไม่ใช่ `getSession()`) เพื่อป้องกัน Session spoofing
+- ทำงานที่ Edge — เร็วระดับ millisecond
 
-## Reporting a Vulnerability
+### ชั้นที่ 2: Server Actions
+- ทุก mutation ตรวจสอบ Session + Role ก่อนดำเนินการ
+- ใช้ `revalidatePath()` เพื่อล้าง cache หลัง mutation
 
-Use this section to tell people how to report a vulnerability.
+### ชั้นที่ 3: Row Level Security (PostgreSQL)
+- 40 RLS policies ครอบคลุมทุกตาราง
+- Public users: อ่านได้อย่างเดียว
+- Admin users: อ่าน + เขียน + ลบได้
+- **RLS เป็น last line of defense** — แม้ bypass ชั้นอื่นได้ ข้อมูลก็ยังปลอดภัย
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+## Environment Variables
+
+| ตัวแปร | ความปลอดภัย | หมายเหตุ |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Public OK | URL ของโปรเจกต์ (ไม่ใช่ความลับ) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public OK | ถูกจำกัดด้วย RLS — ทำอะไรเกินสิทธิ์ไม่ได้ |
+
+> ⚠️ **ห้ามใช้ `service_role` key ใน Frontend หรือ Client-side Code โดยเด็ดขาด**
+
+## การรายงานช่องโหว่
+
+หากพบช่องโหว่ด้านความปลอดภัย กรุณาสร้าง **Private Issue** ที่ GitHub Repository
+หรือติดต่อทีมพัฒนาโดยตรง — อย่าเปิดเผยรายละเอียดช่องโหว่ใน Public Issue
+
+## Audit Log
+
+ทุกการเปลี่ยนแปลงข้อมูลสำคัญ (ผลแข่ง, สถิติ) จะถูกบันทึกในตาราง `audit_logs` อัตโนมัติ
+Admin สามารถตรวจสอบได้ที่หน้า `/admin/history`

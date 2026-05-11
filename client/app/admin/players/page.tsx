@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { createClient } from '@/utils/supabase/client';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
@@ -21,8 +21,6 @@ interface PlayerFormData {
     inGameName: string;
     openId: string;
 }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // Helper to clean name
 const cleanName = (rawName: any) => {
@@ -72,7 +70,7 @@ const parseCSV = (text: any) => {
                 grade: parts[1] || '',
                 team: parts[2] || '',
                 inGameName: parts[3] || '',
-                openId: parts[4] || ''
+                openId: parts[4] || '',
             });
         }
     }
@@ -90,7 +88,7 @@ export default function AdminPlayersPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [editingId, setEditingId] = useState<string | null>(null);
     const [formData, setFormData] = useState<PlayerFormData>({
-        name: '', grade: '', team: '', inGameName: '', openId: ''
+        name: '', grade: '', team: '', inGameName: '', openId: '',
     });
 
     useEffect(() => {
@@ -100,9 +98,23 @@ export default function AdminPlayersPage() {
     const fetchPlayers = async () => {
         setLoading(true);
         setError(null);
+        const supabase = createClient();
         try {
-            const res = await axios.get(`${API_BASE}/players`, { withCredentials: true });
-            setPlayers(res.data);
+            const { data, error: fetchError } = await supabase
+                .from('players')
+                .select('*')
+                .order('name', { ascending: true });
+
+            if (fetchError) throw fetchError;
+
+            setPlayers((data || []).map(p => ({
+                _id: p.id,
+                name: p.name,
+                grade: p.grade || '',
+                team: p.team_name || '',
+                inGameName: p.in_game_name || '',
+                openId: p.open_id || '',
+            })));
         } catch (err: any) {
             console.error(err);
             setError(err.message || 'Failed to fetch players');
@@ -125,7 +137,7 @@ export default function AdminPlayersPage() {
                     icon: 'success',
                     title: `Parsed ${parsed.length} items`,
                     timer: 2000,
-                    showConfirmButton: false
+                    showConfirmButton: false,
                 });
             }
             setImportPreview(parsed);
@@ -160,18 +172,29 @@ export default function AdminPlayersPage() {
     const confirmImport = async () => {
         if (importPreview.length === 0) return;
 
+        const supabase = createClient();
         try {
             Swal.fire({
                 title: 'Importing...',
-                didOpen: () => Swal.showLoading()
+                didOpen: () => Swal.showLoading(),
             });
 
-            await axios.post(`${API_BASE}/players/import`, importPreview, { withCredentials: true });
+            // Batch insert players
+            const rows = importPreview.map(p => ({
+                name: p.name,
+                grade: p.grade || null,
+                team_name: p.team || null,
+                in_game_name: p.inGameName || null,
+                open_id: p.openId || null,
+            }));
+
+            const { error } = await supabase.from('players').insert(rows);
+            if (error) throw error;
 
             Swal.fire({
                 icon: 'success',
                 title: 'Import Successful',
-                text: `Imported ${importPreview.length} players.`
+                text: `Imported ${importPreview.length} players.`,
             });
 
             setIsImporting(false);
@@ -182,20 +205,40 @@ export default function AdminPlayersPage() {
             Swal.fire({
                 icon: 'error',
                 title: 'Import Failed',
-                text: error.response?.data?.error || error.message
+                text: error.message,
             });
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const supabase = createClient();
         try {
             if (editingId) {
-                await axios.put(`${API_BASE}/players/${editingId}`, formData, { withCredentials: true });
+                const { error } = await supabase
+                    .from('players')
+                    .update({
+                        name: formData.name,
+                        grade: formData.grade || null,
+                        team_name: formData.team || null,
+                        in_game_name: formData.inGameName || null,
+                        open_id: formData.openId || null,
+                    })
+                    .eq('id', editingId);
+                if (error) throw error;
                 Swal.fire({ icon: 'success', title: 'Updated successfully', timer: 1500, showConfirmButton: false });
                 setEditingId(null);
             } else {
-                await axios.post(`${API_BASE}/players`, formData, { withCredentials: true });
+                const { error } = await supabase
+                    .from('players')
+                    .insert({
+                        name: formData.name,
+                        grade: formData.grade || null,
+                        team_name: formData.team || null,
+                        in_game_name: formData.inGameName || null,
+                        open_id: formData.openId || null,
+                    });
+                if (error) throw error;
                 Swal.fire({ icon: 'success', title: 'Added successfully', timer: 1500, showConfirmButton: false });
             }
             setFormData({ name: '', grade: '', team: '', inGameName: '', openId: '' });
@@ -204,7 +247,7 @@ export default function AdminPlayersPage() {
             Swal.fire({
                 icon: 'error',
                 title: 'Operation Failed',
-                text: error.response?.data?.error || error.message
+                text: error.message,
             });
         }
     };
@@ -216,7 +259,7 @@ export default function AdminPlayersPage() {
             grade: p.grade || '',
             team: p.team,
             inGameName: p.inGameName || '',
-            openId: p.openId || ''
+            openId: p.openId || '',
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -229,12 +272,14 @@ export default function AdminPlayersPage() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
         });
 
         if (result.isConfirmed) {
+            const supabase = createClient();
             try {
-                await axios.delete(`${API_BASE}/players/${id}`, { withCredentials: true });
+                const { error } = await supabase.from('players').delete().eq('id', id);
+                if (error) throw error;
                 Swal.fire('Deleted!', 'Player has been deleted.', 'success');
                 fetchPlayers();
             } catch (error: any) {
@@ -250,12 +295,15 @@ export default function AdminPlayersPage() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            confirmButtonText: 'Yes, clear all!'
+            confirmButtonText: 'Yes, clear all!',
         });
 
         if (result.isConfirmed) {
+            const supabase = createClient();
             try {
-                await axios.delete(`${API_BASE}/players/all/clear`, { withCredentials: true });
+                // Delete all players — use neq to bypass "cannot delete all" limitation
+                const { error } = await supabase.from('players').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                if (error) throw error;
                 Swal.fire('Cleared!', 'All players have been removed.', 'success');
                 fetchPlayers();
             } catch (error) {

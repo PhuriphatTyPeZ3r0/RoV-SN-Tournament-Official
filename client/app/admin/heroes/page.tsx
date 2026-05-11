@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
 interface Hero {
@@ -10,8 +10,6 @@ interface Hero {
     name: string;
     imageUrl: string;
 }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export default function AdminHeroesPage() {
     const { t } = useLanguage();
@@ -25,9 +23,19 @@ export default function AdminHeroesPage() {
     }, []);
 
     const fetchHeroes = async () => {
+        const supabase = createClient();
         try {
-            const res = await axios.get(`${API_BASE}/heroes`, { withCredentials: true });
-            setHeroes(res.data || []);
+            const { data, error } = await supabase
+                .from('heroes')
+                .select('*')
+                .order('name', { ascending: true });
+
+            if (error) throw error;
+            setHeroes((data || []).map(h => ({
+                _id: h.id,
+                name: h.name,
+                imageUrl: h.image_url || '',
+            })));
         } catch (error) {
             console.error('Failed to fetch heroes:', error);
         } finally {
@@ -40,23 +48,47 @@ export default function AdminHeroesPage() {
         if (!files || files.length === 0) return;
 
         setUploading(true);
-
-        const formData = new FormData();
-        for (let i = 0; i < files.length; i++) {
-            formData.append('heroes', files[i]);
-        }
+        const supabase = createClient();
+        let uploadedCount = 0;
 
         try {
-            const res = await axios.post(`${API_BASE}/heroes/upload`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                withCredentials: true
-            });
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const heroName = file.name.replace(/\.[^/.]+$/, ''); // Strip extension
+                const ext = file.name.split('.').pop() || 'png';
+                const path = `heroes/${Date.now()}_${heroName}.${ext}`;
 
-            const count = res.data.heroes?.length || 0;
+                // Upload to Supabase Storage
+                const { error: uploadError } = await supabase.storage
+                    .from('hero-images')
+                    .upload(path, file, { upsert: true });
+
+                if (uploadError) {
+                    console.error(`Failed to upload ${heroName}:`, uploadError);
+                    continue;
+                }
+
+                const { data: urlData } = supabase.storage
+                    .from('hero-images')
+                    .getPublicUrl(path);
+
+                // Insert into heroes table
+                const { error: insertError } = await supabase
+                    .from('heroes')
+                    .insert({ name: heroName, image_url: urlData.publicUrl });
+
+                if (insertError) {
+                    console.error(`Failed to insert ${heroName}:`, insertError);
+                    continue;
+                }
+
+                uploadedCount++;
+            }
+
             Swal.fire({
                 icon: 'success',
                 title: 'Upload Successful',
-                text: `Uploaded ${count} heroes successfully`
+                text: `Uploaded ${uploadedCount} heroes successfully`,
             });
             fetchHeroes();
         } catch (error: any) {
@@ -64,7 +96,7 @@ export default function AdminHeroesPage() {
             Swal.fire({
                 icon: 'error',
                 title: 'Upload Failed',
-                text: error.response?.data?.error || error.message
+                text: error.message,
             });
         } finally {
             setUploading(false);
@@ -83,16 +115,18 @@ export default function AdminHeroesPage() {
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             confirmButtonText: 'Yes, delete it',
-            cancelButtonText: 'Cancel'
+            cancelButtonText: 'Cancel',
         });
 
         if (result.isConfirmed) {
+            const supabase = createClient();
             try {
-                await axios.delete(`${API_BASE}/heroes/${hero._id}`, { withCredentials: true });
+                const { error } = await supabase.from('heroes').delete().eq('id', hero._id);
+                if (error) throw error;
                 Swal.fire('Deleted!', 'Hero has been deleted.', 'success');
                 fetchHeroes();
             } catch (error: any) {
-                Swal.fire('Error', error.response?.data?.error || 'Failed to delete hero', 'error');
+                Swal.fire('Error', error.message || 'Failed to delete hero', 'error');
             }
         }
     };
@@ -108,16 +142,21 @@ export default function AdminHeroesPage() {
             cancelButtonText: 'Cancel',
             inputValidator: (value) => {
                 if (!value) return 'You need to write something!';
-            }
+            },
         });
 
         if (newName && newName !== hero.name) {
+            const supabase = createClient();
             try {
-                await axios.put(`${API_BASE}/heroes/${hero._id}`, { name: newName }, { withCredentials: true });
+                const { error } = await supabase
+                    .from('heroes')
+                    .update({ name: newName })
+                    .eq('id', hero._id);
+                if (error) throw error;
                 Swal.fire({ icon: 'success', title: 'Updated successfully', timer: 1500, showConfirmButton: false });
                 fetchHeroes();
             } catch (error: any) {
-                Swal.fire('Error', error.response?.data?.error || 'Failed to update hero', 'error');
+                Swal.fire('Error', error.message || 'Failed to update hero', 'error');
             }
         }
     };
@@ -129,16 +168,18 @@ export default function AdminHeroesPage() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Yes, clear all'
+            confirmButtonText: 'Yes, clear all',
         });
 
         if (result.isConfirmed) {
+            const supabase = createClient();
             try {
-                await axios.delete(`${API_BASE}/heroes/all/clear`, { withCredentials: true });
+                const { error } = await supabase.from('heroes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                if (error) throw error;
                 Swal.fire('Cleared!', 'All heroes have been removed.', 'success');
                 fetchHeroes();
             } catch (error: any) {
-                Swal.fire('Error', error.response?.data?.error || 'Failed to clear heroes', 'error');
+                Swal.fire('Error', error.message || 'Failed to clear heroes', 'error');
             }
         }
     };

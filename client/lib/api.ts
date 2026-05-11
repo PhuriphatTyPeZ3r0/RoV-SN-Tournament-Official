@@ -1,55 +1,41 @@
-import {
-    Team,
-    Player,
-    MatchResult,
-    Standing,
-    ScheduleItem,
+/**
+ * Server-side API Service — MIGRATED TO SUPABASE
+ *
+ * This file maintains the same interface as the original Express-backed api.ts
+ * so all existing page.tsx files continue to work without changes.
+ * Under the hood, it now queries Supabase directly instead of proxying to Express.
+ *
+ * TODO (Phase 7): Once all pages are verified working, inline these calls
+ * directly into page files and delete this compatibility layer.
+ */
+
+import { createClient } from '@/utils/supabase/server';
+
+// Re-export existing types for compatibility
+import type {
     PlayerStat,
     TeamStat,
     SeasonStats,
     Hero,
-    PlayerHeroStat
+    PlayerHeroStat,
 } from '@/types';
 
-// Server-side API URL (private, for SSR and Server Components)
-const getServerApiUrl = () => {
-    return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-};
+// ── Helper: get active tournament ID ──────────────────────────
+// ในช่วง migration ใช้ tournament ล่าสุดที่ active อยู่
+async function getActiveTournamentId(): Promise<string | null> {
+    const supabase = await createClient();
+    const { data } = await supabase
+        .from('tournaments')
+        .select('id')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-// Type for fetch options
-type FetchOptions = RequestInit & {
-    token?: string;
-};
-
-// Generic fetch wrapper for server-side calls
-async function serverFetch<T>(endpoint: string, options: FetchOptions = {}): Promise<T> {
-    const url = `${getServerApiUrl()}${endpoint}`;
-    const { token, ...fetchOptions } = options;
-
-    const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...options.headers,
-    };
-
-    if (token) {
-        (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(url, {
-        ...fetchOptions,
-        headers,
-        // Next.js caching options
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
-    });
-
-    if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
-    }
-
-    return response.json();
+    return data?.id || null;
 }
 
-// Types for processed home page data
+// ── Types (kept for page compatibility) ───────────────────────
 export interface ScheduleMatch {
     blue: string;
     red: string;
@@ -69,363 +55,434 @@ export interface ProcessedStanding {
     l: number;
     gd: number;
     pts: number;
+    form?: string[];
 }
 
 export interface MatchWithResult {
     match: ScheduleMatch;
-    result: MatchResult;
+    result: {
+        matchId: string;
+        match_key?: string;
+        scoreBlue: number;
+        scoreRed: number;
+        winner: string;
+        loser: string;
+        isByeWin: boolean;
+        teamBlue: string;
+        teamRed: string;
+        [key: string]: unknown;
+    };
     day: number;
     index: number;
     date?: string;
 }
 
-// Helper to map API schedule data (teamA/teamB) to UI structure (blue/red)
-function mapSchedule(scheduleData: ScheduleItem | null): ScheduleRound[] {
-    if (!scheduleData?.schedule) return [];
-
-    return scheduleData.schedule.map((round: any) => ({
-        day: round.day,
-        date: round.date,
-        matches: (round.matches || []).map((match: any) => ({
-            blue: match.teamA || match.blue || 'Unknown',
-            red: match.teamB || match.red || 'Unknown',
-            date: match.date
-        }))
-    }));
-}
-
-// Server-side API service (for Server Components)
+// ── Server API (Supabase-backed) ──────────────────────────────
 export const serverApi = {
-    // --- Teams & Clubs ---
-    getTeams: async (): Promise<Team[]> => {
-        const data = await serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos');
-        return data.map(item => ({
-            _id: item.teamName,
-            name: item.teamName,
-            logo: item.logoUrl,
-            logoShort: item.logoUrl
-        }));
-    },
+    // --- Standings Page ---
+    getStandingsPageData: async () => {
+        const supabase = await createClient();
+        const tournamentId = await getActiveTournamentId();
 
-    getTeamLogos: async (): Promise<Record<string, string>> => {
-        const data = await serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos');
-        const logosObj: Record<string, string> = {};
-        data.forEach(item => {
-            if (item.teamName) logosObj[item.teamName] = item.logoUrl;
-        });
-        return logosObj;
-    },
+        let standings: ProcessedStanding[] = [];
 
-    getTeamStats: async (): Promise<TeamStat[]> => {
-        return serverFetch<TeamStat[]>('/team-stats');
-    },
-
-    // --- Players ---
-    getPlayers: async (): Promise<Player[]> => {
-        return serverFetch<Player[]>('/players');
-    },
-
-    getPlayerStats: async (): Promise<PlayerStat[]> => {
-        return serverFetch<PlayerStat[]>('/player-stats');
-    },
-
-    getPlayerHeroStats: async (): Promise<PlayerHeroStat[]> => {
-        return serverFetch<PlayerHeroStat[]>('/player-hero-stats');
-    },
-
-    // --- Matches & Results ---
-    getResults: async (): Promise<MatchResult[]> => {
-        return serverFetch<MatchResult[]>('/results');
-    },
-
-    // --- Schedule ---
-    getSchedule: async (): Promise<ScheduleItem> => {
-        return serverFetch<ScheduleItem>('/schedules');
-    },
-
-    getScheduleRounds: async (): Promise<ScheduleRound[]> => {
-        try {
-            const scheduleData = await serverFetch<ScheduleItem>('/schedules');
-            return mapSchedule(scheduleData);
-        } catch {
-            return [];
-        }
-    },
-
-    // --- Standings ---
-    getStandings: async (): Promise<Standing[]> => {
-        return serverFetch<Standing[]>('/standings');
-    },
-
-    // Processed standings for display
-    getProcessedStandings: async (): Promise<ProcessedStanding[]> => {
-        try {
-            const standings = await serverFetch<any[]>('/standings');
-            return standings.map(s => ({
-                name: s.team || s.name,
-                p: s.played || s.p || 0,
-                w: s.won || s.w || 0,
-                l: s.lost || s.l || 0,
-                gd: s.gameDiff || s.gd || 0,
-                pts: s.points || s.pts || ((s.won || s.w || 0) * 3),
-            }));
-        } catch {
-            return [];
-        }
-    },
-
-    // --- Stats ---
-    getSeasonStats: async (): Promise<SeasonStats> => {
-        return serverFetch<SeasonStats>('/season-stats');
-    },
-
-    getHeroes: async (): Promise<Hero[]> => {
-        return serverFetch<Hero[]>('/heroes');
-    },
-
-    // --- Combined Data Fetching (for Pages) ---
-
-    // Home Page Data
-    getHomePageData: async () => {
-        try {
-            const [scheduleData, resultsData, logosData, standingsData] = await Promise.all([
-                serverFetch<ScheduleItem>('/schedules').catch(() => null),
-                serverFetch<MatchResult[]>('/results').catch(() => []),
-                serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []),
-                serverFetch<any[]>('/standings').catch(() => []),
-            ]);
-
-            // Process schedule using mapping helper
-            const schedule: ScheduleRound[] = mapSchedule(scheduleData);
-
-            // Process logos
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
+        if (tournamentId) {
+            const { data } = await supabase.rpc('calculate_tournament_standings', {
+                p_tournament_id: tournamentId,
             });
 
-            // Process standings
-            const standings: ProcessedStanding[] = (standingsData || []).map(s => ({
-                name: s.team || s.name,
-                p: s.played || s.p || 0,
-                w: s.won || s.w || 0,
-                l: s.lost || s.l || 0,
-                gd: s.gameDiff || s.gd || 0,
-                pts: s.points || s.pts || ((s.won || s.w || 0) * 3), // 3 pts per win
+            standings = (data || []).map((s: Record<string, unknown>) => ({
+                name: s.team_name as string,
+                p: (s.played as number) || 0,
+                w: (s.wins as number) || 0,
+                l: (s.losses as number) || 0,
+                gd: (s.game_diff as number) || 0,
+                pts: (s.points as number) || 0,
+                form: s.form as string[] | undefined,
+            }));
+        }
+
+        // Team logos
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url');
+
+        const teamLogos: Record<string, string> = {};
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
+        }
+
+        return { standings, teamLogos };
+    },
+
+    // --- Fixtures Page ---
+    getFixturesPageData: async () => {
+        const supabase = await createClient();
+        const tournamentId = await getActiveTournamentId();
+
+        let schedule: ScheduleRound[] = [];
+        let results: Record<string, unknown>[] = [];
+
+        if (tournamentId) {
+            // Schedule
+            const { data: schedData } = await supabase
+                .from('schedules')
+                .select('*')
+                .eq('tournament_id', tournamentId)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (schedData?.schedule_data) {
+                const raw = schedData.schedule_data as { day: number; date?: string; matches: { teamA?: string; teamB?: string; blue?: string; red?: string; date?: string }[] }[];
+                schedule = raw.map((round) => ({
+                    day: round.day,
+                    date: round.date,
+                    matches: (round.matches || []).map((m) => ({
+                        blue: m.teamA || m.blue || 'Unknown',
+                        red: m.teamB || m.red || 'Unknown',
+                        date: m.date,
+                    })),
+                })).sort((a, b) => a.day - b.day);
+            }
+
+            // Results
+            const { data: matchData } = await supabase
+                .from('matches')
+                .select('*')
+                .eq('tournament_id', tournamentId)
+                .order('match_day', { ascending: true });
+
+            // Map to legacy format for component compatibility
+            results = (matchData || []).map((m) => ({
+                _id: m.id,
+                matchId: m.match_key,
+                matchDay: m.match_day,
+                teamBlue: m.team_blue_name,
+                teamRed: m.team_red_name,
+                scoreBlue: m.score_blue,
+                scoreRed: m.score_red,
+                winner: m.winner_name,
+                loser: m.loser_name,
+                isByeWin: m.is_bye_win,
+                createdAt: m.created_at,
+            }));
+        }
+
+        // Logos
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url');
+
+        const teamLogos: Record<string, string> = {};
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
+        }
+
+        return { schedule, results, teamLogos };
+    },
+
+    // --- Home Page ---
+    getHomePageData: async () => {
+        const supabase = await createClient();
+        const tournamentId = await getActiveTournamentId();
+
+        let schedule: ScheduleRound[] = [];
+        let standings: ProcessedStanding[] = [];
+        const teamLogos: Record<string, string> = {};
+        let latestMatches: MatchWithResult[] = [];
+        let upcomingMatches: ScheduleMatch[] = [];
+        let results: Record<string, unknown>[] = [];
+
+        // Logos (always needed)
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url');
+
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
+        }
+
+        if (tournamentId) {
+            // Standings via RPC
+            const { data: standData } = await supabase.rpc('calculate_tournament_standings', {
+                p_tournament_id: tournamentId,
+            });
+
+            standings = (standData || []).map((s: Record<string, unknown>) => ({
+                name: s.team_name as string,
+                p: (s.played as number) || 0,
+                w: (s.wins as number) || 0,
+                l: (s.losses as number) || 0,
+                gd: (s.game_diff as number) || 0,
+                pts: (s.points as number) || 0,
             }));
 
-            // Get latest matches with results
+            // Schedule
+            const { data: schedData } = await supabase
+                .from('schedules')
+                .select('*')
+                .eq('tournament_id', tournamentId)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (schedData?.schedule_data) {
+                const raw = schedData.schedule_data as { day: number; date?: string; matches: { teamA?: string; teamB?: string; blue?: string; red?: string; date?: string }[] }[];
+                schedule = raw.map((round) => ({
+                    day: round.day,
+                    date: round.date,
+                    matches: (round.matches || []).map((m) => ({
+                        blue: m.teamA || m.blue || 'Unknown',
+                        red: m.teamB || m.red || 'Unknown',
+                        date: m.date,
+                    })),
+                }));
+            }
+
+            // Match results
+            const { data: matchData } = await supabase
+                .from('matches')
+                .select('*')
+                .eq('tournament_id', tournamentId)
+                .order('match_day', { ascending: true });
+
+            const resultsData = (matchData || []).map((m) => ({
+                _id: m.id,
+                matchId: m.match_key,
+                matchDay: m.match_day,
+                teamBlue: m.team_blue_name,
+                teamRed: m.team_red_name,
+                scoreBlue: m.score_blue,
+                scoreRed: m.score_red,
+                winner: m.winner_name,
+                loser: m.loser_name,
+                isByeWin: m.is_bye_win,
+                createdAt: m.created_at,
+            }));
+
+            results = resultsData;
+
+            // Build latest matches with results
             const matchesWithResults: MatchWithResult[] = [];
-            schedule.forEach(round => {
+            schedule.forEach((round) => {
                 (round.matches || []).forEach((m, index) => {
                     const matchKey = `${round.day}_${m.blue}_vs_${m.red}`.replace(/\s+/g, '');
-                    const result = (resultsData || []).find(r => r.matchId === matchKey);
+                    const result = resultsData.find((r) => r.matchId === matchKey);
                     if (result) {
                         matchesWithResults.push({
                             match: m,
-                            result,
+                            result: result as MatchWithResult['result'],
                             day: round.day,
                             index,
-                            date: m.date || round.date
+                            date: m.date || round.date,
                         });
                     }
                 });
             });
 
-            // Sort by day and index descending (most recent first)
-            const latestMatches = matchesWithResults
-                .sort((a, b) => {
-                    if (b.day !== a.day) return b.day - a.day;
-                    return b.index - a.index;
-                })
+            latestMatches = matchesWithResults
+                .sort((a, b) => (b.day !== a.day ? b.day - a.day : b.index - a.index))
                 .slice(0, 4);
 
-            // If no results yet, get first scheduled matches
-            let upcomingMatches: ScheduleMatch[] = [];
             if (latestMatches.length === 0 && schedule.length > 0) {
-                const dayData = schedule.find(r => r.day === 1);
+                const dayData = schedule.find((r) => r.day === 1);
                 if (dayData) {
                     upcomingMatches = dayData.matches.slice(0, 4);
                 }
             }
-
-            return {
-                schedule,
-                standings,
-                teamLogos,
-                latestMatches,
-                upcomingMatches,
-                results: resultsData || [],
-            };
-        } catch (error) {
-            console.error('Error fetching home page data:', error);
-            return {
-                schedule: [],
-                standings: [],
-                teamLogos: {},
-                latestMatches: [],
-                upcomingMatches: [],
-                results: [],
-            };
         }
+
+        return { schedule, standings, teamLogos, latestMatches, upcomingMatches, results };
     },
 
-    // Standings Page Data
-    getStandingsPageData: async () => {
-        try {
-            const [standingsData, logosData] = await Promise.all([
-                serverFetch<any[]>('/standings').catch(() => []),
-                serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []),
-            ]);
+    // --- Clubs Page ---
+    getClubsPageData: async () => {
+        const supabase = await createClient();
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url')
+            .order('name', { ascending: true });
 
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
+        const teams = (teamsData || []).map((t) => t.name).filter(Boolean) as string[];
+        const teamLogos: Record<string, string> = {};
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
+        }
+
+        return { teams, teamLogos };
+    },
+
+    // --- Season Stats Page ---
+    getSeasonStatsPageData: async () => {
+        const supabase = await createClient();
+        const tournamentId = await getActiveTournamentId();
+
+        let seasonStats: SeasonStats | null = null;
+
+        if (tournamentId) {
+            const { data } = await supabase.rpc('get_season_overview', {
+                p_tournament_id: tournamentId,
+            });
+            seasonStats = data as SeasonStats | null;
+        }
+
+        const { data: heroesData } = await supabase
+            .from('heroes')
+            .select('*')
+            .order('name', { ascending: true });
+
+        const heroes: Hero[] = (heroesData || []).map((h) => ({
+            _id: h.id,
+            name: h.name,
+            imageUrl: h.image_url,
+            createdAt: h.created_at,
+        }));
+
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url');
+
+        const teamLogos: Record<string, string> = {};
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
+        }
+
+        return { seasonStats, heroes, teamLogos };
+    },
+
+    // --- Team Stats Page ---
+    getTeamStatsPageData: async () => {
+        const supabase = await createClient();
+        const tournamentId = await getActiveTournamentId();
+
+        let teamStats: TeamStat[] = [];
+
+        if (tournamentId) {
+            const { data } = await supabase.rpc('get_team_stats', {
+                p_tournament_id: tournamentId,
             });
 
-            const standings: ProcessedStanding[] = (standingsData || []).map(s => ({
-                name: s.team || s.name,
-                p: s.played || s.p || 0,
-                w: s.won || s.w || 0,
-                l: s.lost || s.l || 0,
-                gd: s.gameDiff || s.gd || 0,
-                pts: s.points || s.pts || ((s.won || s.w || 0) * 3), // 3 pts per win
+            teamStats = (data || []).map((t: Record<string, unknown>) => ({
+                teamName: t.team_name as string,
+                totalKills: Number(t.total_kills) || 0,
+                totalDeaths: Number(t.total_deaths) || 0,
+                totalAssists: Number(t.total_assists) || 0,
+                mvpCount: Number(t.mvp_count) || 0,
+                realGamesPlayed: Number(t.real_games_played) || 0,
+                realWins: Number(t.real_wins) || 0,
+                avgKillsPerGame: Number(t.avg_kills_per_game) || 0,
+                avgDeathsPerGame: Number(t.avg_deaths_per_game) || 0,
+                avgAssistsPerGame: Number(t.avg_assists_per_game) || 0,
+                avgDuration: 0,
+                kda: Number(t.kda) || 0,
+                winRate: Number(t.win_rate) || 0,
+                realLosses: Number(t.real_losses) || 0,
+            }));
+        }
+
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url');
+
+        const teamLogos: Record<string, string> = {};
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
+        }
+
+        return { teamStats, teamLogos };
+    },
+
+    // --- Player Stats Page ---
+    getPlayerStatsPageData: async () => {
+        const supabase = await createClient();
+        const tournamentId = await getActiveTournamentId();
+
+        let playerStats: PlayerStat[] = [];
+        let playerHeroStats: PlayerHeroStat[] = [];
+
+        if (tournamentId) {
+            // Player leaderboard via RPC
+            const { data: leaderboard } = await supabase.rpc('get_player_leaderboard', {
+                p_tournament_id: tournamentId,
+            });
+
+            playerStats = (leaderboard || []).map((p: Record<string, unknown>) => ({
+                realName: p.real_name as string,
+                playerName: p.player_name as string,
+                teamName: p.team_name as string,
+                totalKills: Number(p.total_kills) || 0,
+                totalDeaths: Number(p.total_deaths) || 0,
+                totalAssists: Number(p.total_assists) || 0,
+                gamesPlayed: Number(p.games_played) || 0,
+                mvpCount: Number(p.mvp_count) || 0,
+                wins: Number(p.wins) || 0,
+                winRate: Number(p.win_rate) || 0,
+                avgKillsPerGame: Number(p.avg_kills) || 0,
+                avgDeathsPerGame: Number(p.avg_deaths) || 0,
+                avgAssistsPerGame: Number(p.avg_assists) || 0,
+                mvpRate: Number(p.mvp_rate) || 0,
+                kda: Number(p.kda) || 0,
             }));
 
-            return { standings, teamLogos };
-        } catch (error) {
-            console.error('Error fetching standings data:', error);
-            return { standings: [], teamLogos: {} };
+            // Player hero stats (top 3 heroes per player)
+            const { data: heroStats } = await supabase
+                .from('game_stats')
+                .select('player_name, hero_name, win, match_id!inner(tournament_id)')
+                .eq('match_id.tournament_id', tournamentId);
+
+            if (heroStats) {
+                const playerHeroMap = new Map<string, Map<string, { gp: number; w: number; k: number; d: number; a: number }>>();
+                for (const row of heroStats) {
+                    const pName = row.player_name;
+                    if (!playerHeroMap.has(pName)) playerHeroMap.set(pName, new Map());
+                    const heroMap = playerHeroMap.get(pName)!;
+                    const current = heroMap.get(row.hero_name) || { gp: 0, w: 0, k: 0, d: 0, a: 0 };
+                    current.gp++;
+                    if (row.win) current.w++;
+                    heroMap.set(row.hero_name, current);
+                }
+
+                playerHeroStats = Array.from(playerHeroMap.entries()).map(([playerName, heroMap]) => ({
+                    realName: playerName,
+                    playerName,
+                    topHeroes: Array.from(heroMap.entries())
+                        .map(([heroName, stats]) => ({
+                            heroName,
+                            gamesPlayed: stats.gp,
+                            wins: stats.w,
+                            totalKills: stats.k,
+                            totalDeaths: stats.d,
+                            totalAssists: stats.a,
+                        }))
+                        .sort((a, b) => b.gamesPlayed - a.gamesPlayed)
+                        .slice(0, 3),
+                }));
+            }
         }
-    },
 
-    // Fixtures Page Data
-    getFixturesPageData: async () => {
-        try {
-            const [scheduleData, resultsData, logosData] = await Promise.all([
-                serverFetch<ScheduleItem>('/schedules').catch(() => null),
-                serverFetch<MatchResult[]>('/results').catch(() => []),
-                serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []),
-            ]);
+        const { data: heroesData } = await supabase
+            .from('heroes')
+            .select('*')
+            .order('name', { ascending: true });
 
-            // Map schedule
-            const schedule: ScheduleRound[] = mapSchedule(scheduleData);
-            const results = resultsData || [];
+        const heroes: Hero[] = (heroesData || []).map((h) => ({
+            _id: h.id,
+            name: h.name,
+            imageUrl: h.image_url,
+            createdAt: h.created_at,
+        }));
 
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
-            });
+        const { data: teamsData } = await supabase
+            .from('teams')
+            .select('name, logo_url');
 
-            // Sort schedule by day
-            const sortedSchedule = [...schedule].sort((a, b) => a.day - b.day);
-
-            return { schedule: sortedSchedule, results, teamLogos };
-        } catch (error) {
-            console.error('Error fetching fixtures data:', error);
-            return { schedule: [], results: [], teamLogos: {} };
+        const teamLogos: Record<string, string> = {};
+        for (const t of teamsData || []) {
+            if (t.name && t.logo_url) teamLogos[t.name] = t.logo_url;
         }
-    },
 
-    // Clubs Page Data
-    getClubsPageData: async () => {
-        try {
-            const logosData = await serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []);
-
-            const teams = (logosData || []).map(item => item.teamName).filter(Boolean);
-
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
-            });
-
-            return { teams, teamLogos };
-        } catch (error) {
-            console.error('Error fetching clubs data:', error);
-            return { teams: [], teamLogos: {} };
-        }
-    },
-
-    // Stats Page Data (Season Overview)
-    getSeasonStatsPageData: async () => {
-        try {
-            const [seasonStats, heroes, logosData] = await Promise.all([
-                serverFetch<SeasonStats>('/season-stats').catch(() => null),
-                serverFetch<Hero[]>('/heroes').catch(() => []),
-                serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []),
-            ]);
-
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
-            });
-
-            return {
-                seasonStats: seasonStats || null,
-                heroes: heroes || [],
-                teamLogos
-            };
-        } catch (error) {
-            console.error('Error fetching season stats:', error);
-            return { seasonStats: null, heroes: [], teamLogos: {} };
-        }
-    },
-
-    // Team Stats Page Data
-    getTeamStatsPageData: async () => {
-        try {
-            const [teamStats, logosData] = await Promise.all([
-                serverFetch<TeamStat[]>('/team-stats').catch(() => []),
-                serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []),
-            ]);
-
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
-            });
-
-            // Sort by Win Rate -> Wins -> KDA -> Kills
-            const sortedStats = (teamStats || []).sort((a, b) => {
-                const winRateA = a.realGamesPlayed > 0 ? (a.realWins / a.realGamesPlayed) : 0;
-                const winRateB = b.realGamesPlayed > 0 ? (b.realWins / b.realGamesPlayed) : 0;
-                if (winRateB !== winRateA) return winRateB - winRateA;
-                if (b.realWins !== a.realWins) return b.realWins - a.realWins;
-                if ((b.kda || 0) !== (a.kda || 0)) return (b.kda || 0) - (a.kda || 0);
-                return (b.totalKills || 0) - (a.totalKills || 0);
-            });
-
-            return { teamStats: sortedStats, teamLogos };
-        } catch (error) {
-            console.error('Error fetching team stats:', error);
-            return { teamStats: [], teamLogos: {} };
-        }
-    },
-
-    // Player Stats Page Data
-    getPlayerStatsPageData: async () => {
-        try {
-            const [playerStats, playerHeroStats, heroes, logosData] = await Promise.all([
-                serverFetch<PlayerStat[]>('/player-stats').catch(() => []),
-                serverFetch<PlayerHeroStat[]>('/player-hero-stats').catch(() => []),
-                serverFetch<Hero[]>('/heroes').catch(() => []),
-                serverFetch<{ teamName: string; logoUrl: string }[]>('/team-logos').catch(() => []),
-            ]);
-
-            const teamLogos: Record<string, string> = {};
-            (logosData || []).forEach(item => {
-                if (item.teamName) teamLogos[item.teamName] = item.logoUrl;
-            });
-
-            return {
-                playerStats: playerStats || [],
-                playerHeroStats: playerHeroStats || [],
-                heroes: heroes || [],
-                teamLogos
-            };
-        } catch (error) {
-            console.error('Error fetching player stats:', error);
-            return { playerStats: [], playerHeroStats: [], heroes: [], teamLogos: {} };
-        }
+        return { playerStats, playerHeroStats, heroes, teamLogos };
     },
 };
 

@@ -1,69 +1,321 @@
-# Deployment Guide : RoV SN Tournament Official
+# 🚀 Deployment Guide — RoV SN Tournament v3.0
 
-โปรเจกต์นี้แยกส่วน Frontend (Next.js) และ Backend (Express/Node.js) โดยแนะนำให้ Deploy ดังนี้:
-
-- **Frontend:** [Vercel](https://vercel.com)
-- **Backend:** [Render](https://render.com) (หรือ VPS/DigitalOcean)
+คู่มือการนำระบบขึ้น Production อย่างละเอียด สำหรับส่งมอบงานให้ทีมดูแลต่อ
 
 ---
 
-## 🚀 1. Backend Deployment (Render.com)
+## 📋 สารบัญ
 
-Backend ควร Deploy ก่อนเพื่อให้ได้ URL มาใส่ใน Frontend
-
-1. เข้าไปที่ [dashboard.render.com](https://dashboard.render.com/)
-2. กดปุ่ม **New +** -> เลือก **Blueprints**
-3. เชื่อมต่อ Git Repository นี้
-4. Render จะอ่านไฟล์ `render.yaml` และสร้าง Service ชื่อ `rov-sn-tournament-api` ให้
-5. **สำคัญ:** ต้องเข้าไปกรอก **Environment Variables** (ที่ไม่ใช่ sync: false) ดังนี้:
-
-| Variable Name | Description | Example Value |
-| :--- | :--- | :--- |
-| `MONGO_URI` | Connection String ของ MongoDB Atlas | `mongodb+srv://user:pass@cluster...` |
-| `JWT_SECRET` | Secret Key สำหรับเข้ารหัส Token | (ตั้งรหัสอะไรก็ได้ที่ยากๆ เช่น `MySuperSecretKey2026`) |
-| `ADMIN_USERNAME` | Username สำหรับเข้า Admin | `admin` |
-| `ADMIN_PASSWORD_HASH` | (Optional) Bcrypt Hash ของรหัสผ่าน | (ถ้าไม่ใส่ จะใช้รหัส default: `admin123`) |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary Name (สำหรับอัปโหลดรูป) | `dpnrq5nso` |
-| `CLOUDINARY_API_KEY` | Cloudinary API Key | `7839...` |
-| `CLOUDINARY_API_SECRET` | Cloudinary API Secret | (ดูจาก Dashboard Cloudinary) |
-| `GEMINI_API_KEY` | Google Gemini AI Key | (สำหรับฟีเจอร์ AI Scan) |
-| `CLIENT_URL` | URL ของ Frontend ที่จะอนุญาต CORS | `https://your-project.vercel.app` (ใส่หลังจาก Deploy Frontend แล้วค่อยมาเติม) |
-
-6. กด **Apply** เพื่อเริ่ม Deploy
-
-เมื่อ Deploy เสร็จ คุณจะได้ URL ของ Backend มา (เช่น `https://rov-api.onrender.com`) **ให้ Copy เก็บไว้**
+1. [สถาปัตยกรรมการ Deploy](#1-สถาปัตยกรรมการ-deploy)
+2. [ขั้นตอนที่ 1: ตั้งค่า Supabase](#2-ขั้นตอนที่-1-ตั้งค่า-supabase)
+3. [ขั้นตอนที่ 2: Deploy บน Vercel](#3-ขั้นตอนที่-2-deploy-บน-vercel)
+4. [ขั้นตอนที่ 3: ทดสอบระบบ](#4-ขั้นตอนที่-3-ทดสอบระบบ)
+5. [การจัดการหลัง Deploy](#5-การจัดการหลัง-deploy)
+6. [Troubleshooting](#6-troubleshooting)
+7. [ค่าใช้จ่าย](#7-ค่าใช้จ่าย)
 
 ---
 
-## 🌐 2. Frontend Deployment (Vercel)
+## 1. สถาปัตยกรรมการ Deploy
 
-1. เข้าไปที่ [vercel.com](https://vercel.com)
-2. กด **Add New...** -> **Project**
-3. Import Git Repository นี้
-4. **Build Settings:**
-   - **Framework Preset:** Next.js (Automatic)
-   - **Root Directory:** กด Edit และเลือกโฟลเดอร์ `client` (สำคัญมาก!)
-5. **Environment Variables:** เพิ่มค่าดังนี้:
+```
+                    ┌──────────────┐
+                    │   ผู้ใช้งาน   │
+                    └──────┬───────┘
+                           │ HTTPS
+                    ┌──────┴───────┐
+                    │   Vercel     │ ← Deploy อัตโนมัติจาก GitHub
+                    │   (Compute) │
+                    │              │
+                    │  • Next.js   │
+                    │  • RSC       │
+                    │  • Actions   │
+                    │  • Middleware│
+                    └──────┬───────┘
+                           │ Supabase SDK (HTTPS)
+                    ┌──────┴───────┐
+                    │  Supabase    │ ← จัดการผ่าน Dashboard
+                    │  (Data)      │
+                    │              │
+                    │  • PostgreSQL│
+                    │  • Auth      │
+                    │  • Storage   │
+                    │  • RLS       │
+                    └──────────────┘
+```
 
-| Variable Name | Description | Example Value |
-| :--- | :--- | :--- |
-| `NEXT_PUBLIC_API_URL` | **สำคัญ:** URL ของ Backend ที่ได้จากข้อ 1 | `https://rov-api.onrender.com` (ห้ามมี slash ปิดท้าย) |
-| `JWT_COOKIE_NAME` | (Optional) ชื่อ Cookie | `rov_auth_token` |
-
-6. กด **Deploy**
+**หลักการสำคัญ:**
+- **Vercel** = รัน Code เท่านั้น (Serverless, จ่ายตามการใช้งาน)
+- **Supabase** = เก็บ Data เท่านั้น (Managed PostgreSQL)
+- ไม่มี Server ค้างทิ้งไว้ 24 ชม. → ประหยัดค่าใช้จ่าย
 
 ---
 
-## ✅ 3. Post-Deployment Check
+## 2. ขั้นตอนที่ 1: ตั้งค่า Supabase
 
-1. เมื่อ Frontend Deploy เสร็จ ให้เอา URL ของ Frontend (เช่น `https://project.vercel.app`) กลับไปใส่ใน Environment Variable `CLIENT_URL` ของฝั่ง Backend (Render) เพื่อแก้ปัญหา CORS (ถ้ามีการตั้งค่า CORS ไว้เข้มงวด)
-2. ลองเข้าเว็บ Frontend -> Login Admin (`admin`/`admin123` หรือรหัสที่ตั้งไว้)
-3. ตรวจสอบหน้า Data ต่างๆ ว่าโหลดขึ้นหรือไม่
+### 2.1 สร้างโปรเจกต์ Supabase
+
+1. ไปที่ [supabase.com](https://supabase.com) → **New Project**
+2. ตั้งชื่อ: `rov-sn-tournament`
+3. เลือก Region: `Southeast Asia (Singapore)` ← เลือกใกล้ผู้ใช้ที่สุด
+4. ตั้ง Database Password → **บันทึกไว้ให้ดี** (ไม่ต้องใช้ใน code แต่ต้องใช้กรณี connect ตรงจาก SQL client)
+5. กด **Create new project** → รอ ~2 นาที
+
+### 2.2 รัน Database Migrations
+
+ไปที่ **SQL Editor** ใน Supabase Dashboard แล้วรัน SQL ไฟล์ตามลำดับ:
+
+> ⚠️ **ต้องรันตามลำดับ** เพราะแต่ละไฟล์อ้างอิงตารางจากไฟล์ก่อนหน้า
+
+| ลำดับ | ไฟล์ | ทำอะไร |
+|---|---|---|
+| 1️⃣ | `001_initial_schema.sql` | สร้าง 10 ตาราง + indexes |
+| 2️⃣ | `002_rls_policies.sql` | สร้าง 40 Row Level Security policies |
+| 3️⃣ | `003_auth_triggers.sql` | สร้าง trigger: auto-create profile เมื่อ user สมัคร |
+| 4️⃣ | `004_core_rpcs.sql` | สร้าง 4 stored procedures (standings, leaderboard, etc.) |
+
+**วิธีรัน:**
+1. เปิดแต่ละไฟล์จากโฟลเดอร์ `client/supabase/migrations/`
+2. Copy เนื้อหาทั้งหมด
+3. Paste ลงใน SQL Editor → กด **Run**
+4. ตรวจสอบว่าไม่มี Error → ทำไฟล์ถัดไป
+
+### 2.3 สร้าง Storage Buckets
+
+ไปที่ **Storage** ใน Dashboard:
+
+1. กด **New bucket** → ชื่อ `team-logos`
+   - ✅ เปิด **Public bucket**
+   - File size limit: `5MB`
+   - Allowed MIME types: `image/*`
+
+2. กด **New bucket** → ชื่อ `hero-images`
+   - ✅ เปิด **Public bucket**
+   - File size limit: `5MB`
+   - Allowed MIME types: `image/*`
+
+> 💡 Public bucket หมายความว่ารูปสามารถเข้าถึงได้โดยไม่ต้อง login — จำเป็นสำหรับแสดงโลโก้ในหน้า Public
+
+### 2.4 สร้าง Admin User
+
+1. ไปที่ **Authentication → Users** → กด **Add user** → **Create new user**
+2. ใส่:
+   - Email: `admin@rov-sn.com` (หรือ Email จริงของ Admin)
+   - Password: ตั้งรหัสที่แข็งแรง
+   - ✅ Auto Confirm User
+3. หลังจากสร้างแล้ว ไปที่ **Table Editor → profiles**
+4. หา row ของ user ที่เพิ่งสร้าง → แก้ค่า `role` เป็น `admin`
+5. กด **Save**
+
+### 2.5 จดค่า API Keys
+
+ไปที่ **Project Settings → API** → จดค่าเหล่านี้:
+
+| ค่า | ตำแหน่งใน Dashboard | ตัวอย่าง |
+|---|---|---|
+| `Project URL` | API → Project URL | `https://abcdefg.supabase.co` |
+| `anon public` key | API → Project API keys | `eyJhbGciOiJIUzI1NiIs...` |
+
+> ⚠️ **ห้ามใช้ `service_role` key ใน Frontend** — key นี้ bypass RLS ทั้งหมด ใช้เฉพาะใน Server-side scripts ที่ปลอดภัยเท่านั้น
 
 ---
 
-## 🛠 Troubleshooting
+## 3. ขั้นตอนที่ 2: Deploy บน Vercel
 
-- **Error CORS:** เช็คว่าใส่ `CLIENT_URL` ใน Backend ถูกต้องหรือไม่ และใน `next.config.ts` ของ Frontend มีการระบุ Domain Backend ใน `securityHeaders` หรือไม่
-- **Hydration Error:** มักเกิดจากส่วน Time/Date ให้ลอง Refresh หน้าเว็บ หรือเช็ค console
-- **Upload รูปไม่ได้:** เช็คค่า Config Cloudinary ใน Backend
+### 3.1 เตรียม GitHub Repository
+
+```bash
+# ตรวจสอบว่าโค้ดล่าสุดถูก push แล้ว
+cd RoV-SN-Tournament-Official
+git add -A
+git commit -m "v3.0: Next.js + Supabase (The Great Purge complete)"
+git push origin main
+```
+
+### 3.2 Import โปรเจกต์ใน Vercel
+
+1. ไปที่ [vercel.com](https://vercel.com) → Login ด้วย GitHub
+2. กด **Add New...** → **Project**
+3. เลือก Repository: `RoV-SN-Tournament-Official`
+4. ตั้งค่า:
+
+| การตั้งค่า | ค่า |
+|---|---|
+| **Framework Preset** | `Next.js` (เลือกอัตโนมัติ) |
+| **Root Directory** | `client` ← **สำคัญมาก!** |
+| **Build Command** | `npm run build` (ค่าเริ่มต้น) |
+| **Output Directory** | `.next` (ค่าเริ่มต้น) |
+| **Install Command** | `npm install` (ค่าเริ่มต้น) |
+
+### 3.3 ตั้งค่า Environment Variables
+
+ก่อนกด Deploy → ไปที่แท็บ **Environment Variables** แล้วเพิ่ม:
+
+```
+┌─────────────────────────────────────┬─────────────────────────────────────────┐
+│ Name                                │ Value                                   │
+├─────────────────────────────────────┼─────────────────────────────────────────┤
+│ NEXT_PUBLIC_SUPABASE_URL            │ https://[YOUR_ID].supabase.co           │
+│ NEXT_PUBLIC_SUPABASE_ANON_KEY       │ eyJhbGciOiJIUzI1NiIs...                │
+└─────────────────────────────────────┴─────────────────────────────────────────┘
+```
+
+- ✅ เลือก **All Environments** (Production, Preview, Development)
+
+### 3.4 กด Deploy! 🎉
+
+กดปุ่ม **Deploy** → รอประมาณ 1-2 นาที
+
+Vercel จะ:
+1. Clone repository
+2. `cd client && npm install`
+3. `npm run build` (Next.js Build)
+4. Deploy เป็น Serverless Functions + Static Files
+5. มอบ URL: `https://rov-sn-tournament-xxxxx.vercel.app`
+
+---
+
+## 4. ขั้นตอนที่ 3: ทดสอบระบบ
+
+### Checklist หลัง Deploy
+
+| ✅ | ทดสอบ | วิธีตรวจ |
+|---|---|---|
+| ☐ | หน้าแรกโหลดได้ | เปิด `https://your-url.vercel.app` |
+| ☐ | ตารางคะแนนแสดงผล | ไปที่ `/standings` |
+| ☐ | ผลการแข่งแสดงผล | ไปที่ `/results` |
+| ☐ | สถิติผู้เล่นแสดงผล | ไปที่ `/stats` |
+| ☐ | Login Admin ได้ | ไปที่ `/admin` → ใส่ Email/Password |
+| ☐ | สร้างทัวร์นาเมนต์ได้ | Admin Dashboard → สร้าง Tournament |
+| ☐ | อัปโหลดโลโก้ได้ | Admin → Teams → กดอัปโหลด |
+| ☐ | บันทึกผลแข่งได้ | Admin → Results → เพิ่มผลแข่ง |
+| ☐ | Standings อัปเดตอัตโนมัติ | หลังบันทึกผล → กลับไปดูหน้า Standings |
+
+### ทดสอบ Security
+
+| ✅ | ทดสอบ | ผลที่ควรได้ |
+|---|---|---|
+| ☐ | เข้า `/admin` โดยไม่ login | Redirect ไปหน้า Login |
+| ☐ | เรียก Supabase ด้วย anon key โดยตรง | RLS บล็อกการแก้ไขข้อมูล |
+| ☐ | Login ด้วย user ที่ role ≠ admin | เข้าหน้า Admin ไม่ได้ |
+
+---
+
+## 5. การจัดการหลัง Deploy
+
+### 5.1 อัปเดตโค้ด (CI/CD อัตโนมัติ)
+
+```bash
+# แก้โค้ด → Push ขึ้น GitHub → Vercel จะ re-deploy อัตโนมัติ
+git add -A
+git commit -m "fix: update team stats display"
+git push origin main
+# ✅ Vercel จะ build + deploy ใหม่ภายใน ~1 นาที
+```
+
+### 5.2 Custom Domain
+
+1. Vercel Dashboard → **Settings → Domains**
+2. กด **Add** → ใส่ Domain (เช่น `tournament.rov-sn.com`)
+3. ไปที่ DNS Provider → เพิ่ม:
+   - Type: `CNAME`
+   - Name: `tournament` (หรือ `@` ถ้าเป็น root domain)
+   - Value: `cname.vercel-dns.com`
+4. รอ DNS propagate (~5 นาที) → Vercel จะออก SSL อัตโนมัติ
+
+### 5.3 การ Backup ข้อมูล
+
+- **Database:** Supabase ทำ Daily Backup อัตโนมัติ (เก็บ 7 วัน ใน Free Tier)
+- **Storage:** ไฟล์รูปภาพเก็บใน Supabase Storage (มี redundancy ในตัว)
+- **โค้ด:** เก็บบน GitHub (version controlled)
+
+### 5.4 Monitoring
+
+| เครื่องมือ | ดูอะไร | ที่ไหน |
+|---|---|---|
+| Vercel Analytics | Page views, Web Vitals | Vercel Dashboard → Analytics |
+| Vercel Logs | Server Action errors | Vercel Dashboard → Logs |
+| Supabase Logs | Database queries, Auth events | Supabase Dashboard → Logs |
+
+---
+
+## 6. Troubleshooting
+
+### ❌ หน้าเว็บโหลดแล้วว่างเปล่า / Error 500
+
+**สาเหตุ:** Environment Variables ไม่ถูกต้อง
+
+**แก้ไข:**
+1. ไป Vercel Dashboard → Settings → Environment Variables
+2. ตรวจสอบว่า `NEXT_PUBLIC_SUPABASE_URL` และ `NEXT_PUBLIC_SUPABASE_ANON_KEY` ถูกต้อง
+3. กด **Redeploy** (Deployments → 3-dot menu → Redeploy)
+
+### ❌ Login แล้วเข้า Admin ไม่ได้
+
+**สาเหตุ:** User ไม่มี role = admin ในตาราง profiles
+
+**แก้ไข:**
+1. Supabase Dashboard → Table Editor → `profiles`
+2. หา user ID ของคุณ → แก้ `role` เป็น `admin`
+
+### ❌ อัปโหลดโลโก้/รูปฮีโร่ไม่ได้
+
+**สาเหตุ:** Storage bucket ยังไม่ได้สร้าง หรือไม่ได้ตั้งเป็น Public
+
+**แก้ไข:**
+1. Supabase Dashboard → Storage
+2. ตรวจสอบว่ามี bucket `team-logos` และ `hero-images`
+3. ตรวจสอบว่าเป็น **Public bucket**
+4. ถ้ายังไม่ได้ตั้ง RLS policy สำหรับ Storage → เพิ่ม policy ให้ authenticated users สามารถ upload ได้
+
+### ❌ Standings/Stats ไม่แสดง
+
+**สาเหตุ:** ยังไม่ได้รัน migration `004_core_rpcs.sql`
+
+**แก้ไข:**
+1. Supabase Dashboard → SQL Editor
+2. Copy เนื้อหาจาก `client/supabase/migrations/004_core_rpcs.sql`
+3. Paste แล้วกด Run
+
+### ❌ Build Error บน Vercel
+
+**สาเหตุทั่วไป:**
+- Root Directory ไม่ได้ตั้งเป็น `client`
+- TypeScript errors
+
+**แก้ไข:**
+1. ตรวจ Build Logs ใน Vercel Dashboard
+2. ลอง build ใน local: `cd client && npm run build`
+3. แก้ error ที่เจอ → push ใหม่
+
+---
+
+## 7. ค่าใช้จ่าย
+
+### Free Tier (เพียงพอสำหรับทัวร์นาเมนต์ขนาดเล็ก-กลาง)
+
+| Service | Free Tier | เพียงพอสำหรับ |
+|---|---|---|
+| **Vercel** | 100GB bandwidth, 100 hrs compute | ~10,000 pageviews/เดือน |
+| **Supabase** | 500MB database, 1GB storage, 50K auth users | ทัวร์นาเมนต์ 50+ ทีม สบายๆ |
+| **รวม** | **$0/เดือน** | ✅ |
+
+### เมื่อต้องอัปเกรด
+
+| สัญญาณ | ควรอัปเกรดเป็น |
+|---|---|
+| Bandwidth เกิน 100GB | Vercel Pro ($20/เดือน) |
+| Database เกิน 500MB | Supabase Pro ($25/เดือน) |
+| ต้องการ Daily Backup มากกว่า 7 วัน | Supabase Pro |
+
+---
+
+## 📞 ติดต่อ
+
+หากพบปัญหาหรือต้องการความช่วยเหลือ:
+- สร้าง Issue ที่ [GitHub Issues](https://github.com/PhuriphatiZAMU/RoV-SN-Tournament-Official/issues)
+- ดู Migration History ที่ `client/supabase/migrations/`
+
+---
+
+*เอกสารนี้อัปเดตล่าสุด: v3.0 — Next.js + Supabase Architecture*

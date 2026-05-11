@@ -1,15 +1,16 @@
 # Dependencies
 node_modules/
 client/node_modules/
-server/node_modules/
 
 # Environment variables
 .env
-*.env.local
-server/.env
+.env.local
+.env*.local
+client/.env.local
 
 # Build output
-client/dist/
+client/.next/
+client/out/
 
 # OS Files
 .DS_Store
@@ -23,9 +24,16 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# Next.js
+client/.next/
+client/out/
+
 # Playwright
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Supabase
+client/supabase/.temp/

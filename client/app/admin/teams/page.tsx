@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
+import apiService from '@/lib/api-client';
 
 interface Team {
     name: string;
@@ -37,52 +36,43 @@ export default function AdminTeamsPage() {
     }, []);
 
     const fetchData = async () => {
+        const supabase = createClient();
         try {
-            // Using axios directly for flexibility with the admin-specific logic
-            const [playersRes, logosRes, scheduleRes] = await Promise.all([
-                axios.get(`${API_BASE}/players`),
-                axios.get(`${API_BASE}/team-logos`),
-                axios.get(`${API_BASE}/schedules`)
+            const [playersData, teamsData, scheduleData] = await Promise.all([
+                apiService.getPlayers(),
+                apiService.getTeams(),
+                apiService.getSchedule(),
             ]);
 
-            const playersData = playersRes.data || [];
-            const logosData = logosRes.data || [];
-            const scheduleData = scheduleRes.data || {};
+            setAllPlayers(playersData || []);
 
-            setAllPlayers(playersData);
+            // Build team name set from players, teams table, and schedule
+            const playerTeams = [...new Set((playersData || []).map((p: Player) => p.team).filter(Boolean))];
+            const dbTeamNames = (teamsData || []).map(t => t.name);
 
-            // Extract unique teams from players and schedule
-            const playerTeams = [...new Set(playersData.map((p: Player) => p.team).filter(Boolean))];
-            // Handle schedule structure (might be array or object with teams prop)
-            const scheduleTeams = Array.isArray(scheduleData)
-                ? [] // If schedule is array of days, extraction logic would be different, but original code used .teams
-                : (scheduleData.teams || []);
-
-            // If scheduleData is the day-array, we might need to extract from matches. 
-            // Original code: scheduleRes.data?.teams. 
-            // If api structure changed, this might need check. 
-            // Assuming original logic was correct for backend.
-
-            // Fix: If scheduleRes.data is array of days, we iterate matches
-            let scheduleTeamsExtracted: string[] = [];
-            if (Array.isArray(scheduleData)) {
-                scheduleData.forEach((day: any) => {
+            const scheduleRaw = (scheduleData as any)?.schedule || [];
+            const scheduleTeamsExtracted: string[] = [];
+            if (Array.isArray(scheduleRaw)) {
+                scheduleRaw.forEach((day: any) => {
                     day.matches?.forEach((m: any) => {
                         if (m.blue) scheduleTeamsExtracted.push(m.blue);
                         if (m.red) scheduleTeamsExtracted.push(m.red);
                     });
                 });
-            } else if (scheduleData.teams) {
-                scheduleTeamsExtracted = scheduleData.teams;
             }
 
-            const allTeamNames = Array.from(new Set([...playerTeams, ...scheduleTeams, ...scheduleTeamsExtracted])) as string[];
+            const allTeamNames = Array.from(new Set([...playerTeams, ...dbTeamNames, ...scheduleTeamsExtracted])) as string[];
 
-            // Build team objects
+            // Build logos map
+            const logosMap = new Map<string, string>();
+            for (const t of teamsData || []) {
+                if (t.logo) logosMap.set(t.name, t.logo);
+            }
+
             const teamList: Team[] = allTeamNames.map(name => ({
-                name: name,
-                players: playersData.filter((p: Player) => p.team === name).map((p: Player) => p.name),
-                logoUrl: logosData.find((l: any) => l.teamName === name)?.logoUrl
+                name,
+                players: (playersData || []).filter((p: Player) => p.team === name).map((p: Player) => p.name),
+                logoUrl: logosMap.get(name),
             }));
 
             setTeams(teamList.sort((a, b) => a.name.localeCompare(b.name)));
@@ -106,39 +96,37 @@ export default function AdminTeamsPage() {
             return;
         }
 
+        const supabase = createClient();
         try {
             const oldName = editingTeam?.name;
             const newName = formData.name.trim();
 
             if (oldName && oldName !== newName) {
-                await axios.post(
-                    `${API_BASE}/players/rename-team`,
-                    { oldName, newName },
-                    { withCredentials: true }
-                );
+                // Rename team across players table
+                const { error } = await supabase
+                    .from('players')
+                    .update({ team_name: newName })
+                    .eq('team_name', oldName);
+                if (error) throw error;
+
+                // Also rename in teams table
+                await supabase
+                    .from('teams')
+                    .update({ name: newName })
+                    .eq('name', oldName);
             }
 
+            // Remove players from team if they were removed in the modal
             const currentPlayers = allPlayers.filter(p => p.team === (newName || oldName));
             const newPlayerNames = formData.players;
-
-            // Find players to remove (those in current but not in new list)
-            // Note: Since formData.players is just names, this logic assumes unique names or matches strictly.
-            // Original logic used name matching.
             const playersToRemove = currentPlayers.filter(p => !newPlayerNames.includes(p.name));
 
             for (const p of playersToRemove) {
-                await axios.patch(
-                    `${API_BASE}/players/${p._id}/update-ign`, // Note: verify endpoint
-                    { team: null },
-                    { withCredentials: true }
-                );
+                await supabase
+                    .from('players')
+                    .update({ team_name: null })
+                    .eq('id', p._id);
             }
-            // Logic to ADD players is missing in original code? 
-            // It only removed players. Adding implies they are already in the list?
-            // "formData.players" seems to be editable list of names.
-            // If user adds a name, we might need to find that player and update them? 
-            // Original code didn't seem to have "Add Player" logic in handleSave, only "Remove".
-            // The modal allows removing members.
 
             Swal.fire({ icon: 'success', title: t.admin.teamsPage?.saveSuccess || 'Saved successfully' });
             setShowModal(false);
@@ -156,7 +144,7 @@ export default function AdminTeamsPage() {
             input: 'file',
             inputAttributes: {
                 'accept': 'image/*',
-                'aria-label': 'Upload your logo'
+                'aria-label': 'Upload your logo',
             },
             showCancelButton: true,
             confirmButtonText: 'Upload',
@@ -166,38 +154,18 @@ export default function AdminTeamsPage() {
                     Swal.showValidationMessage('Please select a file');
                     return;
                 }
-                const uploadFormData = new FormData();
-                uploadFormData.append('logo', file); // API expects 'logo' field?
-                // The original code used 'logo' field but verify endpoint expecting 'image' or 'logo'.
-                // AdminTeamsPage used 'logo'.
 
                 try {
-                    // 1. Upload File
-                    // Check if there is a generic upload endpoint.
-                    // api-client uses '/upload' which typically returns url.
-                    // But here AdminTeamsPage used `${API_BASE}/api/upload`.
-
-                    // We can try calling the generic upload first.
-                    const uploadRes = await axios.post(`${API_BASE}/upload`, uploadFormData, {
-                        headers: { 'Content-Type': 'multipart/form-data' },
-                        withCredentials: true
-                    });
-                    const logoUrl = uploadRes.data.url;
-
-                    // 2. Save to team-logos
-                    await axios.post(`${API_BASE}/team-logos`, {
-                        teamName,
-                        logoUrl
-                    }, {
-                        withCredentials: true
-                    });
-
-                    return logoUrl;
+                    const formData = new FormData();
+                    formData.append('logo', file);
+                    const { url } = await apiService.uploadImage(formData);
+                    await apiService.createTeamLogo({ teamName, logoUrl: url });
+                    return url;
                 } catch (error: any) {
                     Swal.showValidationMessage(`Upload failed: ${error.message}`);
                 }
             },
-            allowOutsideClick: () => !Swal.isLoading()
+            allowOutsideClick: () => !Swal.isLoading(),
         });
 
         if (file) {
@@ -229,7 +197,7 @@ export default function AdminTeamsPage() {
             `,
             showCloseButton: true,
             showConfirmButton: false,
-            width: 450
+            width: 450,
         });
     };
 
@@ -363,17 +331,15 @@ export default function AdminTeamsPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    // This only updates local state to visualize removal
-                                                    // Actual removal happens on Save
                                                     if (formData.players.includes(player.name)) {
                                                         setFormData(prev => ({
                                                             ...prev,
-                                                            players: prev.players.filter(name => name !== player.name)
+                                                            players: prev.players.filter(name => name !== player.name),
                                                         }));
                                                     } else {
                                                         setFormData(prev => ({
                                                             ...prev,
-                                                            players: [...prev.players, player.name]
+                                                            players: [...prev.players, player.name],
                                                         }));
                                                     }
                                                 }}

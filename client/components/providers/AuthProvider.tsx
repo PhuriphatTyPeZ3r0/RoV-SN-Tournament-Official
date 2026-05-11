@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 // Type definitions
 interface AuthUser {
@@ -25,132 +27,112 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper: map Supabase User → AuthUser
+function toAuthUser(user: User, role: string): AuthUser {
+    return {
+        id: user.id,
+        username: user.email || user.id,
+        role: role === 'admin' ? 'admin' : 'user',
+    };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Use local proxy
-    const API_URL = '/api/proxy';
+    const supabase = createClient();
 
-    // Helper to get token
-    const getToken = () => typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-    // Check authentication status by calling verify endpoint
+    // Check authentication status via Supabase session
     const checkAuth = useCallback(async () => {
-        const token = getToken();
-
-        console.log('[AuthProvider] Checking auth...', { token: !!token, apiUrl: API_URL });
-
-        if (!token) {
-            console.log('[AuthProvider] No token found, clearing user');
-            setUser(null);
-            setLoading(false);
-            return;
-        }
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
         try {
             setLoading(true);
-            console.log('[AuthProvider] Fetching verify endpoint...');
-            const response = await fetch(`${API_URL}/auth/verify`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                signal: controller.signal
-            });
 
-            clearTimeout(timeoutId);
+            const { data: { user: sbUser } } = await supabase.auth.getUser();
 
-            console.log(`[AuthProvider] Verify response: ${response.status}`);
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.valid && data.user) {
-                    console.log('[AuthProvider] User verified:', data.user.username);
-                    setUser({
-                        id: data.user.id || 'admin',
-                        username: data.user.username || 'admin',
-                        role: data.user.role || 'admin',
-                    });
-                } else {
-                    console.warn('[AuthProvider] Invalid user data');
-                    localStorage.removeItem('token');
-                    setUser(null);
-                }
-            } else {
-                console.warn('[AuthProvider] Verify failed');
-                localStorage.removeItem('token');
+            if (!sbUser) {
                 setUser(null);
+                return;
             }
+
+            // Fetch role from profiles table
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', sbUser.id)
+                .maybeSingle();
+
+            setUser(toAuthUser(sbUser, profile?.role || 'user'));
         } catch (error) {
             console.error('[AuthProvider] Auth check error:', error);
-            // On timeout or network error, maybe keep token but invalid session?
-            // For safety, let's clear token to prevent infinite loops if backend is down
-            // localStorage.removeItem('token'); 
             setUser(null);
         } finally {
-            console.log('[AuthProvider] Auth check finished');
             setLoading(false);
         }
     }, []);
 
-    // Run auth check on mount
+    // Run auth check on mount and listen for auth state changes
     useEffect(() => {
         checkAuth();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_OUT' || !session?.user) {
+                setUser(null);
+                return;
+            }
+
+            // Fetch role for the signed-in user
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .maybeSingle();
+
+            setUser(toAuthUser(session.user, profile?.role || 'user'));
+        });
+
+        return () => subscription.unsubscribe();
     }, [checkAuth]);
 
-    // Login function - calls our API route
-    const login = useCallback(async (username: string, password: string): Promise<LoginResult> => {
+    // Login function — uses Supabase Auth (email/password)
+    const login = useCallback(async (email: string, password: string): Promise<LoginResult> => {
         try {
             setLoading(true);
 
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                return {
-                    success: false,
-                    error: data.error || 'Login failed',
-                };
+            if (error) {
+                return { success: false, error: error.message };
             }
 
-            // Save token to localStorage
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-                // Manually set user state immediately to avoid waiting for verify roundtrip
-                await checkAuth();
-                return { success: true };
-            } else {
-                return { success: false, error: 'No token received' };
+            if (!data.user) {
+                return { success: false, error: 'Login failed' };
             }
 
-        } catch (error) {
+            // Fetch role
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', data.user.id)
+                .maybeSingle();
+
+            setUser(toAuthUser(data.user, profile?.role || 'user'));
+            return { success: true };
+        } catch (error: any) {
             console.error('Login error:', error);
-            return {
-                success: false,
-                error: 'Network error occurred',
-            };
+            return { success: false, error: error.message || 'Network error occurred' };
         } finally {
             setLoading(false);
         }
-    }, [checkAuth]);
+    }, []);
 
     // Logout function
     const logout = useCallback(async () => {
         try {
             setLoading(true);
-            // Optional: Call logout endpoint if backend needs it (mostly for cookies)
-            localStorage.removeItem('token');
+            await supabase.auth.signOut();
             setUser(null);
         } catch (error) {
             console.error('Logout error:', error);

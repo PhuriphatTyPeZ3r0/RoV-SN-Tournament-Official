@@ -1,34 +1,16 @@
 services:
-  # Backend API Service
+  # Next.js Fullstack Application (Supabase handles DB/Auth/Storage)
   - type: web
-    name: rov-sn-tournament-api
+    name: rov-sn-tournament
     env: node
-    plan: free # or starter/standard
-    buildCommand: cd server && npm install && npm run build
-    startCommand: node server/dist/index.js
+    plan: free
+    rootDir: client
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 10000
-      - key: MONGO_URI
-        sync: false # User must input this manually in Render Dashboard
-      - key: JWT_SECRET
+      - key: NEXT_PUBLIC_SUPABASE_URL
         sync: false
-      - key: ADMIN_USERNAME
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
         sync: false
-      - key: ADMIN_PASSWORD_HASH
-        sync: false
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
-      - key: GEMINI_API_KEY
-        sync: false
-      # CORS Settings (Allow Vercel Frontend)
-      - key: CLIENT_URL
-        sync: false # e.g. https://your-project.vercel.app
-
-# Optional: Background Worker or Cron if needed (None for now)

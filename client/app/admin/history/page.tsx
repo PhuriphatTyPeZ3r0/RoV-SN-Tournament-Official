@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
 interface HistoryEntry {
@@ -15,8 +15,6 @@ interface HistoryEntry {
     changedAt: string;
     reason?: string;
 }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export default function AdminResultHistoryPage() {
     const { t, language } = useLanguage();
@@ -31,26 +29,40 @@ export default function AdminResultHistoryPage() {
 
     const fetchHistory = async () => {
         setLoading(true);
+        const supabase = createClient();
         try {
-            // Use proxy route for authenticated requests
-            console.log('Fetching history from proxy...');
-            const response = await axios.get('/api/proxy/results/recent-changes?limit=100', {
-                withCredentials: true
-            });
-            console.log('History response:', response.data);
-            setHistory(response.data || []);
+            // Fetch from audit_logs table (created by our migration)
+            const { data, error } = await supabase
+                .from('audit_logs')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(100);
+
+            if (error) throw error;
+
+            setHistory((data || []).map(entry => ({
+                _id: entry.id,
+                matchId: entry.record_id || '',
+                action: entry.action as 'create' | 'update' | 'delete',
+                previousData: entry.old_data,
+                newData: entry.new_data,
+                changedBy: entry.user_id || 'system',
+                changedAt: entry.created_at,
+                reason: entry.reason || undefined,
+            })));
         } catch (error: any) {
             console.error('Error fetching history:', error);
-            console.error('Error response:', error.response?.data);
-            console.error('Error status:', error.response?.status);
-
-            // Show error but don't redirect immediately
-            Swal.fire({
-                icon: 'error',
-                title: 'Error Loading History',
-                text: error.response?.data?.message || error.message || 'Failed to load history',
-                confirmButtonText: 'OK'
-            });
+            // If table doesn't exist yet, show empty state gracefully
+            if (error.message?.includes('does not exist') || error.code === '42P01') {
+                setHistory([]);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Loading History',
+                    text: error.message || 'Failed to load history',
+                    confirmButtonText: 'OK',
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -63,7 +75,7 @@ export default function AdminResultHistoryPage() {
             month: 'short',
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
         });
     };
 
@@ -110,7 +122,7 @@ export default function AdminResultHistoryPage() {
             `,
             width: 700,
             showCloseButton: true,
-            showConfirmButton: false
+            showConfirmButton: false,
         });
     };
 
@@ -215,8 +227,8 @@ export default function AdminResultHistoryPage() {
                                                 {entry.action === 'create' && entry.newData && (
                                                     <span className="flex items-center gap-2">
                                                         <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                                        <span>{entry.newData.teamBlue} vs {entry.newData.teamRed}</span>
-                                                        <span className="font-bold">({entry.newData.scoreBlue}-{entry.newData.scoreRed})</span>
+                                                        <span>{entry.newData.teamBlue || entry.newData.team_blue_name} vs {entry.newData.teamRed || entry.newData.team_red_name}</span>
+                                                        <span className="font-bold">({entry.newData.scoreBlue || entry.newData.score_blue}-{entry.newData.scoreRed || entry.newData.score_red})</span>
                                                     </span>
                                                 )}
                                                 {entry.action === 'update' && entry.newData && (
@@ -224,7 +236,7 @@ export default function AdminResultHistoryPage() {
                                                         <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                                                         <span>Updated Match</span>
                                                         <span className="font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">
-                                                            {entry.newData.scoreBlue}-{entry.newData.scoreRed}
+                                                            {entry.newData.scoreBlue || entry.newData.score_blue}-{entry.newData.scoreRed || entry.newData.score_red}
                                                         </span>
                                                     </span>
                                                 )}
@@ -232,7 +244,7 @@ export default function AdminResultHistoryPage() {
                                                     <span className="flex items-center gap-2 text-red-600">
                                                         <i className="fas fa-trash-alt text-xs"></i>
                                                         <span className="line-through text-gray-400">
-                                                            {entry.previousData.teamBlue} vs {entry.previousData.teamRed}
+                                                            {entry.previousData.teamBlue || entry.previousData.team_blue_name} vs {entry.previousData.teamRed || entry.previousData.team_red_name}
                                                         </span>
                                                     </span>
                                                 )}

@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import axios from 'axios';
 import apiService from '@/lib/api-client';
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
+import { createClient } from '@/utils/supabase/client';
 
 export default function AdminDrawPage() {
     const { t } = useLanguage();
@@ -490,7 +488,18 @@ export default function AdminDrawPage() {
         if (result.isConfirmed) {
             setClearing(true);
             try {
-                await axios.delete(`${API_BASE}/schedules/clear`, { withCredentials: true });
+                const supabase = createClient();
+                const { data: tourney } = await supabase
+                    .from('tournaments')
+                    .select('id')
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+                if (tourney) {
+                    await supabase.from('matches').delete().eq('tournament_id', tourney.id);
+                    await supabase.from('schedules').delete().eq('tournament_id', tourney.id);
+                }
                 setMessage({ type: 'success', text: 'All fixture data cleared.' });
                 setTimeout(() => window.location.reload(), 1500);
             } catch (error: any) {
