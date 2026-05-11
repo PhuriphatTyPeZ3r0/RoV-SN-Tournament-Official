@@ -2,19 +2,15 @@ import type { NextConfig } from "next";
 
 // Security headers configuration
 const securityHeaders = [
-  // Prevent XSS attacks - Content Security Policy
   {
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // 'unsafe-eval' is required for Next.js production build
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://vercel.live https://va.vercel-scripts.com",
-      // 'unsafe-inline' required for Next.js styled-jsx
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
       "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:",
-      "img-src 'self' data: blob: https://res.cloudinary.com https://flagcdn.com",
-      // Specified exact domains instead of wildcards
-      "connect-src 'self' http://localhost:3001 https://rov-sn-tournament-api.onrender.com https://ro-v-sn-tournament-official.vercel.app https://vitals.vercel-insights.com wss://ws-us3.pusher.com https://res.cloudinary.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://flagcdn.com",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
       "frame-ancestors 'self'",
       "form-action 'self'",
       "base-uri 'self'",
@@ -22,37 +18,30 @@ const securityHeaders = [
       "upgrade-insecure-requests",
     ].join('; '),
   },
-  // Prevent clickjacking attacks
   {
     key: 'X-Frame-Options',
     value: 'SAMEORIGIN',
   },
-  // Prevent MIME type sniffing
   {
     key: 'X-Content-Type-Options',
     value: 'nosniff',
   },
-  // Control information sent in Referrer header
   {
     key: 'Referrer-Policy',
     value: 'strict-origin-when-cross-origin',
   },
-  // Control browser features and APIs
   {
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
   },
-  // Ensure HTTPS is used (Vercel usually handles this, but good to set)
   {
     key: 'Strict-Transport-Security',
     value: 'max-age=63072000; includeSubDomains; preload',
   },
-  // Prevent cross-site scripting attacks
   {
     key: 'X-XSS-Protection',
     value: '1; mode=block',
   },
-  // Cross-Origin policies
   {
     key: 'Cross-Origin-Opener-Policy',
     value: 'same-origin',
@@ -64,40 +53,31 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Remove X-Powered-By header to prevent information disclosure
   poweredByHeader: false,
 
-  // Enable image optimization for external images
+  // Fix Turbopack path length issue on Windows (OneDrive deep paths)
+  turbopack: {
+    root: __dirname,
+  },
+
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'flagcdn.com',
+        hostname: '*.supabase.co',
       },
       {
         protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-      {
-        protocol: 'http',
-        hostname: 'localhost',
+        hostname: 'flagcdn.com',
       },
     ],
-    // Allow unoptimized images for development
     unoptimized: process.env.NODE_ENV === 'development',
-  },
-
-  // Environment variables
-  env: {
-    JWT_COOKIE_NAME: process.env.JWT_COOKIE_NAME || 'rov_auth_token',
-    JWT_COOKIE_MAX_AGE: process.env.JWT_COOKIE_MAX_AGE || '86400',
   },
 
   // Apply security headers to all routes
   async headers() {
     return [
       {
-        // Apply to all routes
         source: '/:path*',
         headers: securityHeaders,
       },
