@@ -70,7 +70,7 @@ export interface MatchWithResult {
         isByeWin: boolean;
         teamBlue: string;
         teamRed: string;
-        [key: string]: unknown;
+        [key: string]: any;
     };
     day: number;
     index: number;

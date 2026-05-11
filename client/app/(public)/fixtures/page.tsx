@@ -19,9 +19,9 @@ export default async function FixturesPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-12">
             <FixturesContent
-                schedule={data.schedule}
-                results={data.results}
-                teamLogos={data.teamLogos}
+                schedule={data.schedule as any}
+                results={data.results as any}
+                teamLogos={data.teamLogos as any}
             />
         </div>
     );
