@@ -3,6 +3,7 @@ import { Kanit, Oswald } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const kanit = Kanit({
   weight: ['300', '400', '500', '600', '700'],
@@ -63,6 +64,7 @@ export default function RootLayout({
           {children}
         </Providers>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
