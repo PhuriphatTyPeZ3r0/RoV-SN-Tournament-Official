@@ -65,6 +65,19 @@ export async function updateSession(request: NextRequest) {
     }
 
     const path = request.nextUrl.pathname;
+    const code = request.nextUrl.searchParams.get('code');
+
+    // 🚩 0. OAuth Rescue Redirect
+    // If we have a code but we are NOT on the callback page, redirect to callback
+    if (code && path !== '/auth/callback') {
+      const callbackUrl = new URL('/auth/callback', request.url);
+      callbackUrl.searchParams.set('code', code);
+      // Preserve any 'next' parameter if present
+      const next = request.nextUrl.searchParams.get('next');
+      if (next) callbackUrl.searchParams.set('next', next);
+      
+      return NextResponse.redirect(callbackUrl);
+    }
 
     // ✅ Public Routes: Everyone can access
     const isPublicPath = path === '/' || 
