@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { useAuth } from '@/components/providers/AuthProvider';
 import Image from 'next/image';
 
 export default function Navbar() {
     const { t, language, changeLanguage } = useLanguage();
+    const { isAuthenticated, user } = useAuth();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -89,9 +91,22 @@ export default function Navbar() {
                                 {item.label}
                             </Link>
                         ))}
+                        
+                        {isAuthenticated && (
+                            <Link
+                                href="/team"
+                                className={`px-4 py-2 rounded-full font-display text-sm uppercase tracking-wide transition-all ${pathname === '/team'
+                                    ? 'bg-cyan-aura text-uefa-dark font-bold'
+                                    : 'text-cyan-aura hover:bg-cyan-aura/10'
+                                    }`}
+                            >
+                                <i className="fas fa-users mr-2"></i>
+                                {language === 'th' ? 'ทีมของฉัน' : 'My Team'}
+                            </Link>
+                        )}
                     </div>
 
-                    {/* Right Actions - Language Toggle */}
+                    {/* Right Actions - Language Toggle & Login */}
                     <div className="hidden md:flex items-center gap-4">
                         <button
                             onClick={toggleLanguage}
@@ -108,6 +123,23 @@ export default function Navbar() {
                             />
                             <span className="text-gray-300 text-sm font-bold group-hover:text-cyan-aura">{language.toUpperCase()}</span>
                         </button>
+
+                        {isAuthenticated ? (
+                            <Link 
+                                href={user?.role === 'admin' ? '/admin' : '/student-info'}
+                                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 border border-white/10"
+                            >
+                                <i className="fas fa-user-circle"></i>
+                                {user?.username}
+                            </Link>
+                        ) : (
+                            <Link 
+                                href="/login"
+                                className="bg-gradient-to-r from-cyan-aura to-cyan-dark text-uefa-dark px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-cyan-aura/20 hover:scale-105 transition-all"
+                            >
+                                {language === 'th' ? 'เข้าสู่ระบบ' : 'LOGIN'}
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile Toggle */}

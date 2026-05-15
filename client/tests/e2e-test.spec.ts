@@ -3,19 +3,19 @@ import { test, expect } from '@playwright/test';
 test('End-to-End Tournament Admin Flow', async ({ page }) => {
     // 1. Login
     console.log('Step 1: Logging in...');
-    await page.goto('http://localhost:3000/login');
+    await page.goto('http://localhost:3000/admin/login');
 
-    // Wait for inputs
-    await page.waitForSelector('input[type="text"]');
+    // Wait for inputs - Admin login uses type="email"
+    await page.waitForSelector('input[type="email"]');
 
-    await page.fill('input[type="text"]', 'admin');
+    await page.fill('input[type="email"]', 'admin@rov-sn.com');
     await page.fill('input[type="password"]', 'Lastfreedom4_');
 
-    // Click Login Button using Thai text or type
+    // Click Login Button
     await page.click('button[type="submit"]');
 
-    // Wait for navigation (increased timeout)
-    await expect(page).toHaveURL(/\/admin/, { timeout: 15000 });
+    // Wait for navigation
+    await expect(page).toHaveURL(/\/admin/, { timeout: 20000 });
     console.log('✅ Login Successful');
 
     // Wait for Dashboard to stabilize

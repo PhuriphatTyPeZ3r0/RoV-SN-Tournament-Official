@@ -1,128 +1,50 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-import { apiService } from '@/lib/api-client';
-import { MatchResult, Standing, ScheduleItem, Team, Player, Hero } from '@/types';
-
-interface DashboardStats {
-    teams: number;
-    matches: number;
-    results: number;
-    matchDays: number;
-    players: number;
-    heroes: number;
-    logos: number;
-    gameStats: number;
-}
-
-interface QuickAction {
-    label: string;
-    icon: string;
-    href: string;
-    color: string;
-    description: string;
-}
+import { 
+    getAdminDashboardKPIsAction, 
+    getRecentActivityAction, 
+    getDashboardTopPerformersAction,
+    getDashboardToDosAction
+} from '@/features/analytics/dashboard-actions';
+import Image from 'next/image';
 
 export default function AdminDashboard() {
     const { t, language } = useLanguage();
-
-    // State
-    const [stats, setStats] = useState<DashboardStats>({
-        teams: 0,
-        matches: 0,
-        results: 0,
-        matchDays: 0,
-        players: 0,
-        heroes: 0,
-        logos: 0,
-        gameStats: 0
-    });
-
-    const [recentResults, setRecentResults] = useState<MatchResult[]>([]);
-    const [standings, setStandings] = useState<Standing[]>([]);
+    const [isPending, startTransition] = useTransition();
+    const [kpis, setKpis] = useState<any>(null);
+    const [activities, setActivities] = useState<any[]>([]);
+    const [performers, setPerformers] = useState<any>(null);
+    const [todos, setTodos] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch all required data concurrently
-                const [
-                    teamsData,
-                    scheduleData,
-                    resultsData,
-                    standingsData,
-                    playersData,
-                    heroesData
-                ] = await Promise.all([
-                    apiService.getTeams().catch(() => [] as Team[]),
-                    apiService.getSchedule().catch(() => ({ schedule: [] } as unknown as ScheduleItem)),
-                    apiService.getResults().catch(() => [] as MatchResult[]),
-                    apiService.getStandings().catch(() => [] as Standing[]),
-                    apiService.getPlayers().catch(() => [] as Player[]),
-                    apiService.getHeroes().catch(() => [] as Hero[])
-                ]);
-
-                // Calculate derived stats
-                const totalMatches = (scheduleData.schedule || []).reduce((acc, d) => acc + (d.matches?.length || 0), 0);
-                const totalGameStats = resultsData.reduce((acc, r) => acc + (r.gameDetails?.length || 0), 0);
-
-                setStats({
-                    teams: teamsData.length,
-                    matches: totalMatches,
-                    results: resultsData.length,
-                    matchDays: scheduleData.schedule?.length || 0,
-                    players: playersData.length,
-                    heroes: heroesData.length,
-                    logos: teamsData.length, // In this system, teams and logos are essentially the same entity
-                    gameStats: totalGameStats
-                });
-
-                // Process Recent Results
-                const sortedResults = [...resultsData].sort((a, b) => {
-                    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-                    return timeB - timeA;
-                }).slice(0, 5);
-                setRecentResults(sortedResults);
-
-                // Set Standings
-                setStandings(standingsData);
-
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        fetchDashboardData();
     }, []);
 
-    const statsCards = [
-        { label: t.admin.dashboard.totalTeams, value: stats.teams, icon: 'fas fa-users', color: 'from-blue-500 to-blue-600', link: '/admin/teams' },
-        { label: t.admin.dashboard.totalMatches, value: stats.matches, icon: 'fas fa-gamepad', color: 'from-green-500 to-green-600', link: '/admin/results' },
-        { label: t.admin.dashboard.finishedMatches, value: stats.results, icon: 'fas fa-check-circle', color: 'from-purple-500 to-purple-600', link: '/admin/results' },
-        { label: t.admin.dashboard.matchDays, value: stats.matchDays, icon: 'fas fa-calendar-alt', color: 'from-orange-500 to-orange-600', link: '/admin/schedule' },
-        { label: t.admin.dashboard.poolPlayers, value: stats.players, icon: 'fas fa-user-friends', color: 'from-cyan-500 to-cyan-600', link: '/admin/players' },
-        { label: t.admin.dashboard.totalHeroes, value: stats.heroes, icon: 'fas fa-mask', color: 'from-pink-500 to-pink-600', link: '/admin/heroes' },
-        { label: t.admin.dashboard.teamLogos, value: stats.logos, icon: 'fas fa-image', color: 'from-indigo-500 to-indigo-600', link: '/admin/logos' },
-        { label: t.admin.dashboard.gameStats, value: stats.gameStats, icon: 'fas fa-chart-bar', color: 'from-red-500 to-red-600', link: '/admin/game-stats' },
-    ];
+    const fetchDashboardData = async () => {
+        setLoading(true);
+        try {
+            const [kpiData, activityData, topData, todoData] = await Promise.all([
+                getAdminDashboardKPIsAction(),
+                getRecentActivityAction(),
+                getDashboardTopPerformersAction(),
+                getDashboardToDosAction()
+            ]);
+            setKpis(kpiData);
+            setActivities(activityData);
+            setPerformers(topData);
+            setTodos(todoData);
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const quickActions: QuickAction[] = [
-        { label: t.admin.dashboard.draw, icon: 'fas fa-random', href: '/admin/draw', color: 'bg-blue-500', description: t.admin.dashboard.drawDesc },
-        { label: t.admin.dashboard.recordResult, icon: 'fas fa-plus-circle', href: '/admin/results', color: 'bg-green-500', description: t.admin.dashboard.recordResultDesc },
-        { label: t.admin.dashboard.managePlayers, icon: 'fas fa-user-edit', href: '/admin/players', color: 'bg-purple-500', description: t.admin.dashboard.managePlayersDesc },
-        { label: t.admin.dashboard.manageHeroes, icon: 'fas fa-mask', href: '/admin/heroes', color: 'bg-pink-500', description: t.admin.dashboard.manageHeroesDesc },
-        { label: t.admin.dashboard.manageLogos, icon: 'fas fa-image', href: '/admin/logos', color: 'bg-indigo-500', description: t.admin.dashboard.manageLogosDesc },
-        { label: t.admin.dashboard.manageTeams, icon: 'fas fa-users-cog', href: '/admin/teams', color: 'bg-orange-500', description: t.admin.dashboard.manageTeamsDesc },
-        { label: t.admin.dashboard.manageSchedule, icon: 'fas fa-calendar-check', href: '/admin/schedule', color: 'bg-cyan-500', description: t.admin.dashboard.manageScheduleDesc },
-        { label: t.admin.dashboard.manageStats, icon: 'fas fa-chart-line', href: '/admin/game-stats', color: 'bg-red-500', description: t.admin.dashboard.manageStatsDesc },
-    ];
-
-    if (loading) {
+    if (loading || !kpis) {
         return (
             <div className="flex items-center justify-center h-96">
                 <div className="w-12 h-12 border-4 border-cyan-aura border-t-transparent rounded-full animate-spin"></div>
@@ -130,212 +52,295 @@ export default function AdminDashboard() {
         );
     }
 
+    const statsCards = [
+        { label: 'Total Teams', value: kpis.teams.total, icon: 'fas fa-users', color: 'bg-blue-500', link: '/admin/teams' },
+        { label: 'Ready Teams', value: kpis.teams.ready, icon: 'fas fa-check-double', color: 'bg-green-500', link: '/admin/teams' },
+        { label: 'Pending Reg.', value: kpis.registrations.pending, icon: 'fas fa-user-clock', color: 'bg-orange-500', link: '/admin/registrations', alert: kpis.registrations.pending > 0 },
+        { label: 'Total Players', value: kpis.players.total, icon: 'fas fa-user-friends', color: 'bg-cyan-500', link: '/admin/players' },
+    ];
+
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-fadeIn">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                        <i className="fas fa-tachometer-alt mr-3 text-cyan-aura"></i>
-                        {t.admin.dashboard.title}
+                    <h1 className="text-3xl font-display font-black text-uefa-dark uppercase tracking-tight">
+                        Tournament <span className="text-cyan-aura">Command Center</span>
                     </h1>
-                    <p className="text-gray-500 mt-1">{t.admin.dashboard.subtitle}</p>
+                    <p className="text-gray-500 font-medium">ภาพรวมการจัดการแข่งขันและความคืบหน้าล่าสุด</p>
                 </div>
-                <div className="text-sm text-gray-400">
-                    <i className="fas fa-clock mr-1"></i>
-                    {t.admin.dashboard.lastUpdate}: {new Date().toLocaleTimeString(language === 'th' ? 'th-TH' : 'en-US')}
-                </div>
-            </div>
-
-            {/* Tournament Progress */}
-            <div className="bg-white rounded-xl shadow-sm p-6 border-l-4 border-cyan-aura">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-uefa-dark">{t.admin.dashboard.progress}</h2>
-                    <span className="text-2xl font-bold text-cyan-aura">
-                        {stats.matches > 0 ? Math.round((stats.results / stats.matches) * 100) : 0}%
-                    </span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-4 mb-2 overflow-hidden">
-                    <div
-                        className="bg-gradient-to-r from-cyan-aura to-blue-600 h-4 rounded-full transition-all duration-1000"
-                        style={{ width: `${stats.matches > 0 ? (stats.results / stats.matches) * 100 : 0}%` }}
-                    ></div>
-                </div>
-                <div className="flex justify-between text-sm text-gray-500">
-                    <span>
-                        <i className="fas fa-check-circle text-green-500 mr-1"></i>
-                        {t.admin.dashboard.completed}: <strong>{stats.results}</strong>
-                    </span>
-                    <span>
-                        <i className="fas fa-hourglass-half text-orange-500 mr-1"></i>
-                        {t.admin.dashboard.remaining}: <strong>{stats.matches - stats.results}</strong>
-                    </span>
-                    <span>
-                        <i className="fas fa-flag text-gray-400 mr-1"></i>
-                        {t.admin.dashboard.total}: <strong>{stats.matches}</strong>
-                    </span>
-                </div>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {statsCards.map((stat, i) => (
-                    <Link
-                        key={i}
-                        href={stat.link}
-                        className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-all group"
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => startTransition(fetchDashboardData)}
+                        className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-cyan-aura transition-all shadow-sm"
+                        title="Refresh Data"
                     >
-                        <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
-                                <i className={`${stat.icon} text-xl`}></i>
-                            </div>
-                            <div>
-                                <div className="text-2xl font-display font-bold text-uefa-dark">
-                                    {stat.value}
+                        <i className={`fas fa-sync-alt ${isPending ? 'fa-spin' : ''}`}></i>
+                    </button>
+                    <div className="px-4 py-2 bg-uefa-dark text-white rounded-xl text-sm font-bold shadow-lg">
+                        <i className="fas fa-calendar-day mr-2 text-cyan-aura"></i>
+                        {new Date().toLocaleDateString(language === 'th' ? 'th-TH' : 'en-US', { day: 'numeric', month: 'long' })}
+                    </div>
+                </div>
+            </div>
+
+            {/* KPI Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {statsCards.map((stat, i) => (
+                    <Link key={i} href={stat.link} className="group">
+                        <div className={`bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden ${stat.alert ? 'ring-2 ring-orange-500/20 bg-orange-50/10' : ''}`}>
+                            {stat.alert && (
+                                <div className="absolute top-3 right-3 w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
+                            )}
+                            <div className="flex items-center gap-4">
+                                <div className={`w-14 h-14 ${stat.color} rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-${stat.color.split('-')[1]}-500/20 group-hover:scale-110 transition-transform`}>
+                                    <i className={stat.icon}></i>
                                 </div>
-                                <div className="text-gray-500 text-xs">{stat.label}</div>
+                                <div>
+                                    <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</div>
+                                    <div className="text-3xl font-display font-black text-uefa-dark">{stat.value}</div>
+                                </div>
                             </div>
                         </div>
                     </Link>
                 ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-                <h2 className="text-lg font-display font-bold text-uefa-dark uppercase mb-4 flex items-center">
-                    <i className="fas fa-bolt mr-2 text-cyan-aura"></i>
-                    {t.admin.dashboard.quickActions}
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {quickActions.map((action, i) => (
-                        <Link
-                            key={i}
-                            href={action.href}
-                            className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all group border border-transparent hover:border-cyan-aura/30"
-                        >
-                            <div className={`w-12 h-12 ${action.color} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform`}>
-                                <i className={`${action.icon} text-xl`}></i>
-                            </div>
-                            <span className="text-sm font-bold text-gray-700 group-hover:text-cyan-aura transition-colors">{action.label}</span>
-                            <span className="text-xs text-gray-400 text-center">{action.description}</span>
-                        </Link>
-                    ))}
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Results */}
-                <div className="bg-white rounded-xl shadow-sm">
-                    <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-                        <h2 className="text-lg font-display font-bold text-uefa-dark uppercase flex items-center">
-                            <i className="fas fa-history mr-2 text-cyan-aura"></i>
-                            {t.admin.dashboard.recentResults}
-                        </h2>
-                        <Link href="/admin/results" className="text-cyan-aura text-sm hover:underline">
-                            {t.admin.dashboard.viewAll} →
-                        </Link>
-                    </div>
-                    <div className="p-5">
-                        {recentResults.length > 0 ? (
-                            <div className="space-y-3">
-                                {recentResults.map((r, i) => {
-                                    const isBye = r.isByeWin || (r.scoreBlue === 0 && r.scoreRed === 0 && r.winner);
-                                    return (
-                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-bold text-sm">{r.teamBlue}</span>
-                                                <span className="text-gray-400 text-xs">vs</span>
-                                                <span className="font-bold text-sm">{r.teamRed}</span>
-                                            </div>
-                                            {isBye ? (
-                                                <div className="bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                                                    BYE → {r.winner}
-                                                </div>
-                                            ) : (
-                                                <div className="bg-uefa-dark text-white px-3 py-1 rounded-full text-xs font-bold">
-                                                    {r.scoreBlue} - {r.scoreRed}
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className="text-gray-400 text-center py-8">
-                                <i className="fas fa-inbox text-4xl mb-2"></i>
-                                <p>{t.admin.dashboard.noResults}</p>
-                            </div>
+            {/* Action Required Widget */}
+            {(todos?.registrations.length > 0 || todos?.teams.length > 0 || todos?.matches.length > 0) && (
+                <div className="bg-orange-50/30 border border-orange-100 rounded-3xl p-6 animate-slideUp">
+                    <h3 className="text-sm font-black uppercase tracking-widest text-orange-600 mb-4 flex items-center gap-2">
+                        <i className="fas fa-exclamation-triangle"></i> Action Required
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {todos.registrations.length > 0 && (
+                            <Link href="/admin/registrations" className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all group">
+                                <div className="flex justify-between items-start mb-2">
+                                    <span className="text-[10px] font-black text-orange-500 uppercase">Pending Registration</span>
+                                    <i className="fas fa-chevron-right text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                                <div className="text-xs font-bold text-uefa-dark">{todos.registrations[0].full_name}</div>
+                                <div className="text-[10px] text-gray-400">Wait for screening...</div>
+                            </Link>
+                        )}
+                        {todos.teams.length > 0 && (
+                            <Link href="/admin/teams" className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all group">
+                                <div className="flex justify-between items-start mb-2">
+                                    <span className="text-[10px] font-black text-orange-500 uppercase">Team Needs Approval</span>
+                                    <i className="fas fa-chevron-right text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                                <div className="text-xs font-bold text-uefa-dark">{todos.teams[0].name}</div>
+                                <div className="text-[10px] text-gray-400">Ready for review</div>
+                            </Link>
+                        )}
+                        {todos.matches.length > 0 && (
+                            <Link href="/admin/results" className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all group">
+                                <div className="flex justify-between items-start mb-2">
+                                    <span className="text-[10px] font-black text-orange-500 uppercase">Match Pending Result</span>
+                                    <i className="fas fa-chevron-right text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                                </div>
+                                <div className="text-xs font-bold text-uefa-dark truncate">
+                                    {todos.matches[0].team_blue_name} vs {todos.matches[0].team_red_name}
+                                </div>
+                                <div className="text-[10px] text-gray-400">Day {todos.matches[0].match_day} - No results</div>
+                            </Link>
                         )}
                     </div>
                 </div>
+            )}
 
-                {/* Top Teams */}
-                <div className="bg-white rounded-xl shadow-sm">
-                    <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-                        <h2 className="text-lg font-display font-bold text-uefa-dark uppercase flex items-center">
-                            <i className="fas fa-trophy mr-2 text-cyan-aura"></i>
-                            {t.admin.dashboard.topTeams}
-                        </h2>
-                        <Link href="/standings" target="_blank" className="text-cyan-aura text-sm hover:underline">
-                            {t.admin.dashboard.viewAll} →
-                        </Link>
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                {/* Left Column: Progress & Top Performers */}
+                <div className="lg:col-span-1 space-y-8">
+                    
+                    {/* Tournament Progress */}
+                    <div className="bg-uefa-dark rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-aura/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:bg-cyan-aura/20 transition-colors"></div>
+                        
+                        <h3 className="text-sm font-black uppercase tracking-widest text-cyan-aura mb-6">Tournament Progress</h3>
+                        
+                        <div className="flex items-end justify-between mb-4">
+                            <div className="text-5xl font-display font-black tracking-tighter">{kpis.tournament.progress}%</div>
+                            <div className="text-xs font-bold text-gray-400 text-right uppercase">
+                                {kpis.tournament.played} / {kpis.tournament.total} Matches<br/>Completed
+                            </div>
+                        </div>
+
+                        <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden mb-6">
+                            <div 
+                                className="bg-gradient-to-r from-cyan-aura to-blue-500 h-full rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(21,200,255,0.5)]"
+                                style={{ width: `${kpis.tournament.progress}%` }}
+                            ></div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <Link href="/admin/draw" className="flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-xs font-bold uppercase">
+                                <i className="fas fa-dice"></i> Draw
+                            </Link>
+                            <Link href="/admin/results" className="flex items-center justify-center gap-2 py-3 bg-cyan-aura text-uefa-dark hover:bg-white rounded-2xl transition-all text-xs font-bold uppercase">
+                                <i className="fas fa-edit"></i> Results
+                            </Link>
+                        </div>
                     </div>
-                    <div className="p-5">
-                        {standings.length > 0 ? (
-                            <div className="space-y-3">
-                                {standings.slice(0, 5).map((t: any, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${i === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
-                                                i === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white' :
-                                                    i === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white' :
-                                                        'bg-gray-200 text-gray-600'
-                                                }`}>
-                                                {i + 1}
+
+                    {/* Top Performers */}
+                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                        <h3 className="text-sm font-black uppercase tracking-widest text-uefa-dark mb-6 flex items-center gap-2">
+                            <i className="fas fa-fire text-orange-500"></i>
+                            Hot Performance
+                        </h3>
+
+                        {performers ? (
+                            <div className="space-y-6">
+                                {/* Top Players */}
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Top KDA Players</p>
+                                    {performers.topPlayers.map((p: any, i: number) => (
+                                        <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100/50">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-xl bg-uefa-dark text-cyan-aura flex items-center justify-center font-black text-xs">{i+1}</div>
+                                                <div>
+                                                    <div className="text-xs font-black text-uefa-dark">{p.player_name}</div>
+                                                    <div className="text-[10px] text-gray-400 uppercase">{p.team_name}</div>
+                                                </div>
                                             </div>
-                                            <span className="font-bold text-sm">{t.team || t.name}</span>
+                                            <div className="text-right">
+                                                <div className="text-sm font-black text-cyan-aura">{Number(p.kda).toFixed(1)}</div>
+                                                <div className="text-[8px] text-gray-400 font-bold uppercase">KDA</div>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <div className="font-bold text-lg text-cyan-aura">{t.points || t.pts} <span className="text-xs text-gray-400">pts</span></div>
-                                            <div className="text-xs text-gray-500">{t.won || t.w}W {t.lost || t.l}L</div>
-                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Top Heroes */}
+                                <div className="space-y-3 pt-4 border-t border-gray-50">
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Most Picked Heroes</p>
+                                    <div className="flex gap-4">
+                                        {performers.topHeroes.map((h: any, i: number) => (
+                                            <div key={i} className="flex-1 text-center">
+                                                <div className="relative w-12 h-12 mx-auto mb-2 rounded-2xl overflow-hidden ring-2 ring-gray-100">
+                                                    <div className="absolute inset-0 bg-uefa-dark/40 flex items-center justify-center text-white text-[10px] font-black opacity-0 hover:opacity-100 transition-opacity">
+                                                        {h.count}
+                                                    </div>
+                                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
+                                                        <i className="fas fa-mask"></i>
+                                                    </div>
+                                                </div>
+                                                <div className="text-[10px] font-black text-uefa-dark truncate">{h.name}</div>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                </div>
                             </div>
                         ) : (
-                            <div className="text-gray-400 text-center py-8">
-                                <i className="fas fa-medal text-4xl mb-2"></i>
-                                <p>{t.admin.dashboard.noStandings}</p>
+                            <div className="py-10 text-center text-gray-300 text-xs italic">
+                                No tournament data yet
                             </div>
                         )}
                     </div>
                 </div>
+
+                {/* Right Column: Recent Activity Logs */}
+                <div className="lg:col-span-2">
+                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 h-full overflow-hidden flex flex-col">
+                        <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+                            <h3 className="text-sm font-black uppercase tracking-widest text-uefa-dark flex items-center gap-2">
+                                <i className="fas fa-history text-cyan-aura"></i>
+                                Audit Trail
+                            </h3>
+                            <span className="text-[10px] font-bold text-gray-400 bg-white px-3 py-1 rounded-full border border-gray-100 uppercase">System-wide Actions</span>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto">
+                            {activities.length > 0 ? (
+                                <div className="divide-y divide-gray-50">
+                                    {activities.map((log) => (
+                                        <div key={log.id} className="p-5 hover:bg-gray-50/50 transition-colors group">
+                                            <div className="flex items-start gap-4">
+                                                <div className={`mt-1 w-8 h-8 rounded-xl flex items-center justify-center text-xs shadow-sm ${
+                                                    log.action_type === 'INSERT' ? 'bg-green-100 text-green-600' :
+                                                    log.action_type === 'UPDATE' ? 'bg-blue-100 text-blue-600' :
+                                                    'bg-red-100 text-red-600'
+                                                }`}>
+                                                    <i className={`fas ${
+                                                        log.action_type === 'INSERT' ? 'fa-plus' :
+                                                        log.action_type === 'UPDATE' ? 'fa-pen' :
+                                                        'fa-trash'
+                                                    }`}></i>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center justify-between mb-1">
+                                                        <span className="text-xs font-black text-uefa-dark uppercase tracking-tight">
+                                                            {log.actor?.username || 'System'}
+                                                        </span>
+                                                        <span className="text-[10px] text-gray-400 font-medium">
+                                                            {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-xs text-gray-600 leading-relaxed">
+                                                        <span className="font-bold text-uefa-dark uppercase text-[10px] bg-gray-100 px-1.5 py-0.5 rounded mr-2">
+                                                            {log.table_name}
+                                                        </span>
+                                                        {log.action_type === 'INSERT' && 'Created new record'}
+                                                        {log.action_type === 'DELETE' && 'Removed record'}
+                                                        {log.action_type === 'UPDATE' && (
+                                                            <span>
+                                                                Updated 
+                                                                {log.new_data?.status !== log.old_data?.status && (
+                                                                    <span> status from <span className="text-uefa-dark font-bold">'{log.old_data?.status}'</span> to <span className="text-cyan-aura font-bold">'{log.new_data?.status}'</span></span>
+                                                                )}
+                                                                {log.new_data?.winner_name !== log.old_data?.winner_name && (
+                                                                    <span> match result: <span className="text-cyan-aura font-bold">{log.new_data?.winner_name}</span> won</span>
+                                                                )}
+                                                                {log.new_data?.status === log.old_data?.status && log.new_data?.winner_name === log.old_data?.winner_name && ' details updated'}
+                                                            </span>
+                                                        )}
+                                                        <span className="text-[10px] text-gray-400 block mt-1 font-mono">ID: {log.record_id.substring(0, 8)}...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="h-full flex flex-col items-center justify-center py-20 text-gray-300">
+                                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                        <i className="fas fa-scroll text-2xl opacity-20"></i>
+                                    </div>
+                                    <p className="text-xs font-bold uppercase tracking-widest">No activities recorded</p>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <Link href="/admin/history" className="p-4 bg-gray-50 text-center text-[10px] font-black uppercase text-gray-400 hover:text-cyan-aura hover:bg-gray-100 transition-all border-t border-gray-50">
+                            View Detailed History <i className="fas fa-chevron-right ml-1"></i>
+                        </Link>
+                    </div>
+                </div>
             </div>
 
-            {/* View Public Pages */}
-            <div className="bg-gradient-to-r from-cyan-aura/10 to-blue-500/10 rounded-xl p-6 border border-cyan-aura/20">
-                <h2 className="text-lg font-display font-bold text-uefa-dark uppercase mb-4 flex items-center">
-                    <i className="fas fa-external-link-alt mr-2 text-cyan-aura"></i>
-                    {t.admin.dashboard.publicPages}
-                </h2>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+            {/* Quick Navigation Footer */}
+            <div className="bg-gradient-to-r from-cyan-aura/10 via-white to-blue-500/10 rounded-3xl p-8 border border-white shadow-sm">
+                <h3 className="text-sm font-black uppercase tracking-widest text-uefa-dark mb-6 text-center">Quick Navigation</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {[
-                        { label: t.admin.dashboard.home, href: '/', icon: 'fas fa-home' },
-                        { label: t.admin.dashboard.fixtures, href: '/fixtures', icon: 'fas fa-calendar' },
-                        { label: t.admin.dashboard.standings, href: '/standings', icon: 'fas fa-list-ol' },
-                        { label: t.admin.dashboard.stats, href: '/stats', icon: 'fas fa-chart-pie' },
-                        { label: t.admin.dashboard.clubs, href: '/clubs', icon: 'fas fa-users' },
-                        { label: t.admin.dashboard.format, href: '/format', icon: 'fas fa-sitemap' },
-                    ].map((page, i) => (
-                        <Link
-                            key={i}
-                            href={page.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex flex-col items-center gap-2 p-3 bg-white rounded-lg hover:shadow-md transition-all text-center"
+                        { label: 'Draw', href: '/admin/draw', icon: 'fas fa-random', color: 'text-blue-500' },
+                        { label: 'Results', href: '/admin/results', icon: 'fas fa-trophy', color: 'text-yellow-500' },
+                        { label: 'Teams', href: '/admin/teams', icon: 'fas fa-users-cog', color: 'text-green-500' },
+                        { label: 'Registrations', href: '/admin/registrations', icon: 'fas fa-user-check', color: 'text-orange-500' },
+                        { label: 'Heroes', href: '/admin/heroes', icon: 'fas fa-mask', color: 'text-pink-500' },
+                        { label: 'Standings', href: '/standings', icon: 'fas fa-list-ol', color: 'text-cyan-500', external: true },
+                    ].map((item, i) => (
+                        <Link 
+                            key={i} 
+                            href={item.href}
+                            target={item.external ? '_blank' : undefined}
+                            className="flex flex-col items-center gap-3 p-4 bg-white rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all border border-gray-50 group"
                         >
-                            <i className={`${page.icon} text-xl text-cyan-aura`}></i>
-                            <span className="text-xs font-medium text-gray-600">{page.label}</span>
+                            <i className={`${item.icon} text-xl ${item.color} group-hover:scale-110 transition-transform`}></i>
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{item.label}</span>
                         </Link>
                     ))}
                 </div>

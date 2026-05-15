@@ -9,7 +9,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://vercel.live https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
       "font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:",
-      "img-src 'self' data: blob: https://*.supabase.co https://flagcdn.com",
+      "img-src 'self' data: blob: https://*.supabase.co https://flagcdn.com https://res.cloudinary.com",
       "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
       "frame-ancestors 'self'",
       "form-action 'self'",
@@ -54,11 +54,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-
-  // Fix Turbopack path length issue on Windows locally, but disable on Vercel
-  turbopack: process.env.VERCEL ? undefined : {
-    root: __dirname,
-  },
 
   images: {
     remotePatterns: [

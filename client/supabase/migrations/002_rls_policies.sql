@@ -19,8 +19,17 @@ CREATE POLICY "profiles_self_update"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id);
 
-CREATE POLICY "profiles_admin_all"
-  ON public.profiles FOR ALL
+CREATE POLICY "profiles_admin_update"
+  ON public.profiles FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+CREATE POLICY "profiles_admin_delete"
+  ON public.profiles FOR DELETE
   USING (
     EXISTS (
       SELECT 1 FROM public.profiles

@@ -1,203 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
+import { getAllTeamsAction, updateTeamStatusAction } from '@/features/teams/actions';
 import Swal from 'sweetalert2';
-import { createClient } from '@/utils/supabase/client';
-import { useLanguage } from '@/components/providers/LanguageProvider';
-import apiService from '@/lib/api-client';
-
-interface Team {
-    name: string;
-    players: string[];
-    logoUrl?: string;
-}
-
-interface Player {
-    _id: string;
-    name: string;
-    inGameName?: string;
-    team?: string;
-}
+import TeamLogo from '@/components/common/TeamLogo';
+import Image from 'next/image';
 
 export default function AdminTeamsPage() {
-    const { t } = useLanguage();
-    const [teams, setTeams] = useState<Team[]>([]);
+    const [isPending, startTransition] = useTransition();
+    const [teams, setTeams] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-    const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState<Team>({ name: '', players: [] });
-
-    // Additional state for player fetching
-    const [allPlayers, setAllPlayers] = useState<Player[]>([]);
 
     useEffect(() => {
-        fetchData();
+        fetchTeams();
     }, []);
 
-    const fetchData = async () => {
-        const supabase = createClient();
-        try {
-            const [playersData, teamsData, scheduleData] = await Promise.all([
-                apiService.getPlayers(),
-                apiService.getTeams(),
-                apiService.getSchedule(),
-            ]);
+    const fetchTeams = async () => {
+        setLoading(true);
+        const data = await getAllTeamsAction();
+        setTeams(data);
+        setLoading(false);
+    };
 
-            setAllPlayers(playersData || []);
-
-            // Build team name set from players, teams table, and schedule
-            const playerTeams = [...new Set((playersData || []).map((p: Player) => p.team).filter(Boolean))];
-            const dbTeamNames = (teamsData || []).map(t => t.name);
-
-            const scheduleRaw = (scheduleData as any)?.schedule || [];
-            const scheduleTeamsExtracted: string[] = [];
-            if (Array.isArray(scheduleRaw)) {
-                scheduleRaw.forEach((day: any) => {
-                    day.matches?.forEach((m: any) => {
-                        if (m.blue) scheduleTeamsExtracted.push(m.blue);
-                        if (m.red) scheduleTeamsExtracted.push(m.red);
-                    });
+    const handleUpdateStatus = (teamId: string, status: 'incomplete' | 'ready' | 'approved') => {
+        startTransition(async () => {
+            const res = await updateTeamStatusAction(teamId, status);
+            if (res.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'อัปเดตสถานะเรียบร้อย',
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2000,
+                    showConfirmButton: false
                 });
+                fetchTeams();
+            } else {
+                Swal.fire('ข้อผิดพลาด', res.error, 'error');
             }
-
-            const allTeamNames = Array.from(new Set([...playerTeams, ...dbTeamNames, ...scheduleTeamsExtracted])) as string[];
-
-            // Build logos map
-            const logosMap = new Map<string, string>();
-            for (const t of teamsData || []) {
-                if (t.logo) logosMap.set(t.name, t.logo);
-            }
-
-            const teamList: Team[] = allTeamNames.map(name => ({
-                name,
-                players: (playersData || []).filter((p: Player) => p.team === name).map((p: Player) => p.name),
-                logoUrl: logosMap.get(name),
-            }));
-
-            setTeams(teamList.sort((a, b) => a.name.localeCompare(b.name)));
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            Swal.fire({ icon: 'error', title: t.common.error });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleEditTeam = (team: Team) => {
-        setEditingTeam(team);
-        setFormData({ ...team });
-        setShowModal(true);
-    };
-
-    const handleSaveTeam = async () => {
-        if (!formData.name.trim()) {
-            Swal.fire({ icon: 'warning', title: t.admin.teamsPage?.enterTeamName || 'Enter Team Name' });
-            return;
-        }
-
-        const supabase = createClient();
-        try {
-            const oldName = editingTeam?.name;
-            const newName = formData.name.trim();
-
-            if (oldName && oldName !== newName) {
-                // Rename team across players table
-                const { error } = await supabase
-                    .from('players')
-                    .update({ team_name: newName })
-                    .eq('team_name', oldName);
-                if (error) throw error;
-
-                // Also rename in teams table
-                await supabase
-                    .from('teams')
-                    .update({ name: newName })
-                    .eq('name', oldName);
-            }
-
-            // Remove players from team if they were removed in the modal
-            const currentPlayers = allPlayers.filter(p => p.team === (newName || oldName));
-            const newPlayerNames = formData.players;
-            const playersToRemove = currentPlayers.filter(p => !newPlayerNames.includes(p.name));
-
-            for (const p of playersToRemove) {
-                await supabase
-                    .from('players')
-                    .update({ team_name: null })
-                    .eq('id', p._id);
-            }
-
-            Swal.fire({ icon: 'success', title: t.admin.teamsPage?.saveSuccess || 'Saved successfully' });
-            setShowModal(false);
-            setEditingTeam(null);
-            fetchData();
-        } catch (error) {
-            console.error('Error saving team:', error);
-            Swal.fire({ icon: 'error', title: t.admin.teamsPage?.saveError || 'Save failed' });
-        }
-    };
-
-    const handleUploadLogo = async (teamName: string) => {
-        const { value: file } = await Swal.fire({
-            title: `Upload Logo: ${teamName}`,
-            input: 'file',
-            inputAttributes: {
-                'accept': 'image/*',
-                'aria-label': 'Upload your logo',
-            },
-            showCancelButton: true,
-            confirmButtonText: 'Upload',
-            showLoaderOnConfirm: true,
-            preConfirm: async (file) => {
-                if (!file) {
-                    Swal.showValidationMessage('Please select a file');
-                    return;
-                }
-
-                try {
-                    const formData = new FormData();
-                    formData.append('logo', file);
-                    const { url } = await apiService.uploadImage(formData);
-                    await apiService.createTeamLogo({ teamName, logoUrl: url });
-                    return url;
-                } catch (error: any) {
-                    Swal.showValidationMessage(`Upload failed: ${error.message}`);
-                }
-            },
-            allowOutsideClick: () => !Swal.isLoading(),
-        });
-
-        if (file) {
-            Swal.fire({ icon: 'success', title: 'Logo uploaded' });
-            fetchData();
-        }
-    };
-
-    const handleViewTeamDetails = (team: Team) => {
-        const teamPlayers = allPlayers.filter(p => p.team === team.name);
-
-        Swal.fire({
-            title: team.name,
-            html: `
-                <div class="text-left">
-                    ${team.logoUrl ? `<img src="${team.logoUrl}" class="w-24 h-24 mx-auto mb-4 rounded-lg object-contain bg-gray-50 border p-2" />` : ''}
-                    <h4 class="font-bold text-gray-700 mb-2 border-b pb-1">Members (${teamPlayers.length})</h4>
-                    <div class="max-h-60 overflow-y-auto space-y-1">
-                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `
-                            <div class="flex justify-between items-center py-2 px-2 hover:bg-gray-50 rounded">
-                                <div class="flex flex-col">
-                                    <span class="font-medium text-gray-800">${p.name}</span>
-                                    <span class="text-xs text-gray-400">IGN: ${p.inGameName || '-'}</span>
-                                </div>
-                            </div>
-                        `).join('') : `<p class="text-gray-400 text-center py-4">No Members</p>`}
-                    </div>
-                </div>
-            `,
-            showCloseButton: true,
-            showConfirmButton: false,
-            width: 450,
         });
     };
 
@@ -205,174 +46,157 @@ export default function AdminTeamsPage() {
         team.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (loading) return <div className="p-12 text-center text-gray-400">Loading...</div>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-aura border-t-transparent"></div>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                <i className="fas fa-users-cog mr-3 text-cyan-aura"></i>
-                {t.admin.teamsPage?.title || 'Manage Teams'}
-            </h1>
+        <div className="space-y-6 animate-fadeIn">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div>
+                    <h1 className="text-2xl font-display font-bold text-uefa-dark uppercase">
+                        Manage <span className="text-cyan-aura">Teams</span>
+                    </h1>
+                    <p className="text-gray-500 text-sm">จัดการข้อมูลทีมและตรวจสอบความพร้อม</p>
+                </div>
 
-            {/* Search */}
-            <div className="bg-white rounded-xl shadow-sm p-4">
-                <div className="relative">
-                    <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <div className="relative w-full sm:w-64">
+                    <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                     <input
                         type="text"
-                        placeholder={t.admin.teamsPage?.search || 'Search Teams...'}
+                        placeholder="ค้นหาชื่อทีม..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none text-sm transition-all"
                     />
                 </div>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredTeams.map((team, index) => {
-                    const teamPlayers = allPlayers.filter(p => p.team === team.name);
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredTeams.map((team) => (
+                    <div key={team.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group">
+                        {/* Team Header */}
+                        <div className="p-5 flex items-start gap-4">
+                            <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                <TeamLogo teamName={team.name} logoUrl={team.logo_url} size="md" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-uefa-dark text-lg truncate mb-1">{team.name}</h3>
+                                <div className="flex items-center gap-2">
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                                        team.status === 'approved' ? 'bg-green-100 text-green-600' :
+                                        team.status === 'ready' ? 'bg-blue-100 text-blue-600' :
+                                        'bg-yellow-100 text-yellow-600'
+                                    }`}>
+                                        {team.status}
+                                    </span>
+                                    <span className="text-xs text-gray-400">
+                                        <i className="fas fa-users mr-1"></i>
+                                        {team.members?.length || 0}/6 Members
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-                    return (
-                        <div key={index} className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-all border border-gray-100">
-                            <div className="flex items-start gap-4">
-                                <div className="group relative w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200">
-                                    {team.logoUrl ? (
-                                        <img src={team.logoUrl} alt={team.name} className="w-full h-full object-contain p-1" />
-                                    ) : (
-                                        <i className="fas fa-users text-2xl text-gray-300"></i>
-                                    )}
-                                    <div
-                                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
-                                        onClick={() => handleUploadLogo(team.name)}
-                                        title="Change Logo"
-                                    >
-                                        <i className="fas fa-camera text-white"></i>
+                        {/* Members Preview */}
+                        <div className="px-5 pb-4">
+                            <div className="bg-gray-50 rounded-xl p-3 space-y-2">
+                                {team.members?.slice(0, 3).map((m: any) => (
+                                    <div key={m.id} className="flex justify-between items-center text-xs">
+                                        <span className="text-gray-700 font-medium truncate max-w-[120px]">
+                                            {m.name}
+                                            {m.id === team.captain_id && <i className="fas fa-crown text-yellow-500 ml-1"></i>}
+                                        </span>
+                                        <span className="text-gray-400 italic">{m.in_game_name}</span>
                                     </div>
-                                </div>
-
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-uefa-dark truncate">{team.name}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        <i className="fas fa-user-friends mr-1"></i>
-                                        {teamPlayers.length} Members
-                                    </p>
-
-                                    {/* Player Avatars */}
-                                    <div className="flex mt-2 -space-x-2">
-                                        {teamPlayers.slice(0, 5).map((p, i) => (
-                                            <div
-                                                key={i}
-                                                className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 flex items-center justify-center text-white text-xs font-bold border-2 border-white"
-                                                title={p.name}
-                                            >
-                                                {p.name.charAt(0)}
-                                            </div>
-                                        ))}
-                                        {teamPlayers.length > 5 && (
-                                            <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs font-bold border-2 border-white">
-                                                +{teamPlayers.length - 5}
-                                            </div>
-                                        )}
+                                ))}
+                                {team.members?.length > 3 && (
+                                    <div className="text-[10px] text-center text-gray-400">
+                                        และอีก {team.members.length - 3} คน...
                                     </div>
-                                </div>
+                                )}
+                                {(!team.members || team.members.length === 0) && (
+                                    <div className="text-[10px] text-center text-gray-400 italic py-2">
+                                        ยังไม่มีสมาชิก
+                                    </div>
+                                )}
                             </div>
+                        </div>
 
-                            <div className="flex gap-2 mt-4 pt-4 border-t border-gray-100">
-                                <button
-                                    onClick={() => handleViewTeamDetails(team)}
-                                    className="flex-1 py-2 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-sm font-medium text-gray-600 transition-colors"
+                        {/* Actions */}
+                        <div className="p-4 bg-gray-50/50 border-t border-gray-50 flex items-center justify-between gap-2">
+                            <div className="flex gap-1">
+                                <button 
+                                    onClick={() => handleUpdateStatus(team.id, 'incomplete')}
+                                    className={`p-2 rounded-lg text-xs font-bold transition-all ${team.status === 'incomplete' ? 'bg-yellow-500 text-white shadow-sm' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
+                                    title="Set Incomplete"
                                 >
-                                    <i className="fas fa-eye mr-1"></i> Details
+                                    <i className="fas fa-hourglass-start"></i>
                                 </button>
-                                <button
-                                    onClick={() => handleEditTeam(team)}
-                                    className="flex-1 py-2 px-3 bg-cyan-aura/10 hover:bg-cyan-aura/20 rounded-lg text-sm font-medium text-cyan-600 transition-colors"
+                                <button 
+                                    onClick={() => handleUpdateStatus(team.id, 'ready')}
+                                    className={`p-2 rounded-lg text-xs font-bold transition-all ${team.status === 'ready' ? 'bg-blue-500 text-white shadow-sm' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
+                                    title="Set Ready"
                                 >
-                                    <i className="fas fa-edit mr-1"></i> Update
+                                    <i className="fas fa-check-circle"></i>
+                                </button>
+                                <button 
+                                    onClick={() => handleUpdateStatus(team.id, 'approved')}
+                                    className={`p-2 rounded-lg text-xs font-bold transition-all ${team.status === 'approved' ? 'bg-green-500 text-white shadow-sm' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
+                                    title="Approve Team"
+                                >
+                                    <i className="fas fa-shield-alt"></i>
                                 </button>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
 
-            {/* Edit Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
-                        <div className="bg-gradient-to-r from-cyan-aura to-blue-600 p-6">
-                            <h2 className="text-xl font-display font-bold text-white flex items-center">
-                                <i className="fas fa-edit mr-3"></i>
-                                Edit Team
-                            </h2>
-                        </div>
-                        <div className="p-6 space-y-6">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Team Name</label>
-                                <input
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-aura focus:border-transparent bg-gray-50"
-                                />
-                                <p className="text-xs text-gray-500 mt-2">
-                                    <i className="fas fa-info-circle mr-1"></i>
-                                    Renaming will update all players in this team.
-                                </p>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Members</label>
-                                <div className="max-h-56 overflow-y-auto border border-gray-200 rounded-lg bg-gray-50">
-                                    {allPlayers.filter(p => p.team === (editingTeam?.name)).map((player, i) => (
-                                        <div key={i} className="flex items-center justify-between p-3 border-b border-gray-200 last:border-0 hover:bg-white">
-                                            <span className="text-sm text-gray-800 font-medium">{player.name}</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    if (formData.players.includes(player.name)) {
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            players: prev.players.filter(name => name !== player.name),
-                                                        }));
-                                                    } else {
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            players: [...prev.players, player.name],
-                                                        }));
-                                                    }
-                                                }}
-                                                className={`w-6 h-6 rounded-full flex items-center justify-center ${formData.players.includes(player.name)
-                                                    ? 'bg-red-100 text-red-500 hover:bg-red-200'
-                                                    : 'bg-green-100 text-green-500 hover:bg-green-200'
-                                                    }`}
-                                            >
-                                                <i className={`fas ${formData.players.includes(player.name) ? 'fa-minus' : 'fa-undo'} text-xs`}></i>
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="p-4 bg-gray-50 border-t border-gray-200 flex gap-3">
-                            <button
-                                onClick={() => setShowModal(false)}
-                                className="flex-1 py-3 px-4 bg-white border border-gray-300 hover:bg-gray-100 rounded-lg font-bold text-gray-700"
+                            <button 
+                                onClick={() => {
+                                    Swal.fire({
+                                        title: team.name,
+                                        html: `
+                                            <div class="text-left space-y-4">
+                                                <div>
+                                                    <h4 class="font-bold text-uefa-dark border-b pb-1 mb-2">Members (${team.members?.length || 0}/6)</h4>
+                                                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                                                        ${team.members?.map((m: any) => `
+                                                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                                                <div>
+                                                                    <div class="font-bold text-sm">${m.name} ${m.id === team.captain_id ? '<span class="text-yellow-500">👑</span>' : ''}</div>
+                                                                    <div class="text-[10px] text-gray-500">IGN: ${m.in_game_name} | Grade: ${m.grade}</div>
+                                                                </div>
+                                                            </div>
+                                                        `).join('')}
+                                                    </div>
+                                                </div>
+                                                <div class="p-3 bg-cyan-aura/5 rounded-lg border border-cyan-aura/10 text-xs">
+                                                    <div class="font-bold text-cyan-600 mb-1 uppercase tracking-wider">Invite Code</div>
+                                                    <div class="font-mono text-lg font-black text-uefa-dark">${team.invite_code}</div>
+                                                </div>
+                                            </div>
+                                        `,
+                                        showConfirmButton: false,
+                                        showCloseButton: true
+                                    });
+                                }}
+                                className="px-4 py-2 bg-white hover:bg-uefa-dark hover:text-white border border-gray-200 rounded-lg text-xs font-bold transition-all"
                             >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSaveTeam}
-                                className="flex-1 py-3 px-4 bg-gradient-to-r from-cyan-aura to-blue-600 text-white rounded-lg font-bold shadow-lg"
-                            >
-                                Save Changes
+                                <i className="fas fa-info-circle mr-1"></i> ดูรายละเอียด
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
+                ))}
+
+                {filteredTeams.length === 0 && (
+                    <div className="col-span-full flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm text-gray-400">
+                        <i className="fas fa-users-slash text-6xl mb-4 opacity-20"></i>
+                        <p>ไม่พบข้อมูลทีม</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -90,14 +90,14 @@ export const apiService = {
         const supabase = createClient();
         const { data, error } = await supabase
             .from('players')
-            .select('id, name, team_name, in_game_name, previous_igns, created_at')
+            .select('id, name, teams(name), in_game_name, previous_igns, created_at')
             .order('name', { ascending: true });
 
         if (error) throw new Error(error.message);
         return (data || []).map(p => ({
             _id: p.id,
             name: p.name,
-            team: p.team_name || undefined,
+            team: (p.teams as any)?.name || undefined,
             inGameName: p.in_game_name || undefined,
             previousIGNs: p.previous_igns || [],
             createdAt: p.created_at,
@@ -218,7 +218,8 @@ export const apiService = {
         if (!data) return { _id: '', teams: [], potA: [], potB: [], schedule: [], createdAt: '' };
 
         // schedule_data is JSON — convert to the legacy shape
-        const raw = (data.schedule_data as { day: number; date?: string; matches: { teamA?: string; teamB?: string; blue?: string; red?: string; time?: string; date?: string }[] }[]) || [];
+        const rawData = typeof data.schedule_data === 'string' ? JSON.parse(data.schedule_data) : data.schedule_data;
+        const raw = (rawData as { day: number; date?: string; matches: { teamA?: string; teamB?: string; blue?: string; red?: string; time?: string; date?: string }[] }[]) || [];
         const schedule = raw.map(round => ({
             day: round.day,
             date: round.date,
@@ -401,7 +402,7 @@ export const apiService = {
             teams: result.teams || [],
             potA: [],
             potB: [],
-            schedule: result.schedule_data as ScheduleItem['schedule'],
+            schedule: (typeof result.schedule_data === 'string' ? JSON.parse(result.schedule_data) : result.schedule_data) as ScheduleItem['schedule'],
             createdAt: result.created_at,
         } as unknown as ScheduleItem;
     },

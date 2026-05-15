@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { AdminRealtimeListener } from '@/components/admin/AdminRealtimeListener';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, loading, isAuthenticated } = useAuth();
@@ -22,6 +23,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const menuItems = [
         { path: '/admin', label: t.admin.dashboard.title, icon: 'fas fa-tachometer-alt', exact: true },
+        { path: '/admin/registrations', label: 'Registrations', icon: 'fas fa-user-check' },
         { path: '/admin/draw', label: t.admin.dashboard.draw, icon: 'fas fa-random' },
         { path: '/admin/schedule', label: t.admin.dashboard.manageSchedule, icon: 'fas fa-calendar-check' },
         { path: '/admin/results', label: t.admin.dashboard.recordResult, icon: 'fas fa-trophy' },
@@ -65,6 +67,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="min-h-screen bg-gray-100 flex">
+            <AdminRealtimeListener />
             {/* Mobile Overlay */}
             {sidebarOpen && (
                 <div

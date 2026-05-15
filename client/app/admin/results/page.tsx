@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
-import { apiService } from '@/lib/api-client';
 import GameStatsModal from '@/components/admin/GameStatsModal';
+import { getMatchesAction } from '@/features/tournament/actions';
+import { updateMatchResultAction, saveGameStatsAction, getMatchStatsAction } from '@/features/tournament/result-actions';
+import { apiService } from '@/lib/api-client';
 
 // Types
 interface PlayerStats {
@@ -25,141 +27,155 @@ interface GameStatsData {
 }
 
 interface Match {
-    blue: string;
-    red: string;
-    matchId?: string; // Generated on the fly usually
+    id: string;
+    team_blue_name: string;
+    team_red_name: string;
+    match_day: number;
+    match_key: string;
+    score_blue: number;
+    score_red: number;
+    winner_name: string | null;
+    is_bye_win: boolean;
+    mvp_player: string | null;
 }
-
-interface MatchResult {
-    matchId: string;
-    blueTeam: string;
-    redTeam: string;
-    scoreBlue: number;
-    scoreRed: number;
-    winner: string;
-    matchDate: string;
-    mvp: string;
-    duration: string;
-    isByeWin?: boolean;
-}
-
-// Helper function to convert day number to display label
-const getDayLabel = (day: number): string => {
-    switch (day) {
-        case 10: return 'Day 10 (Semi Finals BO5)';
-        case 11: return 'Day 11 (Grand Final BO5)';
-        // Handle legacy data just in case
-        case 90: return 'Day 10 (Semi Finals BO5)';
-        case 91: return 'Day 11 (Grand Final BO5)';
-        default: return `Day ${day} (League BO5`;
-    }
-};
 
 export default function AdminResultsPage() {
     const { t } = useLanguage();
-    const [schedule, setSchedule] = useState<{ day: number; matches: Match[] }[]>([]);
-    const [selectedDay, setSelectedDay] = useState<number | null>(null);
+    const [isPending, startTransition] = useTransition();
+    const [matches, setMatches] = useState<Match[]>([]);
+    const [selectedDay, setSelectedDay] = useState<number>(1);
     const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
-    const [matchId, setMatchId] = useState<string>('');
     const [loading, setLoading] = useState(true);
 
     // Form Data
-    const [formData, setFormData] = useState<Partial<MatchResult>>({
+    const [formData, setFormData] = useState({
         scoreBlue: 0,
         scoreRed: 0,
         mvp: '',
-        duration: '',
         isByeWin: false
     });
 
     // Game Stats Management
-    // We can store an array of stats if BO3/BO5, but typical implementation here seems to be per-game or simplified.
-    // Based on previous code, it seems to handle one set of stats per match entry or maybe per game?
-    // The previous code had `gameStats` array.
-    const [gameStats, setGameStats] = useState<GameStatsData[]>([]);
+    const [gameStats, setGameStats] = useState<Record<number, GameStatsData>>({});
     const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
     const [editingGameIndex, setEditingGameIndex] = useState<number>(0);
     const [allPlayers, setAllPlayers] = useState<any[]>([]);
     const [allHeroes, setAllHeroes] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [scheduleData, playersData, heroesData] = await Promise.all([
-                    apiService.getSchedule(),
-                    apiService.getPlayers(),
-                    apiService.getHeroes()
-                ]);
-
-                // Handle schedule structure
-                const scheduleList = (scheduleData as any).schedule || scheduleData || [];
-                setSchedule(scheduleList);
-                setAllPlayers(playersData || []);
-                setAllHeroes(heroesData || []);
-
-                if (scheduleList.length > 0 && selectedDay === null) {
-                    setSelectedDay(scheduleList[0]?.day || 1);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                Swal.fire({ icon: 'error', title: t.common.error });
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchData();
+        initData();
     }, []);
 
-    const generateMatchId = (day: number, teamA: string, teamB: string) => {
-        return `${day}_${teamA}_vs_${teamB}`.replace(/\s+/g, '');
-    };
-
-    const handleMatchSelect = async (match: Match, index: number) => {
-        if (!selectedDay) return;
-        const generatedId = generateMatchId(selectedDay, match.blue, match.red);
-
-        setSelectedMatch(match);
-        setMatchId(generatedId);
-        setFormData({ scoreBlue: 0, scoreRed: 0, mvp: '', duration: '', isByeWin: false });
-        setGameStats([]);
-
-        // Try to load existing result details if they exist (to fill stats?)
-        // Assuming we start fresh or load basic confirmation.
-        // If we want to edit existing results, we'd query API here.
-        // For now, let's assume we are entering new results or overwriting.
+    const initData = async () => {
+        setLoading(true);
         try {
-            // Check if result exists (Optional enhancement)
-            const results = await apiService.getResults();
-            const existing = results.find(r => r.matchId === generatedId);
-            if (existing) {
-                setFormData({
-                    scoreBlue: existing.scoreBlue,
-                    scoreRed: existing.scoreRed,
-                    mvp: existing.mvp || '',
-                    duration: (existing as any).duration || '',
-                    isByeWin: existing.isByeWin || false
-                });
+            const supabase = (await import('@/utils/supabase/client')).createClient();
+            
+            // Get active tournament
+            const { data: tourney } = await supabase
+                .from('tournaments')
+                .select('id')
+                .eq('status', 'active')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
 
-                // If the API supported getting full game stats for a match, we would load them here.
-                // const stats = await apiService.getMatchStats(generatedId);
-                // if (stats) setGameStats(stats);
+            if (tourney) {
+                const matchData = await getMatchesAction(tourney.id);
+                setMatches(matchData as any);
+                
+                if (matchData && matchData.length > 0) {
+                    setSelectedDay(matchData[0].match_day);
+                }
             }
-        } catch (e) {
-            console.log('No existing result found or error loading it.');
+
+            const [playersData, heroesData] = await Promise.all([
+                apiService.getPlayers(),
+                apiService.getHeroes()
+            ]);
+
+            setAllPlayers(playersData || []);
+            setAllHeroes(heroesData || []);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleStatSave = (data: GameStatsData) => {
-        setGameStats(prev => {
-            const newStats = [...prev];
-            newStats[editingGameIndex] = data;
-            return newStats;
+    const handleMatchSelect = async (match: Match) => {
+        setSelectedMatch(match);
+        setFormData({
+            scoreBlue: match.score_blue || 0,
+            scoreRed: match.score_red || 0,
+            mvp: match.mvp_player || '',
+            isByeWin: match.is_bye_win || false
         });
+        
+        // Load existing game stats
+        const stats = await getMatchStatsAction(match.id);
+        const groupedStats: Record<number, GameStatsData> = {};
+        
+        stats.forEach((s: any) => {
+            if (!groupedStats[s.game_number - 1]) {
+                groupedStats[s.game_number - 1] = {
+                    blue: [],
+                    red: [],
+                    winner: s.win && s.team_name === match.team_blue_name ? 'blue' : (!s.win && s.team_name === match.team_blue_name ? 'red' : undefined),
+                    duration: `${Math.floor(s.game_duration / 60)}:${String(s.game_duration % 60).padStart(2, '0')}`
+                };
+            }
+            
+            const playerStat = {
+                name: s.player_name,
+                hero: s.hero_name,
+                k: s.kills,
+                d: s.deaths,
+                a: s.assists,
+                gold: 0
+            };
+
+            if (s.team_name === match.team_blue_name) {
+                groupedStats[s.game_number - 1].blue.push(playerStat);
+                if (s.mvp) groupedStats[s.game_number - 1].mvp = s.player_name;
+            } else {
+                groupedStats[s.game_number - 1].red.push(playerStat);
+                if (s.mvp) groupedStats[s.game_number - 1].mvp = s.player_name;
+            }
+
+            // Fix winner determination logic
+            if (s.win) {
+                groupedStats[s.game_number - 1].winner = s.team_name === match.team_blue_name ? 'blue' : 'red';
+            }
+        });
+
+        setGameStats(groupedStats);
+    };
+
+    const handleStatSave = (data: GameStatsData) => {
+        setGameStats(prev => ({
+            ...prev,
+            [editingGameIndex]: data
+        }));
+        
+        // Auto-update total score if winner is specified
+        if (data.winner) {
+            const currentStats = { ...gameStats, [editingGameIndex]: data };
+            let blueWins = 0;
+            let redWins = 0;
+            Object.values(currentStats).forEach(g => {
+                if (g.winner === 'blue') blueWins++;
+                if (g.winner === 'red') redWins++;
+            });
+            setFormData(prev => ({ ...prev, scoreBlue: blueWins, scoreRed: redWins }));
+        }
+
         Swal.fire({
             icon: 'success',
-            title: 'บันทึกสถิติเรียบร้อย',
-            timer: 1500,
+            title: 'บันทึกสถิติชั่วคราวแล้ว',
+            toast: true,
+            position: 'top-end',
+            timer: 2000,
             showConfirmButton: false
         });
     };
@@ -171,142 +187,114 @@ export default function AdminResultsPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedMatch || !selectedDay) return;
+        if (!selectedMatch) return;
 
-        const winner = formData.isByeWin
-            ? formData.scoreBlue! > formData.scoreRed! ? selectedMatch.blue : selectedMatch.red
-            : formData.scoreBlue! > formData.scoreRed! ? selectedMatch.blue :
-                formData.scoreRed! > formData.scoreBlue! ? selectedMatch.red : 'Draw';
+        startTransition(async () => {
+            try {
+                // 1. Update Match Summary
+                const winner = formData.scoreBlue > formData.scoreRed ? selectedMatch.team_blue_name :
+                               formData.scoreRed > formData.scoreBlue ? selectedMatch.team_red_name : '';
+                
+                await updateMatchResultAction(selectedMatch.id, {
+                    scoreBlue: formData.scoreBlue,
+                    scoreRed: formData.scoreRed,
+                    winner,
+                    isByeWin: formData.isByeWin,
+                    mvp: formData.mvp
+                });
 
-        const resultData = {
-            matchId,
-            blueTeam: selectedMatch.blue,
-            redTeam: selectedMatch.red,
-            scoreBlue: formData.scoreBlue,
-            scoreRed: formData.scoreRed,
-            winner,
-            matchDate: formData.matchDate ? new Date(formData.matchDate).toISOString() : new Date().toISOString(),
-            mvp: formData.mvp,
-            duration: formData.duration,
-            isByeWin: formData.isByeWin
-        };
-
-        try {
-            Swal.fire({
-                title: 'Updating...',
-                didOpen: () => Swal.showLoading()
-            });
-
-            // 1. Create/Update Result
-            await apiService.createResult(resultData);
-
-            // 2. Save Game Stats
-            if (gameStats.length > 0) {
-                // Flatten stats or send as is? 
-                // The API expect `saveGameStats(stats: unknown[])`.
-                // We need to format it as the backend expects.
-                // Assuming backend expects array of objects with matchId, gameNumber, stats.
-                const formattedStats = gameStats.map((game, idx) => ({
-                    matchId,
-                    gameNumber: idx + 1,
-                    blueTeam: selectedMatch.blue,
-                    redTeam: selectedMatch.red,
-                    stats: {
-                        blue: game.blue,
-                        red: game.red,
-                        winner: game.winner,
-                        mvp: game.mvp,
-                        duration: game.duration
+                // 2. Save detailed game stats
+                const gameIndices = Object.keys(gameStats).map(Number);
+                for (const idx of gameIndices) {
+                    const game = gameStats[idx];
+                    if (game && game.winner) {
+                        await saveGameStatsAction(selectedMatch.id, {
+                            gameNumber: idx + 1,
+                            blueTeam: selectedMatch.team_blue_name,
+                            redTeam: selectedMatch.team_red_name,
+                            winner: game.winner,
+                            mvp: game.mvp || '',
+                            duration: game.duration || '00:00',
+                            blueStats: game.blue,
+                            redStats: game.red
+                        });
                     }
-                }));
+                }
 
-                await apiService.saveGameStats(formattedStats);
+                Swal.fire('สำเร็จ', 'บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+                initData(); // Refresh list
+                setSelectedMatch(null);
+            } catch (error: any) {
+                Swal.fire('ข้อผิดพลาด', error.message, 'error');
             }
-
-            Swal.fire({
-                icon: 'success',
-                title: 'บันทึกผลการแข่งขันสำเร็จ',
-                timer: 2000
-            });
-
-            // Reload schedule/results?
-            // setMatchId('');
-            // setSelectedMatch(null);
-
-        } catch (error: any) {
-            console.error('Save Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'เกิดข้อผิดพลาด',
-                text: error.response?.data?.error || error.message
-            });
-        }
+        });
     };
 
-    if (loading) return <div className="p-8 text-center">Loading...</div>;
+    if (loading) return <div className="p-8 text-center"><i className="fas fa-spinner fa-spin mr-2"></i> Loading...</div>;
 
-    const currentMatches = schedule.find(d => d.day === selectedDay)?.matches || [];
+    const days = Array.from(new Set(matches.map(m => m.match_day))).sort((a, b) => a - b);
+    const currentMatches = matches.filter(m => m.match_day === selectedDay);
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                <i className="fas fa-trophy mr-3 text-cyan-aura"></i>
-                บันทึกผลการแข่งขัน
+        <div className="space-y-6 animate-fadeIn">
+            <h1 className="text-2xl font-display font-bold text-uefa-dark uppercase">
+                <i className="fas fa-edit mr-3 text-cyan-aura"></i>
+                Match <span className="text-cyan-aura">Results</span>
             </h1>
 
-            <div className="grid lg:grid-cols-3 gap-6">
-                {/* Left: Schedule Selection */}
+            <div className="grid lg:grid-cols-3 gap-8">
+                {/* Left: Match Selection */}
                 <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-white rounded-xl shadow-sm p-4">
-                        <label className="block text-sm font-bold text-gray-700 mb-2">เลือกวันแข่งขัน</label>
+                    <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+                        <label className="block text-sm font-bold text-uefa-dark mb-3 uppercase tracking-wider">เลือกวันแข่งขัน</label>
                         <div className="flex flex-wrap gap-2">
-                            {schedule.map(d => (
+                            {days.map(d => (
                                 <button
-                                    key={d.day}
+                                    key={d}
                                     onClick={() => {
-                                        setSelectedDay(d.day);
+                                        setSelectedDay(d);
                                         setSelectedMatch(null);
                                     }}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${selectedDay === d.day
-                                        ? 'bg-cyan-aura text-white shadow-md'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedDay === d
+                                        ? 'bg-uefa-dark text-white shadow-lg'
+                                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                                         }`}
                                 >
-                                    {getDayLabel(d.day)}
+                                    DAY {d}
                                 </button>
                             ))}
+                            {days.length === 0 && <p className="text-gray-400 text-xs italic">ยังไม่มีการจัดสายแข่ง</p>}
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl shadow-sm p-4">
-                        <h3 className="font-bold text-gray-700 mb-3">เลือกคู่แข่งขัน</h3>
-                        <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                            {currentMatches.map((match, idx) => {
-                                const mId = selectedDay ? generateMatchId(selectedDay, match.blue, match.red) : '';
-                                const isSelected = mId === matchId;
-                                return (
-                                    <button
-                                        key={idx}
-                                        onClick={() => handleMatchSelect(match, idx)}
-                                        className={`w-full p-3 rounded-lg border transition-all text-left group ${isSelected
-                                            ? 'border-cyan-aura bg-cyan-50 ring-1 ring-cyan-aura'
-                                            : 'border-gray-100 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        <div className="flex items-center justify-between text-sm">
-                                            <span className={`font-bold ${isSelected ? 'text-cyan-700' : 'text-gray-700'}`}>
-                                                {match.blue}
-                                            </span>
-                                            <span className="text-xs text-gray-400">vs</span>
-                                            <span className={`font-bold ${isSelected ? 'text-red-700' : 'text-gray-700'}`}>
-                                                {match.red}
-                                            </span>
+                    <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+                        <h3 className="font-bold text-uefa-dark mb-4 uppercase tracking-wider text-sm">เลือกคู่แข่งขัน</h3>
+                        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                            {currentMatches.map((match) => (
+                                <button
+                                    key={match.id}
+                                    onClick={() => handleMatchSelect(match)}
+                                    className={`w-full p-4 rounded-2xl border transition-all text-left relative overflow-hidden group ${selectedMatch?.id === match.id
+                                        ? 'border-cyan-aura bg-cyan-50/50'
+                                        : 'border-gray-100 hover:bg-gray-50'
+                                        }`}
+                                >
+                                    {selectedMatch?.id === match.id && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-cyan-aura"></div>}
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex justify-between items-center text-xs font-bold uppercase tracking-tighter">
+                                            <span className={selectedMatch?.id === match.id ? 'text-blue-600' : 'text-gray-600'}>{match.team_blue_name}</span>
+                                            <span className="text-gray-300">VS</span>
+                                            <span className={selectedMatch?.id === match.id ? 'text-red-600' : 'text-gray-600'}>{match.team_red_name}</span>
                                         </div>
-                                    </button>
-                                );
-                            })}
+                                        <div className="text-[10px] text-gray-400 mt-1 flex justify-between">
+                                            <span>Current: {match.score_blue} - {match.score_red}</span>
+                                            {match.winner_name && <span className="text-green-500"><i className="fas fa-check-circle"></i> Result Set</span>}
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
                             {currentMatches.length === 0 && (
-                                <p className="text-center text-gray-400 py-4">ไม่มีแมตช์ในวันนี้</p>
+                                <p className="text-center text-gray-400 py-8 text-sm italic">ไม่มีแมตช์ในวันนี้</p>
                             )}
                         </div>
                     </div>
@@ -315,187 +303,160 @@ export default function AdminResultsPage() {
                 {/* Right: Result Entry */}
                 <div className="lg:col-span-2">
                     {selectedMatch ? (
-                        <div className="bg-white rounded-xl shadow-sm p-6 animate-fade-in">
-                            <div className="border-b pb-4 mb-6">
-                                <h2 className="text-xl font-bold flex items-center justify-center gap-4 text-uefa-dark">
-                                    <span className="text-blue-600">{selectedMatch.blue}</span>
-                                    <span className="text-gray-400 text-sm">VS</span>
-                                    <span className="text-red-600">{selectedMatch.red}</span>
-                                </h2>
-                                <p className="text-center text-xs text-gray-400 mt-1">ID: {matchId}</p>
+                        <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 animate-fadeIn">
+                            <div className="flex flex-col items-center mb-8">
+                                <div className="flex items-center gap-10">
+                                    <div className="text-center">
+                                        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-2 border border-gray-100">
+                                            <span className="text-2xl font-black text-blue-600">{selectedMatch.team_blue_name.charAt(0)}</span>
+                                        </div>
+                                        <span className="text-sm font-black text-uefa-dark uppercase">{selectedMatch.team_blue_name}</span>
+                                    </div>
+                                    <div className="text-3xl font-black text-gray-200 italic">VS</div>
+                                    <div className="text-center">
+                                        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-2 border border-gray-100">
+                                            <span className="text-2xl font-black text-red-600">{selectedMatch.team_red_name.charAt(0)}</span>
+                                        </div>
+                                        <span className="text-sm font-black text-uefa-dark uppercase">{selectedMatch.team_red_name}</span>
+                                    </div>
+                                </div>
+                                <div className="mt-4 px-3 py-1 bg-gray-100 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                    Match ID: {selectedMatch.match_key}
+                                </div>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-8">
                                 {/* Score Input */}
-                                <div className="grid grid-cols-2 gap-8 justify-center">
+                                <div className="flex justify-center items-center gap-6 bg-gray-50 p-8 rounded-3xl border border-gray-100">
                                     <div className="text-center">
-                                        <label className="block text-sm font-bold text-blue-600 mb-2">Score {selectedMatch.blue}</label>
+                                        <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Score Blue</label>
                                         <input
                                             type="number"
                                             min="0"
                                             value={formData.scoreBlue}
                                             onChange={(e) => setFormData({ ...formData, scoreBlue: parseInt(e.target.value) || 0 })}
-                                            className="w-24 h-16 text-3xl font-bold text-center border-2 border-blue-100 rounded-xl focus:border-blue-500 focus:outline-none"
+                                            className="w-24 h-24 text-5xl font-black text-center bg-white border-2 border-blue-100 rounded-3xl text-uefa-dark focus:border-blue-500 outline-none transition-all shadow-sm"
                                         />
                                     </div>
+                                    <div className="text-3xl font-black text-gray-300 mt-6">-</div>
                                     <div className="text-center">
-                                        <label className="block text-sm font-bold text-red-600 mb-2">Score {selectedMatch.red}</label>
+                                        <label className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-3">Score Red</label>
                                         <input
                                             type="number"
                                             min="0"
                                             value={formData.scoreRed}
                                             onChange={(e) => setFormData({ ...formData, scoreRed: parseInt(e.target.value) || 0 })}
-                                            className="w-24 h-16 text-3xl font-bold text-center border-2 border-red-100 rounded-xl focus:border-red-500 focus:outline-none"
+                                            className="w-24 h-24 text-5xl font-black text-center bg-white border-2 border-red-100 rounded-3xl text-uefa-dark focus:border-red-500 outline-none transition-all shadow-sm"
                                         />
                                     </div>
                                 </div>
 
-                                {/* Bye Win Options */}
-                                <div className="flex flex-col items-center justify-center bg-gray-50 p-4 rounded-lg gap-3">
-                                    <label className="flex items-center gap-2 cursor-pointer">
+                                {/* Bye Win / Status */}
+                                <div className="flex flex-col items-center gap-4">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.isByeWin ? 'bg-cyan-aura border-cyan-aura' : 'border-gray-300 group-hover:border-cyan-aura'}`}>
+                                            {formData.isByeWin && <i className="fas fa-check text-white text-xs"></i>}
+                                        </div>
                                         <input
                                             type="checkbox"
+                                            className="hidden"
                                             checked={formData.isByeWin}
                                             onChange={(e) => setFormData({ ...formData, isByeWin: e.target.checked })}
-                                            className="w-5 h-5 text-cyan-aura rounded focus:ring-cyan-aura"
                                         />
-                                        <span className="font-bold text-gray-700">ชนะบาย (No Show)</span>
+                                        <span className="font-bold text-gray-600 uppercase text-xs tracking-wider">ชนะบาย (Bye Win)</span>
                                     </label>
-
-                                    {formData.isByeWin && (
-                                        <div className="flex gap-4 animate-fade-in">
-                                            <span className="text-sm self-center">เลือกทีมชนะ:</span>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input
-                                                    type="radio"
-                                                    name="byeWinner"
-                                                    checked={formData.scoreBlue! > formData.scoreRed!} // Use score logic to store winner state implicitly or add explicit logic
-                                                    onChange={() => setFormData({ ...formData, scoreBlue: 3, scoreRed: 0 })} // Auto set scores? Or just used for winner determination?
-                                                    className="text-blue-600"
-                                                />
-                                                <span className="text-blue-600 font-bold">{selectedMatch.blue}</span>
-                                            </label>
-                                            <label className="flex items-center gap-2 cursor-pointer">
-                                                <input
-                                                    type="radio"
-                                                    name="byeWinner"
-                                                    checked={formData.scoreRed! > formData.scoreBlue!}
-                                                    onChange={() => setFormData({ ...formData, scoreBlue: 0, scoreRed: 3 })}
-                                                    className="text-red-600"
-                                                />
-                                                <span className="text-red-600 font-bold">{selectedMatch.red}</span>
-                                            </label>
-                                        </div>
-                                    )}
                                 </div>
 
-                                {/* Details: MVP & Duration Removed per request */}
-                                {/* Game Stats Buttons */}
-                                {!formData.isByeWin && (
-                                    <div className="border-t pt-4">
-                                        <h3 className="font-bold text-gray-700 mb-3">บันทึกสถิติรายเกม (Game Stats)</h3>
-                                        <div className="flex gap-3 overflow-x-auto pb-2">
-                                            {[...Array(selectedDay && selectedDay >= 10 ? 5 : 3)].map((_, i) => (
-                                                <button
-                                                    key={i}
-                                                    type="button"
-                                                    onClick={() => openStatsModal(i)}
-                                                    className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg border-2 font-bold transition-all ${gameStats[i]
-                                                        ? 'bg-green-50 border-green-500 text-green-700'
-                                                        : 'bg-white border-dashed border-gray-300 text-gray-400 hover:border-cyan-aura hover:text-cyan-aura'
-                                                        }`}
-                                                >
-                                                    <i className={`fas ${gameStats[i] ? 'fa-check' : 'fa-plus'}`}></i>
-                                                    Game {i + 1}
-                                                </button>
-                                            ))}
-                                        </div>
-
-                                        {/* Display saved game stats summary */}
-                                        {gameStats.length > 0 && (
-                                            <div className="mt-4 space-y-3">
-                                                <h4 className="text-sm font-bold text-gray-600">สถิติที่บันทึกไว้:</h4>
-                                                {gameStats.map((game, idx) => game && (
-                                                    <div key={idx} className="bg-gray-50 rounded-lg p-3 text-xs">
-                                                        <div className="flex justify-between items-center mb-2">
-                                                            <div className="font-bold text-gray-700">Game {idx + 1}</div>
-                                                            <div className="text-gray-500">
-                                                                {game.winner && <span className={`mr-2 font-bold ${game.winner === 'blue' ? 'text-blue-600' : 'text-red-600'}`}>Winner: {game.winner === 'blue' ? 'Blue' : 'Red'}</span>}
-                                                                {game.mvp && <span className="mr-2 text-cyan-600">MVP: {game.mvp}</span>}
-                                                                {game.duration && <span>Time: {game.duration}</span>}
-                                                            </div>
-                                                        </div>
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            {/* Blue Team */}
-                                                            <div>
-                                                                <div className="text-blue-600 font-bold mb-1">{selectedMatch?.blue}</div>
-                                                                {game.blue?.map((p, pi) => p.name && (
-                                                                    <div key={pi} className="flex justify-between text-gray-600">
-                                                                        <span>{p.name} ({p.hero})</span>
-                                                                        <span>{p.k}/{p.d}/{p.a}</span>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                            {/* Red Team */}
-                                                            <div>
-                                                                <div className="text-red-600 font-bold mb-1">{selectedMatch?.red}</div>
-                                                                {game.red?.map((p, pi) => p.name && (
-                                                                    <div key={pi} className="flex justify-between text-gray-600">
-                                                                        <span>{p.name} ({p.hero})</span>
-                                                                        <span>{p.k}/{p.d}/{p.a}</span>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
+                                {/* Game Stats Section */}
+                                <div className="border-t border-gray-100 pt-8">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="font-black text-uefa-dark uppercase text-sm tracking-wider flex items-center gap-2">
+                                            <i className="fas fa-chart-line text-cyan-aura"></i>
+                                            บันทึกสถิติรายเกม
+                                        </h3>
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase">Best of 5</span>
                                     </div>
-                                )}
+                                    
+                                    <div className="flex gap-4 overflow-x-auto pb-4">
+                                        {[0, 1, 2, 3, 4].map((i) => (
+                                            <button
+                                                key={i}
+                                                type="button"
+                                                onClick={() => openStatsModal(i)}
+                                                className={`flex-shrink-0 w-28 h-20 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${gameStats[i]
+                                                    ? 'bg-green-50 border-green-500 text-green-700'
+                                                    : 'bg-white border-dashed border-gray-200 text-gray-400 hover:border-cyan-aura hover:text-cyan-aura'
+                                                    }`}
+                                            >
+                                                <span className="text-[10px] font-black uppercase">Game {i + 1}</span>
+                                                <i className={`fas ${gameStats[i] ? 'fa-check-circle' : 'fa-plus-circle'} text-lg`}></i>
+                                                {gameStats[i]?.winner && <span className="text-[8px] font-bold uppercase">{gameStats[i].winner} Win</span>}
+                                            </button>
+                                        ))}
+                                    </div>
 
-                                {/* Submit Actions */}
-                                <div className="flex gap-4 pt-6">
+                                    {/* MVP Selection for Match */}
+                                    <div className="mt-6 bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Match MVP (ผู้เล่นดีเด่นประจำแมตช์)</label>
+                                        <select
+                                            value={formData.mvp}
+                                            onChange={(e) => setFormData({ ...formData, mvp: e.target.value })}
+                                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura text-sm font-bold text-uefa-dark"
+                                        >
+                                            <option value="">-- เลือกผู้เล่น MVP --</option>
+                                            {allPlayers.filter(p => p.team === selectedMatch.team_blue_name || p.team === selectedMatch.team_red_name).map((p) => (
+                                                <option key={p._id} value={p.name}>
+                                                    {p.name} {p.inGameName ? `(${p.inGameName})` : ''} [{p.team}]
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex gap-4">
                                     <button
                                         type="button"
                                         onClick={() => setSelectedMatch(null)}
-                                        className="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-xl hover:bg-gray-200 transition-colors"
+                                        className="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition-all uppercase text-sm tracking-widest"
                                     >
                                         ยกเลิก
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 py-3 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-cyan-aura/50 hover:scale-[1.02] transition-all"
+                                        disabled={isPending}
+                                        className="flex-[2] py-4 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-black rounded-2xl shadow-xl shadow-cyan-aura/20 hover:shadow-cyan-aura/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase text-sm tracking-widest disabled:opacity-50"
                                     >
-                                        บันทึกผลการแข่งขัน
+                                        {isPending ? <><i className="fas fa-spinner fa-spin mr-2"></i> กำลังบันทึก...</> : 'บันทึกข้อมูลทั้งหมด'}
                                     </button>
                                 </div>
                             </form>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center bg-gray-50 rounded-xl border border-dashed border-gray-200 p-12 text-gray-400">
-                            <i className="fas fa-hand-pointer text-4xl mb-4 animate-bounce"></i>
-                            <p>เลือกคู่แข่งขันจากรายการด้านซ้าย</p>
-                            <p className="text-sm">เพื่อเริ่มบันทึกผลคะแนนและสถิติ</p>
+                        <div className="h-full min-h-[500px] flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200 p-12 text-gray-300">
+                            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+                                <i className="fas fa-hand-pointer text-4xl animate-bounce text-gray-200"></i>
+                            </div>
+                            <p className="font-bold text-gray-400 uppercase tracking-widest text-sm">กรุณาเลือกคู่แข่งขัน</p>
+                            <p className="text-xs mt-2">เพื่อเริ่มบันทึกผลการแข่งขันและสถิติผู้เล่น</p>
                         </div>
                     )}
                 </div>
-            </div >
+            </div>
 
             {selectedMatch && (
                 <GameStatsModal
                     isOpen={isStatsModalOpen}
                     onClose={() => setIsStatsModalOpen(false)}
-                    teamBlue={selectedMatch.blue}
-                    teamRed={selectedMatch.red}
+                    teamBlue={selectedMatch.team_blue_name}
+                    teamRed={selectedMatch.team_red_name}
                     gameNumber={editingGameIndex + 1}
                     initialData={gameStats[editingGameIndex]}
                     onSave={handleStatSave}
                     allPlayers={allPlayers}
                     allHeroes={allHeroes}
                 />
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 }

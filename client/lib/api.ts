@@ -124,49 +124,75 @@ export const serverApi = {
         let results: Record<string, unknown>[] = [];
 
         if (tournamentId) {
-            // Schedule
-            const { data: schedData } = await supabase
-                .from('schedules')
-                .select('*')
-                .eq('tournament_id', tournamentId)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (schedData?.schedule_data) {
-                const raw = schedData.schedule_data as { day: number; date?: string; matches: { teamA?: string; teamB?: string; blue?: string; red?: string; date?: string }[] }[];
-                schedule = raw.map((round) => ({
-                    day: round.day,
-                    date: round.date,
-                    matches: (round.matches || []).map((m) => ({
-                        blue: m.teamA || m.blue || 'Unknown',
-                        red: m.teamB || m.red || 'Unknown',
-                        date: m.date,
-                    })),
-                })).sort((a, b) => a.day - b.day);
-            }
-
-            // Results
+            // 1. Fetch all matches for the tournament
             const { data: matchData } = await supabase
                 .from('matches')
                 .select('*')
                 .eq('tournament_id', tournamentId)
-                .order('match_day', { ascending: true });
+                .order('match_day', { ascending: true })
+                .order('created_at', { ascending: true });
 
-            // Map to legacy format for component compatibility
-            results = (matchData || []).map((m) => ({
-                _id: m.id,
-                matchId: m.match_key,
-                matchDay: m.match_day,
-                teamBlue: m.team_blue_name,
-                teamRed: m.team_red_name,
-                scoreBlue: m.score_blue,
-                scoreRed: m.score_red,
-                winner: m.winner_name,
-                loser: m.loser_name,
-                isByeWin: m.is_bye_win,
-                createdAt: m.created_at,
-            }));
+            if (matchData && matchData.length > 0) {
+                // Build schedule rounds from match data
+                const roundsMap = new Map<number, ScheduleRound>();
+                
+                matchData.forEach(m => {
+                    if (!roundsMap.has(m.match_day)) {
+                        roundsMap.set(m.match_day, {
+                            day: m.match_day,
+                            matches: []
+                        });
+                    }
+                    roundsMap.get(m.match_day)!.matches.push({
+                        blue: m.team_blue_name,
+                        red: m.team_red_name,
+                    });
+                });
+
+                schedule = Array.from(roundsMap.values()).sort((a, b) => a.day - b.day);
+
+                // Map results for component compatibility
+                // A match is considered "played" if scores are non-zero OR it's a bye OR it has a winner
+                results = matchData
+                    .filter(m => m.score_blue !== 0 || m.score_red !== 0 || m.is_bye_win || m.winner_name)
+                    .map((m) => ({
+                        _id: m.id,
+                        matchId: m.match_key,
+                        matchDay: m.match_day,
+                        teamBlue: m.team_blue_name,
+                        teamRed: m.team_red_name,
+                        scoreBlue: m.score_blue,
+                        scoreRed: m.score_red,
+                        winner: m.winner_name,
+                        loser: m.loser_name,
+                        isByeWin: m.is_bye_win,
+                        createdAt: m.created_at,
+                    }));
+            } else {
+                // Fallback to legacy schedules table if no matches exist
+                const { data: schedData } = await supabase
+                    .from('schedules')
+                    .select('*')
+                    .eq('tournament_id', tournamentId)
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                if (schedData?.schedule_data) {
+                    const rawData = typeof schedData.schedule_data === 'string' ? JSON.parse(schedData.schedule_data) : schedData.schedule_data;
+                    const raw = Array.isArray(rawData) ? rawData : [];
+                    
+                    schedule = (raw as any[]).map((round) => ({
+                        day: round.day,
+                        date: round.date,
+                        matches: (round.matches || []).map((m: any) => ({
+                            blue: m.teamA || m.blue || 'Unknown',
+                            red: m.teamB || m.red || 'Unknown',
+                            date: m.date,
+                        })),
+                    })).sort((a, b) => a.day - b.day);
+                }
+            }
         }
 
         // Logos
@@ -228,11 +254,13 @@ export const serverApi = {
                 .maybeSingle();
 
             if (schedData?.schedule_data) {
-                const raw = schedData.schedule_data as { day: number; date?: string; matches: { teamA?: string; teamB?: string; blue?: string; red?: string; date?: string }[] }[];
-                schedule = raw.map((round) => ({
+                const rawData = typeof schedData.schedule_data === 'string' ? JSON.parse(schedData.schedule_data) : schedData.schedule_data;
+                const raw = Array.isArray(rawData) ? rawData : [];
+                
+                schedule = (raw as any[]).map((round) => ({
                     day: round.day,
                     date: round.date,
-                    matches: (round.matches || []).map((m) => ({
+                    matches: (round.matches || []).map((m: any) => ({
                         blue: m.teamA || m.blue || 'Unknown',
                         red: m.teamB || m.red || 'Unknown',
                         date: m.date,

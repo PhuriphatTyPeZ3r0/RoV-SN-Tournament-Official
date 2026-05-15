@@ -80,6 +80,7 @@ const parseCSV = (text: any) => {
 export default function AdminPlayersPage() {
     const { t } = useLanguage();
     const [players, setPlayers] = useState<Player[]>([]);
+    const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [importPreview, setImportPreview] = useState<Player[]>([]);
@@ -92,17 +93,28 @@ export default function AdminPlayersPage() {
     });
 
     useEffect(() => {
-        fetchPlayers();
+        fetchInitialData();
     }, []);
 
-    const fetchPlayers = async () => {
+    const fetchInitialData = async () => {
         setLoading(true);
+        await Promise.all([fetchTeams(), fetchPlayers()]);
+        setLoading(false);
+    };
+
+    const fetchTeams = async () => {
+        const supabase = createClient();
+        const { data } = await supabase.from('teams').select('id, name');
+        if (data) setTeams(data);
+    };
+
+    const fetchPlayers = async () => {
         setError(null);
         const supabase = createClient();
         try {
             const { data, error: fetchError } = await supabase
                 .from('players')
-                .select('*')
+                .select('*, teams(name)')
                 .order('name', { ascending: true });
 
             if (fetchError) throw fetchError;
@@ -111,15 +123,13 @@ export default function AdminPlayersPage() {
                 _id: p.id,
                 name: p.name,
                 grade: p.grade || '',
-                team: p.team_name || '',
+                team: (p.teams as any)?.name || '',
                 inGameName: p.in_game_name || '',
                 openId: p.open_id || '',
             })));
         } catch (err: any) {
             console.error(err);
             setError(err.message || 'Failed to fetch players');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -180,13 +190,16 @@ export default function AdminPlayersPage() {
             });
 
             // Batch insert players
-            const rows = importPreview.map(p => ({
-                name: p.name,
-                grade: p.grade || null,
-                team_name: p.team || null,
-                in_game_name: p.inGameName || null,
-                open_id: p.openId || null,
-            }));
+            const rows = importPreview.map(p => {
+                const teamObj = teams.find(t => t.name === p.team);
+                return {
+                    name: p.name,
+                    grade: p.grade || null,
+                    team_id: teamObj?.id || null,
+                    in_game_name: p.inGameName || null,
+                    open_id: p.openId || null,
+                };
+            });
 
             const { error } = await supabase.from('players').insert(rows);
             if (error) throw error;
@@ -213,6 +226,8 @@ export default function AdminPlayersPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const supabase = createClient();
+        const teamObj = teams.find(t => t.name === formData.team);
+        
         try {
             if (editingId) {
                 const { error } = await supabase
@@ -220,7 +235,7 @@ export default function AdminPlayersPage() {
                     .update({
                         name: formData.name,
                         grade: formData.grade || null,
-                        team_name: formData.team || null,
+                        team_id: teamObj?.id || null,
                         in_game_name: formData.inGameName || null,
                         open_id: formData.openId || null,
                     })
@@ -234,7 +249,7 @@ export default function AdminPlayersPage() {
                     .insert({
                         name: formData.name,
                         grade: formData.grade || null,
-                        team_name: formData.team || null,
+                        team_id: teamObj?.id || null,
                         in_game_name: formData.inGameName || null,
                         open_id: formData.openId || null,
                     });
@@ -396,7 +411,20 @@ export default function AdminPlayersPage() {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                     <input name="name" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
                     <input name="grade" placeholder="Grade" value={formData.grade} onChange={(e) => setFormData({ ...formData, grade: e.target.value })} className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
-                    <input name="team" placeholder="Team" value={formData.team} onChange={(e) => setFormData({ ...formData, team: e.target.value })} required className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
+                    <div className="relative">
+                        <input 
+                            name="team" 
+                            placeholder="Team" 
+                            list="team-list"
+                            value={formData.team} 
+                            onChange={(e) => setFormData({ ...formData, team: e.target.value })} 
+                            required 
+                            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" 
+                        />
+                        <datalist id="team-list">
+                            {teams.map(t => <option key={t.id} value={t.name} />)}
+                        </datalist>
+                    </div>
                     <input name="inGameName" placeholder="In-Game Name" value={formData.inGameName} onChange={(e) => setFormData({ ...formData, inGameName: e.target.value })} className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
                     <input name="openId" placeholder="OpenID" value={formData.openId} onChange={(e) => setFormData({ ...formData, openId: e.target.value })} className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
 

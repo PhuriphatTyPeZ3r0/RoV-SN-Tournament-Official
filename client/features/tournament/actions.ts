@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { checkRole } from '@/utils/auth';
 
 /**
  * Tournament Core Server Actions
@@ -71,14 +72,14 @@ export async function getResultHistoryAction(matchKey?: string) {
   const supabase = await createClient();
 
   let query = supabase
-    .from('match_history')
-    .select('*')
-    .order('changed_at', { ascending: false })
+    .from('audit_logs')
+    .select(`
+      *,
+      actor:profiles!actor_id(username)
+    `)
+    .eq('table_name', 'matches')
+    .order('created_at', { ascending: false })
     .limit(100);
-
-  if (matchKey) {
-    query = query.eq('match_key', matchKey);
-  }
 
   const { data, error } = await query;
   if (error) throw new Error(`Failed to fetch history: ${error.message}`);
@@ -91,13 +92,8 @@ export async function getResultHistoryAction(matchKey?: string) {
 
 // Helper: verify admin session
 async function requireAdmin() {
+  const { user } = await checkRole(['admin', 'super_admin']);
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    throw new Error('Unauthorized: Authentication required');
-  }
-
   return { supabase, user };
 }
 

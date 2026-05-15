@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { getResultHistoryAction } from '@/features/tournament/actions';
 
 interface HistoryEntry {
     _id: string;
@@ -29,40 +29,27 @@ export default function AdminResultHistoryPage() {
 
     const fetchHistory = async () => {
         setLoading(true);
-        const supabase = createClient();
         try {
-            // Fetch from audit_logs table (created by our migration)
-            const { data, error } = await supabase
-                .from('audit_logs')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(100);
+            const data = await getResultHistoryAction();
 
-            if (error) throw error;
-
-            setHistory((data || []).map(entry => ({
+            setHistory((data || []).map((entry: any) => ({
                 _id: entry.id,
                 matchId: entry.record_id || '',
-                action: entry.action as 'create' | 'update' | 'delete',
+                action: entry.action_type === 'INSERT' ? 'create' : (entry.action_type === 'UPDATE' ? 'update' : 'delete'),
                 previousData: entry.old_data,
                 newData: entry.new_data,
-                changedBy: entry.user_id || 'system',
+                changedBy: entry.actor?.username || 'system',
                 changedAt: entry.created_at,
                 reason: entry.reason || undefined,
             })));
         } catch (error: any) {
             console.error('Error fetching history:', error);
-            // If table doesn't exist yet, show empty state gracefully
-            if (error.message?.includes('does not exist') || error.code === '42P01') {
-                setHistory([]);
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error Loading History',
-                    text: error.message || 'Failed to load history',
-                    confirmButtonText: 'OK',
-                });
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'Error Loading History',
+                text: error.message || 'Failed to load history',
+                confirmButtonText: 'OK',
+            });
         } finally {
             setLoading(false);
         }
