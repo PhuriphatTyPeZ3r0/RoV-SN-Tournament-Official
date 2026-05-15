@@ -8,7 +8,9 @@ import type { User } from '@supabase/supabase-js';
 interface AuthUser {
     id: string;
     username: string;
-    role: 'admin' | 'user';
+    role: 'guest' | 'student' | 'player' | 'captain' | 'admin' | 'super_admin';
+    isProfileComplete: boolean;
+    registrationStatus: string;
 }
 
 interface LoginResult {
@@ -20,19 +22,21 @@ interface AuthContextType {
     user: AuthUser | null;
     loading: boolean;
     isAuthenticated: boolean;
-    login: (username: string, password: string) => Promise<LoginResult>;
+    login: (email: string, password: string) => Promise<LoginResult>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Helper: map Supabase User → AuthUser
-function toAuthUser(user: User, role: string): AuthUser {
+// Helper: map Supabase User + Profile → AuthUser
+function toAuthUser(user: User, profile: any): AuthUser {
     return {
         id: user.id,
-        username: user.email || user.id,
-        role: role === 'admin' ? 'admin' : 'user',
+        username: profile?.username || user.email || user.id,
+        role: profile?.role || 'guest',
+        isProfileComplete: !!profile?.is_profile_complete,
+        registrationStatus: profile?.registration_status || 'none',
     };
 }
 
@@ -54,14 +58,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
-            // Fetch role from profiles table
+            // Fetch profile data
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('role')
+                .select('username, role, is_profile_complete, registration_status')
                 .eq('id', sbUser.id)
                 .maybeSingle();
 
-            setUser(toAuthUser(sbUser, profile?.role || 'user'));
+            setUser(toAuthUser(sbUser, profile));
         } catch (error) {
             console.error('[AuthProvider] Auth check error:', error);
             setUser(null);
@@ -80,14 +84,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 return;
             }
 
-            // Fetch role for the signed-in user
+            // Fetch profile for the signed-in user
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('role')
+                .select('username, role, is_profile_complete, registration_status')
                 .eq('id', session.user.id)
                 .maybeSingle();
 
-            setUser(toAuthUser(session.user, profile?.role || 'user'));
+            setUser(toAuthUser(session.user, profile));
         });
 
         return () => subscription.unsubscribe();

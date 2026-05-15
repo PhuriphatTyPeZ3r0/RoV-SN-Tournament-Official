@@ -6,6 +6,7 @@ import { Resend } from 'resend';
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { loginSchema, registerSchema } from './schemas';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -141,13 +142,14 @@ export async function completeOnboardingAction(formData: FormData) {
 }
 
 export async function loginStudentAction(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const rawData = Object.fromEntries(formData.entries());
+  const validated = loginSchema.safeParse(rawData);
 
-  if (!email || !password) {
-    return { error: 'Please provide both email and password.' };
+  if (!validated.success) {
+    return { error: validated.error.issues[0].message };
   }
 
+  const { email, password } = validated.data;
   const supabase = await createClient();
 
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -156,54 +158,48 @@ export async function loginStudentAction(formData: FormData) {
   });
 
   if (authError || !authData.user) {
-    return { error: 'Invalid email or password.' };
+    return { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' };
   }
 
   // Check profile for next steps
   const { data: profile } = await supabase
     .from('profiles')
-    .select('is_first_login, otp_enabled')
+    .select('is_first_login, is_profile_complete')
     .eq('id', authData.user.id)
     .single();
 
-  // All users in this flow should go through OTP as per diagram
-  // We'll trigger OTP sending here
+  // Trigger OTP sending
   await sendOTPAction();
 
   return { 
     success: true, 
     nextStep: 'verify-otp',
-    isFirstLogin: profile?.is_first_login ?? false
+    isFirstLogin: profile?.is_first_login ?? false,
+    isProfileComplete: profile?.is_profile_complete ?? false
   };
 }
 
 export async function registerStudentAction(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const firstNameTh = formData.get('firstNameTh') as string;
-  const lastNameTh = formData.get('lastNameTh') as string;
-  const firstNameEn = formData.get('firstNameEn') as string;
-  const lastNameEn = formData.get('lastNameEn') as string;
-  const studentId = formData.get('studentId') as string;
-  const grade = formData.get('grade') as string;
-  const openId = formData.get('openId') as string;
-  const inGameName = formData.get('inGameName') as string;
+  const rawData = Object.fromEntries(formData.entries());
+  const validated = registerSchema.safeParse(rawData);
+
+  if (!validated.success) {
+    return { error: validated.error.issues[0].message };
+  }
+
+  const data = validated.data;
   const privacyFlag = formData.get('privacyFlag') === 'on';
   const isApplyingForAdmin = formData.get('applyForAdmin') === 'on';
 
-  if (!email || !password || !firstNameTh || !lastNameTh || !firstNameEn || !lastNameEn || !studentId || !grade || !inGameName) {
-    return { error: 'Please fill in all required fields.' };
-  }
-
   const supabase = await createClient();
 
-  // 0. Auto-generate Username: Phuriphat.H -> Phuriphat.He (if duplicate)
-  let username = `${firstNameEn}.${lastNameEn.charAt(0)}`;
+  // 0. Auto-generate Username
+  let username = `${data.firstNameEn}.${data.lastNameEn.charAt(0)}`;
   let isUnique = false;
   let lastNameIndex = 1;
 
-  while (!isUnique && lastNameIndex <= lastNameEn.length) {
-    username = `${firstNameEn}.${lastNameEn.substring(0, lastNameIndex)}`;
+  while (!isUnique && lastNameIndex <= data.lastNameEn.length) {
+    username = `${data.firstNameEn}.${data.lastNameEn.substring(0, lastNameIndex)}`;
     const { count } = await supabase
       .from('profiles')
       .select('username', { count: 'exact', head: true })
@@ -216,25 +212,24 @@ export async function registerStudentAction(formData: FormData) {
     }
   }
 
-  // Fallback if full name + 123 is needed (highly unlikely but for safety)
   if (!isUnique) {
-    username = `${firstNameEn}.${lastNameEn}.${Math.floor(Math.random() * 999)}`;
+    username = `${data.firstNameEn}.${data.lastNameEn}.${Math.floor(Math.random() * 999)}`;
   }
 
   // 1. Sign up to Auth
   const { data: authData, error: authError } = await supabase.auth.signUp({
-    email,
-    password,
+    email: data.email,
+    password: data.password,
     options: {
       data: {
-        full_name: `${firstNameTh} ${lastNameTh}`,
+        full_name: `${data.firstNameTh} ${data.lastNameTh}`,
         username: username,
       }
     }
   });
 
   if (authError || !authData.user) {
-    return { error: authError?.message || 'Registration failed.' };
+    return { error: authError?.message || 'การสมัครสมาชิกล้มเหลว' };
   }
 
   // Determine status and role based on application type
@@ -242,58 +237,66 @@ export async function registerStudentAction(formData: FormData) {
   const role = isApplyingForAdmin ? 'guest' : 'student';
 
   // 2. Update profile
-  await supabase
+  const { error: profileError } = await supabase
     .from('profiles')
     .update({ 
       username,
-      first_name_th: firstNameTh,
-      last_name_th: lastNameTh,
-      first_name_en: firstNameEn,
-      last_name_en: lastNameEn,
-      student_id: studentId,
-      class_grade: grade,
-      open_id: openId,
-      in_game_name: inGameName,
+      first_name_th: data.firstNameTh,
+      last_name_th: data.lastNameTh,
+      first_name_en: data.firstNameEn,
+      last_name_en: data.lastNameEn,
+      student_id: data.studentId,
+      class_grade: data.grade,
+      open_id: data.openId,
+      in_game_name: data.inGameName,
       privacy_flag: privacyFlag,
       is_first_login: true,
       registration_status: status,
       role: role as any,
-      is_profile_complete: !isApplyingForAdmin // Mark complete if student
+      is_profile_complete: !isApplyingForAdmin
     })
     .eq('id', authData.user.id);
+
+  if (profileError) {
+    return { error: `บันทึกข้อมูลโปรไฟล์ไม่สำเร็จ: ${profileError.message}` };
+  }
 
   // 3. Insert into registrations table
   const { error: regError } = await supabase
     .from('registrations')
     .insert({
       user_id: authData.user.id,
-      full_name: `${firstNameTh} ${lastNameTh}`,
-      first_name_th: firstNameTh,
-      last_name_th: lastNameTh,
-      first_name_en: firstNameEn,
-      last_name_en: lastNameEn,
-      student_id: studentId,
-      grade: grade,
-      open_id: openId,
-      in_game_name: inGameName,
+      full_name: `${data.firstNameTh} ${data.lastNameTh}`,
+      first_name_th: data.firstNameTh,
+      last_name_th: data.lastNameTh,
+      first_name_en: data.firstNameEn,
+      last_name_en: data.lastNameEn,
+      student_id: data.studentId,
+      grade: data.grade,
+      open_id: data.openId,
+      in_game_name: data.inGameName,
       privacy_flag: privacyFlag,
       status: status,
       target_role: isApplyingForAdmin ? 'admin' : 'student'
     });
 
   if (regError) {
-    return { error: `Registration request failed: ${regError.message}` };
+    return { error: `การส่งคำขอสมัครสมาชิกล้มเหลว: ${regError.message}` };
   }
 
   // 4. Auto-create player if it's a student
   if (!isApplyingForAdmin) {
-    await supabase.from('players').upsert({
+    const { error: playerError } = await supabase.from('players').upsert({
       profile_id: authData.user.id,
-      name: `${firstNameTh} ${lastNameTh}`,
-      grade: grade,
-      in_game_name: inGameName,
-      open_id: openId
+      name: `${data.firstNameTh} ${data.lastNameTh}`,
+      grade: data.grade,
+      in_game_name: data.inGameName,
+      open_id: data.openId
     }, { onConflict: 'profile_id', ignoreDuplicates: true });
+
+    if (playerError) {
+      console.error('Player creation failed:', playerError);
+    }
   }
 
   // 5. Send OTP and Redirect
