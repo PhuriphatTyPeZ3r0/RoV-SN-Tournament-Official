@@ -120,13 +120,13 @@ export async function completeOnboardingAction(formData: FormData) {
 
   // 4. Auto-create player if it's a student
   if (!isApplyingForAdmin) {
-    await supabase.from('players').insert({
+    await supabase.from('players').upsert({
       profile_id: user.id,
       name: `${data.firstNameTh} ${data.lastNameTh}`,
       grade: data.grade,
       in_game_name: data.inGameName,
       open_id: data.openId
-    }).onConflict('profile_id').ignore();
+    }, { onConflict: 'profile_id', ignoreDuplicates: true });
   }
 
   // 5. Revalidate, Send OTP and Redirect
@@ -287,13 +287,13 @@ export async function registerStudentAction(formData: FormData) {
 
   // 4. Auto-create player if it's a student
   if (!isApplyingForAdmin) {
-    await supabase.from('players').insert({
+    await supabase.from('players').upsert({
       profile_id: authData.user.id,
       name: `${firstNameTh} ${lastNameTh}`,
       grade: grade,
       in_game_name: inGameName,
       open_id: openId
-    }).onConflict('profile_id').ignore();
+    }, { onConflict: 'profile_id', ignoreDuplicates: true });
   }
 
   // 5. Send OTP and Redirect

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { verifyOTPAction, sendOTPAction } from '@/features/auth/student-actions';
 
-export default function VerifyOTPPage() {
+function VerifyOTPContent() {
     const searchParams = useSearchParams();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
@@ -155,5 +155,13 @@ export default function VerifyOTPPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function VerifyOTPPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center mt-20"><i className="fas fa-spinner fa-spin text-4xl text-cyan- aura"></i></div>}>
+            <VerifyOTPContent />
+        </Suspense>
     );
 }
