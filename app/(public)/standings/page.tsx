@@ -25,7 +25,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
     const tournaments = await serverApi.getTournaments();
     
     // Find resolved season or fallback to active
-    const currentSeason = seasonNumber || data.standings.length > 0 ? (tournaments.find(t => t.season === seasonNumber)?.season || tournaments.find(t => t.status === 'active')?.season || 2026) : 2026;
+    const currentSeason = seasonNumber || data.standings.length > 0 ? (tournaments.find(t => t.season === seasonNumber)?.season || tournaments.find(t => t.status === 'active')?.season || 2027) : 2027;
 
     return (
         <div className="min-h-screen bg-gray-50 pb-12">

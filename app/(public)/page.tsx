@@ -6,7 +6,7 @@ import HomeContentWrapper from '@/components/home/HomeContentWrapper';
 
 export async function generateMetadata(): Promise<Metadata> {
     const data = await serverApi.getHomePageData();
-    const season = data.activeTournament?.season || 2026;
+    const season = data.activeTournament?.season || 2027;
     const title = `RoV SN Tournament ${season}`;
     const description = `การแข่งขัน RoV ที่ยิ่งใหญ่ที่สุดในรั้ว SN - Witness the new legend unfold`;
 
@@ -31,7 +31,7 @@ export default async function HomePage() {
     return (
         <div className="bg-white min-h-screen">
             {/* Hero Carousel - Client Side Only */}
-            <HeroCarouselWrapper activeSeason={data.activeTournament?.season || 2026} />
+            <HeroCarouselWrapper activeSeason={data.activeTournament?.season || 2027} />
 
             {/* Content Section - Client Side Only */}
             <HomeContentWrapper

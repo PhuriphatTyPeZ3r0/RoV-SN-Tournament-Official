@@ -40,7 +40,6 @@ export default function Navbar() {
     const navItems = [
         { path: '/', label: t.nav.home },
         { path: '/fixtures', label: t.nav.fixtures },
-        { path: '/brackets', label: t.nav.brackets },
         { path: '/standings', label: t.nav.standings },
         { path: '/stats', label: t.nav.stats },
         { path: '/clubs', label: t.nav.teams },

@@ -17,7 +17,7 @@ export default function StatsLayout({ children, tournaments }: StatsLayoutProps)
     const searchParams = useSearchParams();
     const seasonParam = searchParams.get('season');
     const seasonNumber = seasonParam ? parseInt(seasonParam, 10) : undefined;
-    const currentSeason = seasonNumber || (tournaments.find(t => t.status === 'active')?.season || 2026);
+    const currentSeason = seasonNumber || (tournaments.find(t => t.status === 'active')?.season || 2027);
 
     // Determine active tab based on pathname
     const getActiveTab = () => {
