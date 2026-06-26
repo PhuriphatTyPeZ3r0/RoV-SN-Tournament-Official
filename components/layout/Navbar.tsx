@@ -54,11 +54,12 @@ export default function Navbar() {
     const flagUrl = language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png";
 
     return (
-        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-uefa-dark shadow-lg py-2' : 'bg-gradient-to-b from-uefa-dark to-transparent py-4'}`}>
+        // lg: breakpoint (1024px) used throughout — iPad landscape and below uses hamburger menu
+        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-uefa-dark shadow-lg py-2' : 'bg-gradient-to-b from-uefa-dark to-transparent py-3 lg:py-4'}`}>
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
+                    <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
                         <div className="relative">
                             <Image
                                 src="/images/logo/RoV-Logo.png"
@@ -66,24 +67,24 @@ export default function Navbar() {
                                 width={48}
                                 height={48}
                                 priority
-                                className="h-10 md:h-12 w-auto transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(21,200,255,0.5)]"
+                                className="h-9 lg:h-12 w-auto transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(21,200,255,0.5)]"
                             />
                             <div className="absolute inset-0 bg-cyan-aura mix-blend-overlay opacity-0 group-hover:opacity-50 blur-lg transition-opacity"></div>
                         </div>
-                        <div className="hidden md:block">
-                            <h1 className="text-white font-display font-bold text-lg tracking-wider leading-none group-hover:text-cyan-aura transition-colors">
-                                RoV SN<br /><span className="text-cyan-aura text-sm font-normal tracking-[0.2em]">TOURNAMENT</span>
+                        <div className="hidden sm:block">
+                            <h1 className="text-white font-display font-bold text-base lg:text-lg tracking-wider leading-none group-hover:text-cyan-aura transition-colors">
+                                RoV SN<br /><span className="text-cyan-aura text-xs lg:text-sm font-normal tracking-[0.2em]">TOURNAMENT</span>
                             </h1>
                         </div>
                     </Link>
 
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center gap-1 bg-uefa-dark/80 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/10 shadow-lg">
+                    {/* Desktop Menu — hidden below lg (1024px) */}
+                    <div className="hidden lg:flex items-center gap-1 bg-uefa-dark/80 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/10 shadow-lg">
                         {navItems.map((item) => (
                             <Link
                                 key={item.path}
                                 href={item.path}
-                                className={`px-4 py-2 rounded-full font-display text-sm uppercase tracking-wide transition-all ${pathname === item.path
+                                className={`px-3 xl:px-4 py-2 rounded-full font-display text-xs xl:text-sm uppercase tracking-wide transition-all ${pathname === item.path
                                     ? 'bg-cyan-aura text-uefa-dark font-bold shadow-[0_0_15px_rgba(21,200,255,0.4)]'
                                     : 'text-gray-300 hover:text-white hover:bg-white/5'
                                     }`}
@@ -95,19 +96,19 @@ export default function Navbar() {
                         {isAuthenticated && (
                             <Link
                                 href="/team"
-                                className={`px-4 py-2 rounded-full font-display text-sm uppercase tracking-wide transition-all ${pathname === '/team'
+                                className={`px-3 xl:px-4 py-2 rounded-full font-display text-xs xl:text-sm uppercase tracking-wide transition-all ${pathname === '/team'
                                     ? 'bg-cyan-aura text-uefa-dark font-bold'
                                     : 'text-cyan-aura hover:bg-cyan-aura/10'
                                     }`}
                             >
-                                <i className="fas fa-users mr-2"></i>
+                                <i className="fas fa-users mr-1.5"></i>
                                 {t.nav.myTeam}
                             </Link>
                         )}
                     </div>
 
-                    {/* Right Actions - Language Toggle & Login */}
-                    <div className="hidden md:flex items-center gap-4">
+                    {/* Right Actions - Language Toggle & Login — hidden below lg */}
+                    <div className="hidden lg:flex items-center gap-3 xl:gap-4">
                         <button
                             onClick={toggleLanguage}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all group bg-uefa-dark/50 backdrop-blur-sm"
@@ -127,7 +128,7 @@ export default function Navbar() {
                         {isAuthenticated && (user?.role === 'admin' || user?.role === 'super_admin') && (
                             <Link 
                                 href="/admin"
-                                className="bg-cyan-aura hover:bg-cyan-aura/90 text-uefa-dark px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(21,200,255,0.3)] hover:scale-105"
+                                className="bg-cyan-aura hover:bg-cyan-aura/90 text-uefa-dark px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(21,200,255,0.3)] hover:scale-105"
                             >
                                 <i className="fas fa-user-shield"></i>
                                 {t.nav.adminPanel}
@@ -137,7 +138,7 @@ export default function Navbar() {
                         {isAuthenticated ? (
                             <Link 
                                 href="/student-info"
-                                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 border border-white/10 hover:scale-105"
+                                className="bg-white/10 hover:bg-white/20 text-white px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 border border-white/10 hover:scale-105"
                             >
                                 <i className="fas fa-user-circle"></i>
                                 {user?.username}
@@ -145,40 +146,61 @@ export default function Navbar() {
                         ) : (
                             <Link 
                                 href="/login"
-                                className="bg-gradient-to-r from-cyan-aura to-cyan-dark text-uefa-dark px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-cyan-aura/20 hover:scale-105 transition-all"
+                                className="bg-gradient-to-r from-cyan-aura to-cyan-dark text-uefa-dark px-4 xl:px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-cyan-aura/20 hover:scale-105 transition-all"
                             >
                                 {t.nav.login}
                             </Link>
                         )}
                     </div>
 
-                    {/* Mobile Toggle */}
-                    <button
-                        className="md:hidden text-white text-2xl w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    >
-                        <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
-                    </button>
+                    {/* Tablet/Mobile Right Area: Language + Hamburger Toggle */}
+                    <div className="lg:hidden flex items-center gap-2">
+                        {/* Language toggle visible on tablet+ (sm breakpoint) */}
+                        <button
+                            onClick={toggleLanguage}
+                            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all bg-uefa-dark/50"
+                        >
+                            <Image
+                                src={flagUrl}
+                                alt={language}
+                                width={18}
+                                height={13}
+                                className="rounded shadow-sm"
+                                style={{ width: 'auto', height: 'auto' }}
+                                unoptimized
+                            />
+                            <span className="text-gray-300 text-xs font-bold">{language.toUpperCase()}</span>
+                        </button>
+
+                        {/* Hamburger button */}
+                        <button
+                            className="text-white text-xl w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            aria-label="Toggle menu"
+                        >
+                            <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Mobile Menu Overlay */}
+            {/* Mobile/Tablet Menu Overlay */}
             <div
-                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsMenuOpen(false)}
             />
 
-            {/* Mobile Menu Panel */}
-            <div className={`fixed top-0 right-0 h-full w-[80%] max-w-sm bg-uefa-dark shadow-2xl z-50 transform transition-transform duration-300 md:hidden border-l border-white/10 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            {/* Mobile/Tablet Menu Panel */}
+            <div className={`fixed top-0 right-0 h-full w-[75%] max-w-xs sm:max-w-sm bg-uefa-dark shadow-2xl z-50 transform transition-transform duration-300 lg:hidden border-l border-white/10 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex flex-col h-full">
                     {/* Mobile Menu Header */}
-                    <div className="p-6 border-b border-white/10 flex justify-between items-center bg-gradient-to-r from-uefa-dark to-deep-space">
+                    <div className="p-5 border-b border-white/10 flex justify-between items-center bg-gradient-to-r from-uefa-dark to-deep-space">
                         <span className="text-white font-display text-xl font-bold tracking-wider">MENU</span>
                         <div className="flex items-center gap-3">
-                            {/* Language Toggle in Mobile */}
+                            {/* Language Toggle in Mobile (shown only on xs screens — hidden on sm+ since it's in the navbar) */}
                             <button
                                 onClick={toggleLanguage}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10"
+                                className="sm:hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10"
                             >
                                 <Image
                                     src={flagUrl}
@@ -202,15 +224,15 @@ export default function Navbar() {
                     </div>
 
                     {/* Mobile Navigation Links */}
-                    <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+                    <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1.5">
                         {navItems.map((item, idx) => (
                             <Link
                                 key={item.path}
                                 href={item.path}
                                 onClick={() => setIsMenuOpen(false)}
-                                className={`block px-6 py-4 rounded-xl text-lg font-display uppercase tracking-wider transition-all border border-transparent ${pathname === item.path
+                                className={`block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent ${pathname === item.path
                                     ? 'bg-gradient-to-r from-cyan-aura to-blue-600 text-white shadow-lg shadow-cyan-aura/20 border-cyan-aura/30'
-                                    : 'text-gray-400 hover:bg-white/5 hover:text-white hover:pl-8'
+                                    : 'text-gray-400 hover:bg-white/5 hover:text-white hover:pl-7'
                                     }`}
                                 style={{ animationDelay: `${idx * 50}ms` }}
                             >
@@ -224,11 +246,11 @@ export default function Navbar() {
                         {/* Mobile Auth Actions */}
                         {isAuthenticated ? (
                             <>
-                                <div className="h-px bg-white/10 my-4"></div>
+                                <div className="h-px bg-white/10 my-3"></div>
                                 <Link
                                     href="/team"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className={`block px-6 py-4 rounded-xl text-lg font-display uppercase tracking-wider transition-all border border-transparent ${pathname === '/team' ? 'bg-cyan-aura text-uefa-dark font-bold' : 'text-cyan-aura hover:bg-cyan-aura/10 hover:pl-8'}`}
+                                    className={`block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent ${pathname === '/team' ? 'bg-cyan-aura text-uefa-dark font-bold' : 'text-cyan-aura hover:bg-cyan-aura/10 hover:pl-7'}`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <span><i className="fas fa-users mr-3"></i>{t.nav.myTeam}</span>
@@ -240,7 +262,7 @@ export default function Navbar() {
                                     <Link
                                         href="/admin"
                                         onClick={() => setIsMenuOpen(false)}
-                                        className="block px-6 py-4 rounded-xl text-lg font-display uppercase tracking-wider transition-all border border-transparent text-cyan-aura bg-cyan-aura/5 hover:bg-cyan-aura/20 hover:pl-8"
+                                        className="block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent text-cyan-aura bg-cyan-aura/5 hover:bg-cyan-aura/20 hover:pl-7"
                                     >
                                         <div className="flex items-center justify-between">
                                             <span><i className="fas fa-user-shield mr-3"></i>{t.nav.adminPanel}</span>
@@ -252,7 +274,7 @@ export default function Navbar() {
                                 <Link
                                     href="/student-info"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className={`block px-6 py-4 rounded-xl text-lg font-display uppercase tracking-wider transition-all border border-transparent ${pathname === '/student-info' ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white hover:pl-8'}`}
+                                    className={`block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent ${pathname === '/student-info' ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white hover:pl-7'}`}
                                 >
                                     <div className="flex items-center justify-between">
                                         <span><i className="fas fa-user-circle mr-3"></i>{user?.username}</span>
@@ -262,11 +284,11 @@ export default function Navbar() {
                             </>
                         ) : (
                             <>
-                                <div className="h-px bg-white/10 my-4"></div>
+                                <div className="h-px bg-white/10 my-3"></div>
                                 <Link
                                     href="/login"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="block px-6 py-4 rounded-xl text-lg font-display uppercase tracking-wider text-center text-uefa-dark bg-gradient-to-r from-cyan-aura to-cyan-dark font-bold hover:scale-105 active:scale-95 transition-all"
+                                    className="block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider text-center text-uefa-dark bg-gradient-to-r from-cyan-aura to-cyan-dark font-bold hover:scale-105 active:scale-95 transition-all"
                                 >
                                     {t.nav.login}
                                 </Link>
@@ -278,4 +300,3 @@ export default function Navbar() {
         </nav>
     );
 }
-

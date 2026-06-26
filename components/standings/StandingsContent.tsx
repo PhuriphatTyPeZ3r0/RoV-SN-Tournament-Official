@@ -45,7 +45,7 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
             <div className="bg-uefa-dark py-6 md:py-12 mb-4 md:mb-8 shadow-lg border-b-4 border-cyan-aura">
                 <div className="container mx-auto px-4 flex justify-between items-center">
                     <div className="min-w-0 flex-1">
-                        <h1 className="text-2xl md:text-4xl font-display font-bold text-white uppercase tracking-wider truncate">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-white uppercase tracking-wider truncate">
                             {t.nav.standings}
                         </h1>
                         <p className="text-cyan-aura/80 font-sans mt-1 text-xs md:text-base hidden sm:block">
@@ -76,16 +76,16 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
                 {/* Standings Table */}
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
                     <div className="overflow-x-auto">
-                        <table className="w-full uefa-table min-w-[700px]">
+                        <table className="w-full uefa-table min-w-[560px]">
                             <thead>
                                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
-                                    <th className="p-4 w-16 text-center text-gray-500 uppercase text-xs font-bold tracking-wider">#</th>
-                                    <th className="p-4 text-left text-gray-500 uppercase text-xs font-bold tracking-wider">{t.standings.team}</th>
-                                    <th className="p-4 text-center text-gray-500 uppercase text-xs font-bold tracking-wider">{t.standings.played}</th>
-                                    <th className="p-4 text-center text-green-600 uppercase text-xs font-bold tracking-wider">{t.standings.won}</th>
-                                    <th className="p-4 text-center text-red-500 uppercase text-xs font-bold tracking-wider">{t.standings.lost}</th>
-                                    <th className="p-4 text-center text-gray-500 uppercase text-xs font-bold tracking-wider">{t.standings.gd}</th>
-                                    <th className="p-4 text-center text-uefa-dark uppercase text-xs font-bold tracking-wider">{t.standings.pts}</th>
+                                    <th className="p-3 lg:p-4 w-12 lg:w-16 text-center text-gray-500 uppercase text-xs font-bold tracking-wider">#</th>
+                                    <th className="p-3 lg:p-4 text-left text-gray-500 uppercase text-xs font-bold tracking-wider">{t.standings.team}</th>
+                                    <th className="p-3 lg:p-4 text-center text-gray-500 uppercase text-xs font-bold tracking-wider">{t.standings.played}</th>
+                                    <th className="p-3 lg:p-4 text-center text-green-600 uppercase text-xs font-bold tracking-wider">{t.standings.won}</th>
+                                    <th className="p-3 lg:p-4 text-center text-red-500 uppercase text-xs font-bold tracking-wider">{t.standings.lost}</th>
+                                    <th className="p-3 lg:p-4 text-center text-gray-500 uppercase text-xs font-bold tracking-wider">{t.standings.gd}</th>
+                                    <th className="p-3 lg:p-4 text-center text-uefa-dark uppercase text-xs font-bold tracking-wider">{t.standings.pts}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -97,8 +97,8 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
                                             className={`transition-all duration-200 hover:bg-echo-white group ${isQualified ? 'bg-cyan-aura/5' : ''}`}
                                         >
                                             {/* Position */}
-                                            <td className="p-4 text-center">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold mx-auto transition-transform group-hover:scale-110 ${isQualified
+                                            <td className="p-3 lg:p-4 text-center">
+                                                <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center font-bold mx-auto transition-transform group-hover:scale-110 text-sm ${isQualified
                                                     ? 'bg-cyan-aura text-uefa-dark shadow-lg shadow-cyan-aura/30'
                                                     : 'bg-gray-200 text-gray-500'
                                                     }`}>
@@ -107,7 +107,7 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
                                             </td>
 
                                             {/* Team Name */}
-                                            <td className="p-4">
+                                            <td className="p-3 lg:p-4">
                                                 <div className="flex items-center gap-3">
                                                     <TeamLogo teamName={team.name} logoUrl={teamLogos[team.name]} size="md" />
                                                     <span className="font-bold text-uefa-dark text-sm md:text-base truncate max-w-[150px] md:max-w-none">{team.name}</span>
@@ -115,16 +115,16 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
                                             </td>
 
                                             {/* Played */}
-                                            <td className="p-4 text-center text-gray-600 font-medium">{team.p}</td>
+                                            <td className="p-3 lg:p-4 text-center text-gray-600 font-medium">{team.p}</td>
 
                                             {/* Won */}
-                                            <td className="p-4 text-center font-bold text-green-600">{team.w}</td>
+                                            <td className="p-3 lg:p-4 text-center font-bold text-green-600">{team.w}</td>
 
                                             {/* Lost */}
-                                            <td className="p-4 text-center font-bold text-red-500">{team.l}</td>
+                                            <td className="p-3 lg:p-4 text-center font-bold text-red-500">{team.l}</td>
 
                                             {/* GD */}
-                                            <td className="p-4 text-center font-mono">
+                                            <td className="p-3 lg:p-4 text-center font-mono">
                                                 <span className={`px-2 py-1 rounded ${team.gd > 0 ? 'text-green-600 bg-green-50' :
                                                     team.gd < 0 ? 'text-red-500 bg-red-50' :
                                                         'text-gray-500 bg-gray-100'
@@ -134,8 +134,8 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
                                             </td>
 
                                             {/* Points */}
-                                            <td className="p-4 text-center">
-                                                <span className="text-xl font-display font-bold text-uefa-dark bg-gray-50 px-3 py-1 rounded-lg inline-block min-w-[50px]">
+                                            <td className="p-3 lg:p-4 text-center">
+                                                <span className="text-lg lg:text-xl font-display font-bold text-uefa-dark bg-gray-50 px-2 lg:px-3 py-1 rounded-lg inline-block min-w-[40px] lg:min-w-[50px]">
                                                     {team.pts}
                                                 </span>
                                             </td>

@@ -54,7 +54,7 @@ export default function FixturesContent({ schedule, results, teamLogos, tourname
             <>
                 <div className="bg-uefa-dark py-6 md:py-12 mb-4 md:mb-8 shadow-lg border-b-4 border-cyan-aura">
                     <div className="container mx-auto px-4 flex justify-between items-center">
-                        <h1 className="text-2xl md:text-4xl font-display font-bold text-white uppercase tracking-wider">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-white uppercase tracking-wider">
                             {t.nav.fixtures}
                         </h1>
                         <SeasonSelector tournaments={tournaments} currentSeason={currentSeason} />
@@ -76,7 +76,7 @@ export default function FixturesContent({ schedule, results, teamLogos, tourname
             <div className="bg-uefa-dark py-6 md:py-12 mb-8 shadow-lg border-b-4 border-cyan-aura">
                 <div className="container mx-auto px-4 flex justify-between items-center">
                     <div className="min-w-0 flex-1">
-                        <h1 className="text-2xl md:text-4xl font-display font-bold text-white uppercase tracking-wider truncate">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-white uppercase tracking-wider truncate">
                             {t.nav.fixtures}
                         </h1>
                         <p className="text-cyan-aura/80 font-sans mt-1 text-xs md:text-base hidden sm:block">

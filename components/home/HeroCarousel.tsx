@@ -18,7 +18,7 @@ export default function HeroCarousel({ activeSeason }: HeroCarouselProps) {
     }, [activeSeason]);
 
     return (
-        <div className="relative w-full aspect-[21/9] bg-uefa-dark overflow-hidden shadow-2xl">
+        <div className="relative w-full aspect-[16/9] sm:aspect-[2/1] lg:aspect-[21/9] bg-uefa-dark overflow-hidden shadow-2xl">
             <div className="carousel-wrapper h-full flex transition-transform duration-700 ease-in-out">
                 <div className="carousel-slide relative min-w-full h-full">
                     <Image
