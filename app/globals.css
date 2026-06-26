@@ -12,6 +12,37 @@
   --theme-primary-dark: #0099cc;
 }
 
+/* Echo: Dark Mode (default) */
+:root[data-mode="dark"], [data-theme="echo"][data-mode="dark"],
+:root:not([data-mode]), [data-theme="echo"]:not([data-mode]) {
+  --mode-bg-page: #0a1628;
+  --mode-bg-card: #0f1f35;
+  --mode-bg-card-hover: rgba(255,255,255,0.04);
+  --mode-text-primary: #f0f8ff;
+  --mode-text-muted: #94a3b8;
+  --mode-text-subtle: #64748b;
+  --mode-border: rgba(255,255,255,0.08);
+  --mode-border-strong: rgba(255,255,255,0.15);
+  --mode-input-bg: rgba(255,255,255,0.04);
+  --mode-input-text: #ffffff;
+  --mode-shadow: rgba(0,0,0,0.4);
+}
+
+/* Echo: Light Mode */
+:root[data-mode="light"], [data-theme="echo"][data-mode="light"] {
+  --mode-bg-page: #f0f9ff;
+  --mode-bg-card: #ffffff;
+  --mode-bg-card-hover: #f8fafc;
+  --mode-text-primary: #0f172a;
+  --mode-text-muted: #475569;
+  --mode-text-subtle: #94a3b8;
+  --mode-border: #e2e8f0;
+  --mode-border-strong: #cbd5e1;
+  --mode-input-bg: #ffffff;
+  --mode-input-text: #0f172a;
+  --mode-shadow: rgba(0,0,0,0.08);
+}
+
 /* Arena Theme: Crimson Fire */
 [data-theme="arena"] {
   --theme-primary: #FF2E2E;
@@ -22,6 +53,37 @@
   --theme-bg-surface: #260f0f;
   --theme-primary-light: #ff6666;
   --theme-primary-dark: #b30000;
+}
+
+/* Arena: Dark Mode */
+[data-theme="arena"][data-mode="dark"],
+[data-theme="arena"]:not([data-mode]) {
+  --mode-bg-page: #160606;
+  --mode-bg-card: #260f0f;
+  --mode-bg-card-hover: rgba(255,255,255,0.04);
+  --mode-text-primary: #fff0f0;
+  --mode-text-muted: #f87171;
+  --mode-text-subtle: #9f1239;
+  --mode-border: rgba(255,255,255,0.08);
+  --mode-border-strong: rgba(255,46,46,0.3);
+  --mode-input-bg: rgba(255,255,255,0.04);
+  --mode-input-text: #ffffff;
+  --mode-shadow: rgba(0,0,0,0.4);
+}
+
+/* Arena: Light Mode */
+[data-theme="arena"][data-mode="light"] {
+  --mode-bg-page: #fff5f5;
+  --mode-bg-card: #ffffff;
+  --mode-bg-card-hover: #fef2f2;
+  --mode-text-primary: #1c0505;
+  --mode-text-muted: #7f1d1d;
+  --mode-text-subtle: #b91c1c;
+  --mode-border: #fecaca;
+  --mode-border-strong: #f87171;
+  --mode-input-bg: #ffffff;
+  --mode-input-text: #1c0505;
+  --mode-shadow: rgba(180,0,0,0.08);
 }
 
 /* Cyberpunk Theme: Cyan-Pink (สีฟ้าชมพู) */
@@ -36,6 +98,37 @@
   --theme-primary-dark: #cc0066;
 }
 
+/* Cyberpunk: Dark Mode */
+[data-theme="cyberpunk"][data-mode="dark"],
+[data-theme="cyberpunk"]:not([data-mode]) {
+  --mode-bg-page: #001219;
+  --mode-bg-card: #002233;
+  --mode-bg-card-hover: rgba(255,255,255,0.04);
+  --mode-text-primary: #fff0f8;
+  --mode-text-muted: #f472b6;
+  --mode-text-subtle: #9d174d;
+  --mode-border: rgba(255,255,255,0.08);
+  --mode-border-strong: rgba(255,0,127,0.3);
+  --mode-input-bg: rgba(255,255,255,0.04);
+  --mode-input-text: #ffffff;
+  --mode-shadow: rgba(0,0,0,0.4);
+}
+
+/* Cyberpunk: Light Mode */
+[data-theme="cyberpunk"][data-mode="light"] {
+  --mode-bg-page: #fff0f8;
+  --mode-bg-card: #ffffff;
+  --mode-bg-card-hover: #fdf2f8;
+  --mode-text-primary: #0f0010;
+  --mode-text-muted: #7c3aed;
+  --mode-text-subtle: #db2777;
+  --mode-border: #fce7f3;
+  --mode-border-strong: #f9a8d4;
+  --mode-input-bg: #ffffff;
+  --mode-input-text: #0f0010;
+  --mode-shadow: rgba(180,0,100,0.08);
+}
+
 /* Void Theme: Abyssal Purple */
 [data-theme="void"] {
   --theme-primary: #A855F7;
@@ -46,6 +139,37 @@
   --theme-bg-surface: #150926;
   --theme-primary-light: #c084fc;
   --theme-primary-dark: #7e22ce;
+}
+
+/* Void: Dark Mode */
+[data-theme="void"][data-mode="dark"],
+[data-theme="void"]:not([data-mode]) {
+  --mode-bg-page: #0B0314;
+  --mode-bg-card: #150926;
+  --mode-bg-card-hover: rgba(255,255,255,0.04);
+  --mode-text-primary: #f5f0ff;
+  --mode-text-muted: #c084fc;
+  --mode-text-subtle: #7e22ce;
+  --mode-border: rgba(255,255,255,0.08);
+  --mode-border-strong: rgba(168,85,247,0.3);
+  --mode-input-bg: rgba(255,255,255,0.04);
+  --mode-input-text: #ffffff;
+  --mode-shadow: rgba(0,0,0,0.4);
+}
+
+/* Void: Light Mode */
+[data-theme="void"][data-mode="light"] {
+  --mode-bg-page: #faf5ff;
+  --mode-bg-card: #ffffff;
+  --mode-bg-card-hover: #f5f0ff;
+  --mode-text-primary: #1e0533;
+  --mode-text-muted: #6b21a8;
+  --mode-text-subtle: #9333ea;
+  --mode-border: #e9d5ff;
+  --mode-border-strong: #c084fc;
+  --mode-input-bg: #ffffff;
+  --mode-input-text: #1e0533;
+  --mode-shadow: rgba(100,0,200,0.08);
 }
 
 @theme {
@@ -68,8 +192,8 @@
 
 /* --- GLOBAL STYLES --- */
 body {
-  background-color: var(--theme-bg-deep);
-  color: var(--theme-secondary);
+  background-color: var(--mode-bg-page, var(--theme-bg-deep));
+  color: var(--mode-text-primary, var(--theme-secondary));
   overflow-x: hidden;
   scroll-behavior: smooth;
   font-family: var(--font-prompt), sans-serif;
@@ -732,26 +856,37 @@ body.menu-open {
   font-style: italic;
 }
 
-/* --- SLEEK DARK MODE OVERRIDES --- */
+/* ================================================
+   🌗 SEMANTIC MODE SYSTEM
+   Replaces blunt !important dark-mode overrides.
+   Components should use var(--mode-*) instead of
+   hardcoded Tailwind gray/white classes.
+   ================================================ */
 
-/* Backgrounds */
+/* --- Core page & card backgrounds --- */
+body {
+  background-color: var(--mode-bg-page);
+  color: var(--mode-text-primary);
+}
+
+/* --- Card / Surface overrides (mode-aware) --- */
 .bg-white {
-  background-color: var(--theme-bg-surface) !important;
+  background-color: var(--mode-bg-card) !important;
 }
 
-.bg-gray-50, 
-.bg-gray-100, 
-.bg-slate-50, 
+.bg-gray-50,
+.bg-gray-100,
+.bg-slate-50,
 .bg-slate-100 {
-  background-color: var(--theme-bg-deep) !important;
+  background-color: var(--mode-bg-page) !important;
 }
 
-.bg-gray-200, 
+.bg-gray-200,
 .bg-slate-200 {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: var(--mode-border) !important;
 }
 
-/* Borders */
+/* --- Borders --- */
 .border-gray-50,
 .border-gray-100,
 .border-gray-200,
@@ -759,94 +894,94 @@ body.menu-open {
 .border-slate-100,
 .border-slate-200,
 .border-slate-300 {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--mode-border) !important;
 }
 
-/* Dividers */
+/* --- Dividers --- */
 .divide-gray-50 > * + *,
 .divide-gray-100 > * + *,
 .divide-gray-200 > * + * {
-  border-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--mode-border) !important;
 }
 
-/* Text Colors */
+/* --- Text Colors (semantic) --- */
 .text-uefa-dark {
-  color: #ffffff !important;
+  color: var(--mode-text-primary) !important;
 }
 
 .text-gray-900,
 .text-gray-800,
 .text-slate-900,
 .text-slate-800 {
-  color: #f8fafc !important; /* slate-50 */
+  color: var(--mode-text-primary) !important;
 }
 
 .text-gray-700,
 .text-gray-600,
 .text-slate-700,
 .text-slate-600 {
-  color: #cbd5e1 !important; /* slate-300 */
+  color: var(--mode-text-muted) !important;
 }
 
 .text-gray-500,
 .text-gray-400,
 .text-slate-500,
 .text-slate-400 {
-  color: #94a3b8 !important; /* slate-400 */
+  color: var(--mode-text-subtle) !important;
 }
 
-/* Forms & Inputs */
-input:not([type="checkbox"]):not([type="radio"]), 
-select, 
+/* --- Forms & Inputs --- */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
 textarea {
-  background-color: rgba(255, 255, 255, 0.03) !important;
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: var(--mode-input-bg) !important;
+  color: var(--mode-input-text) !important;
+  border-color: var(--mode-border) !important;
 }
 
-input:not([type="checkbox"]):not([type="radio"]):focus, 
-select:focus, 
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
 textarea:focus {
   border-color: var(--theme-primary) !important;
   box-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.3) !important;
 }
 
-input::placeholder, 
+input::placeholder,
 textarea::placeholder {
-  color: #64748b !important;
+  color: var(--mode-text-subtle) !important;
 }
 
 option {
-  background-color: var(--theme-bg-surface) !important;
-  color: #ffffff !important;
+  background-color: var(--mode-bg-card) !important;
+  color: var(--mode-input-text) !important;
 }
 
-/* Modals & Dialogs */
-.modal-content, 
+/* --- Modals & Dialogs --- */
+.modal-content,
 [role="dialog"] {
-  background-color: var(--theme-bg-surface) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5) !important;
+  background-color: var(--mode-bg-card) !important;
+  border: 1px solid var(--mode-border) !important;
+  box-shadow: 0 10px 50px var(--mode-shadow) !important;
 }
 
-/* Hover effects for list items and table rows */
+/* --- Hover effects --- */
 .hover\:bg-gray-50:hover,
 .hover\:bg-slate-50:hover {
-  background-color: rgba(255, 255, 255, 0.03) !important;
+  background-color: var(--mode-bg-card-hover) !important;
 }
 
-/* Scrollbars */
+/* --- Scrollbars --- */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--theme-bg-deep);
+  background: var(--mode-bg-page);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--mode-border-strong);
   border-radius: 4px;
 }
 
@@ -854,33 +989,88 @@ option {
   background: var(--theme-primary);
 }
 
-/* Specific UI enhancements for League/Stats tables */
+/* --- Tables (uefa-table) --- */
 .uefa-table th {
-  background: linear-gradient(180deg, var(--theme-bg-surface) 0%, var(--theme-bg-deep) 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(
+    180deg,
+    var(--mode-bg-card) 0%,
+    var(--mode-bg-page) 100%
+  ) !important;
+  color: var(--mode-text-primary) !important;
   border-bottom: 2px solid var(--theme-primary) !important;
 }
 
 .uefa-table tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: #cbd5e1 !important;
+  border-bottom: 1px solid var(--mode-border) !important;
+  color: var(--mode-text-muted) !important;
 }
 
 .uefa-table tr:hover {
-  background: rgba(255, 255, 255, 0.02) !important;
+  background: var(--mode-bg-card-hover) !important;
 }
 
+/* --- Rule Cards --- */
 .rule-card {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.02) 0%, var(--theme-bg-surface) 100%) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
-  color: #cbd5e1 !important;
+  background: linear-gradient(
+    90deg,
+    var(--mode-bg-card-hover) 0%,
+    var(--mode-bg-card) 100%
+  ) !important;
+  box-shadow: 0 4px 20px var(--mode-shadow) !important;
+  color: var(--mode-text-muted) !important;
 }
 
 .rule-card:hover {
-  box-shadow: 0 4px 25px rgba(var(--theme-primary-rgb), 0.15) !important;
+  box-shadow: 0 4px 25px rgba(var(--theme-primary-rgb), 0.2) !important;
 }
 
+/* --- Error container --- */
 .error-container {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(244, 63, 94, 0.05) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.05) 0%,
+    rgba(244, 63, 94, 0.05) 100%
+  ) !important;
   border: 1px solid rgba(239, 68, 68, 0.2) !important;
-}
+}
+
+/* ================================================
+   ☀️ LIGHT MODE SPECIFIC ENHANCEMENTS
+   Extra polish for components that look different
+   in light mode vs dark mode.
+   ================================================ */
+
+[data-mode="light"] body {
+  background-color: var(--mode-bg-page);
+}
+
+/* Navbar in light mode — keep dark for visual contrast */
+[data-mode="light"] nav.fixed {
+  /* Navbar stays dark (brand color), so no override needed here */
+}
+
+/* Skeleton in light mode */
+[data-mode="light"] .skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* Qualification zone highlight - lighter shade in light mode */
+[data-mode="light"] .uefa-table tr.qualification-zone {
+  background: linear-gradient(
+    90deg,
+    rgba(var(--theme-primary-rgb), 0.07) 0%,
+    transparent 100%
+  );
+}
+
+/* Shadow elevation in light mode */
+[data-mode="light"] .shadow-sm {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+[data-mode="light"] .shadow-lg {
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04) !important;
+}
+

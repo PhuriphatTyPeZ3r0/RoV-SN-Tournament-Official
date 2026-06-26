@@ -5,11 +5,13 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useThemeMode } from '@/components/providers/ThemeModeProvider';
 import Image from 'next/image';
 
 export default function Navbar() {
     const { t, language, changeLanguage } = useLanguage();
     const { isAuthenticated, user } = useAuth();
+    const { mode, toggleMode } = useThemeMode();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -107,8 +109,20 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    {/* Right Actions - Language Toggle & Login — hidden below lg */}
+                    {/* Desktop Right Actions: Language + Dark Mode Toggle + Login */}
                     <div className="hidden lg:flex items-center gap-3 xl:gap-4">
+                        {/* Dark / Light Mode Toggle */}
+                        <button
+                            onClick={toggleMode}
+                            aria-label="Toggle dark/light mode"
+                            className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 backdrop-blur-sm transition-all hover:scale-110 group"
+                        >
+                            <i
+                                className={`fas ${
+                                    mode === 'dark' ? 'fa-sun text-yellow-400' : 'fa-moon text-slate-400'
+                                } transition-transform duration-300 group-hover:rotate-12`}
+                            ></i>
+                        </button>
                         <button
                             onClick={toggleLanguage}
                             className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all group bg-uefa-dark/50 backdrop-blur-sm"
@@ -153,8 +167,20 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    {/* Tablet/Mobile Right Area: Language + Hamburger Toggle */}
+                    {/* Tablet/Mobile Right Area: Dark Mode + Language + Hamburger Toggle */}
                     <div className="lg:hidden flex items-center gap-2">
+                        {/* Dark / Light Mode Toggle — always visible */}
+                        <button
+                            onClick={toggleMode}
+                            aria-label="Toggle dark/light mode"
+                            className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-white/5 transition-all"
+                        >
+                            <i
+                                className={`fas ${
+                                    mode === 'dark' ? 'fa-sun text-yellow-400' : 'fa-moon text-slate-400'
+                                } text-sm`}
+                            ></i>
+                        </button>
                         {/* Language toggle visible on tablet+ (sm breakpoint) */}
                         <button
                             onClick={toggleLanguage}
