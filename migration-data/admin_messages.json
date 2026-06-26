@@ -1,0 +1,2055 @@
+[
+  {
+    "type": 0,
+    "content": "https://phuriphatizamu.github.io/RoVSN-Program/",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-12-19T22:05:20.795000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1451696936116687068",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "มาแล้วว การแข่งขันเกม Esports [RoV SN Tournament 2026] เกมที่ 2 ในปี 2025 นี้ต่อด้วยเกม RoV (Arena of Valor) ⚔️\n\nระบบการแข่งขันและกติกาสามารถดูได้จากรูปข้างบน และสามารถติดตามผลการแข่งขัน รางวัล และข่าวสารอื่นๆ ได้ที่ดิสคอร์ดลิงก์ด้านล่างครับ\n\nสมัครได้ตั้งแต่วันนี้ - [ระบุวันปิดรับสมัคร เช่น วันศุกร์ที่ 10 มกราคม 2569] เวลา [ระบุเวลา] น. รับแค่ 16 ทีมเท่านั้น‼️ รีบสมัครเลย\n\n📌 ช่องทางการสมัคร ⬇️ : \nhttps://forms.gle/hJ3Kit5uJvgFZhKWA\n\n📌 ติดตามข่าวสาร การประกาศต่างๆ ได้ที่ ⬇️ : \nhttps://discord.gg/eAjAAM58wd\n\n#RoV #RoVSNTournament2026 #Esports #RoVTH",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-12-19T21:00:21.868000+00:00",
+    "edited_timestamp": "2025-12-19T21:18:51.266000+00:00",
+    "flags": 0,
+    "components": [],
+    "id": "1451680582831706195",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [
+      {
+        "id": "1451679282723295293",
+        "filename": "Event_Poster_1.png",
+        "size": 4501608,
+        "url": "https://cdn.discordapp.com/attachments/1273326546936922202/1451679282723295293/Event_Poster_1.png?ex=6a3af2af&is=6a39a12f&hm=a728c569f6e72ffd84f25103eefac38be1815e220f5bfc675d76a815baf7e5c0&",
+        "proxy_url": "https://media.discordapp.net/attachments/1273326546936922202/1451679282723295293/Event_Poster_1.png?ex=6a3af2af&is=6a39a12f&hm=a728c569f6e72ffd84f25103eefac38be1815e220f5bfc675d76a815baf7e5c0&",
+        "width": 2160,
+        "height": 2880,
+        "content_type": "image/png",
+        "original_content_type": "image/png",
+        "content_scan_version": 3,
+        "placeholder": "jucFBQAIhn6FtmcIiIcqRy9l+gRX",
+        "placeholder_version": 1,
+        "title": "Event Poster 1"
+      },
+      {
+        "id": "1451679283587190894",
+        "filename": "Event_Poster_2.png",
+        "size": 4168477,
+        "url": "https://cdn.discordapp.com/attachments/1273326546936922202/1451679283587190894/Event_Poster_2.png?ex=6a3af2b0&is=6a39a130&hm=c83e2df675dffc678e460aca35955ef4a1b2b8534c5b12971f5d4772fe940f92&",
+        "proxy_url": "https://media.discordapp.net/attachments/1273326546936922202/1451679283587190894/Event_Poster_2.png?ex=6a3af2b0&is=6a39a130&hm=c83e2df675dffc678e460aca35955ef4a1b2b8534c5b12971f5d4772fe940f92&",
+        "width": 2160,
+        "height": 2880,
+        "content_type": "image/png",
+        "original_content_type": "image/png",
+        "content_scan_version": 3,
+        "placeholder": "jOcFBQAJpn52doaJZ4lnh09kyQhX",
+        "placeholder_version": 1,
+        "title": "Event Poster 2"
+      },
+      {
+        "id": "1451679284728041662",
+        "filename": "Event_Poster_3.png",
+        "size": 4277865,
+        "url": "https://cdn.discordapp.com/attachments/1273326546936922202/1451679284728041662/Event_Poster_3.png?ex=6a3af2b0&is=6a39a130&hm=0ef5702d64d98d19c6e5f7456a29eff967b1b4220794456d2ded22516387efc2&",
+        "proxy_url": "https://media.discordapp.net/attachments/1273326546936922202/1451679284728041662/Event_Poster_3.png?ex=6a3af2b0&is=6a39a130&hm=0ef5702d64d98d19c6e5f7456a29eff967b1b4220794456d2ded22516387efc2&",
+        "width": 2160,
+        "height": 2880,
+        "content_type": "image/png",
+        "original_content_type": "image/png",
+        "content_scan_version": 3,
+        "placeholder": "jOcFBQALlI92dXWJZopnh09juQhX",
+        "placeholder_version": 1,
+        "title": "Event Poster 3"
+      }
+    ],
+    "embeds": [],
+    "timestamp": "2025-12-19T20:55:12.522000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1451679285340274774",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "<@988793262099791902>",
+    "mentions": [
+      {
+        "id": "988793262099791902",
+        "username": "hakurenc",
+        "avatar": "1796a9dfb3c5d953829f98faf779fab7",
+        "discriminator": "0",
+        "public_flags": 0,
+        "flags": 0,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "C#m7",
+        "avatar_decoration_data": {
+          "asset": "a_3c97a2d37f433a7913a1c7b7a735d000",
+          "sku_id": "1144308439720394944",
+          "expires_at": null
+        },
+        "collectibles": {
+          "nameplate": {
+            "sku_id": "1462116614131548265",
+            "asset": "nameplates/gothica/nevermore/",
+            "label": "COLLECTIBLES_GOTHICA_NEVERMORE_NP_A11Y",
+            "palette": "white"
+          }
+        },
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": null,
+        "primary_guild": null
+      }
+    ],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-12-19T14:48:33.034000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1451587012799762454",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "https://forms.gle/uEaqindoUnQgHRty5",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-12-04T07:58:27.306000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1446047990912647271",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [
+      {
+        "id": "1444338895394312294",
+        "filename": "RoV_Logo.png",
+        "size": 240738,
+        "url": "https://cdn.discordapp.com/attachments/1273326546936922202/1444338895394312294/RoV_Logo.png?ex=6a3b452b&is=6a39f3ab&hm=e724c484939e297a6cf4b4cffe64f957107333fcc6206aa4efb2066abcbdf55b&",
+        "proxy_url": "https://media.discordapp.net/attachments/1273326546936922202/1444338895394312294/RoV_Logo.png?ex=6a3b452b&is=6a39f3ab&hm=e724c484939e297a6cf4b4cffe64f957107333fcc6206aa4efb2066abcbdf55b&",
+        "width": 500,
+        "height": 500,
+        "content_type": "image/webp",
+        "original_content_type": "image/png",
+        "content_scan_version": 2,
+        "placeholder": "YZUNFwYIiIiQd4iBeXaHh5d3l5B3eH8J",
+        "placeholder_version": 1,
+        "title": "RoV Logo"
+      }
+    ],
+    "embeds": [],
+    "timestamp": "2025-11-29T14:47:07.247000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1444338895671005285",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "reactions": [
+      {
+        "emoji": {
+          "id": "1273554950886002768",
+          "name": "crythumbsup"
+        },
+        "count": 1,
+        "count_details": {
+          "burst": 0,
+          "normal": 1
+        },
+        "burst_colors": [],
+        "me_burst": false,
+        "burst_me": false,
+        "me": true,
+        "burst_count": 0
+      }
+    ]
+  },
+  {
+    "type": 0,
+    "content": "",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [
+      {
+        "id": "1444338848988401675",
+        "filename": "Event_Poster.png",
+        "size": 4501608,
+        "url": "https://cdn.discordapp.com/attachments/1273326546936922202/1444338848988401675/Event_Poster.png?ex=6a3b4520&is=6a39f3a0&hm=548c45d8686aa25498a402e6cf0462b03cc4248c7d4cf7547383e65d4f5804f8&",
+        "proxy_url": "https://media.discordapp.net/attachments/1273326546936922202/1444338848988401675/Event_Poster.png?ex=6a3b4520&is=6a39f3a0&hm=548c45d8686aa25498a402e6cf0462b03cc4248c7d4cf7547383e65d4f5804f8&",
+        "width": 2160,
+        "height": 2880,
+        "content_type": "image/png",
+        "original_content_type": "image/png",
+        "content_scan_version": 2,
+        "placeholder": "jucFBQAIhn6FtmcIiIcqRy9l+gRX",
+        "placeholder_version": 1,
+        "title": "Event Poster"
+      }
+    ],
+    "embeds": [],
+    "timestamp": "2025-11-29T14:46:56.194000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1444338849311359188",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [
+      {
+        "id": "1444338637561925712",
+        "filename": "Echo_of_Destiny.png",
+        "size": 4486713,
+        "url": "https://cdn.discordapp.com/attachments/1273326546936922202/1444338637561925712/Echo_of_Destiny.png?ex=6a3b44ed&is=6a39f36d&hm=9aba4ffbca85ed9206f262fb2bdbda65a6239255b2ecdbe758ca0207513f10f9&",
+        "proxy_url": "https://media.discordapp.net/attachments/1273326546936922202/1444338637561925712/Echo_of_Destiny.png?ex=6a3b44ed&is=6a39f36d&hm=9aba4ffbca85ed9206f262fb2bdbda65a6239255b2ecdbe758ca0207513f10f9&",
+        "width": 5120,
+        "height": 2160,
+        "content_type": "image/png",
+        "original_content_type": "image/png",
+        "content_scan_version": 2,
+        "placeholder": "5IYJA4IISFebhliH31vu79E=",
+        "placeholder_version": 1,
+        "title": "Echo of Destiny"
+      }
+    ],
+    "embeds": [],
+    "timestamp": "2025-11-29T14:46:05.775000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1444338637839007816",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "<a:alert2:1273559222495215616>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-11T08:22:54.822000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1437719225212080129",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1273554431455006720",
+      "username": "แอดมินผู้จัด｜ 2023 & 2024",
+      "avatar": "f9ec1b1ce946206617176ca3bc151885",
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "global_name": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "1273554431455006720"
+  },
+  {
+    "type": 0,
+    "content": "<:Jungle:1437062698633527346>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-09T12:54:57.734000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1437062912735842386",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "619956172694224957",
+      "username": "izamu.phx",
+      "avatar": "1b51070dfea03f6ba11747465c58e722",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "I Love Sinestrea",
+      "avatar_decoration_data": {
+        "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+        "sku_id": "1427463138634109027",
+        "expires_at": null
+      },
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1164979454557290546",
+        "identity_enabled": true,
+        "tag": "FC",
+        "badge": "a3290d71cdc373a5f63598746c8f1476"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 19,
+    "content": "izamu.phx uploaded <:EeveeDance_1436686646941581373:1436686664809578496>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-08T11:59:53.579000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1436686666239705194",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "559426966151757824",
+    "message_reference": {
+      "type": 0,
+      "channel_id": "1273326546936922202",
+      "message_id": "1436686466389377084",
+      "guild_id": "1273323395655794688"
+    },
+    "interaction_metadata": {
+      "id": "1436686662733402253",
+      "type": 3,
+      "user": {
+        "id": "619956172694224957",
+        "username": "izamu.phx",
+        "avatar": "1b51070dfea03f6ba11747465c58e722",
+        "discriminator": "0",
+        "public_flags": 128,
+        "flags": 128,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "I Love Sinestrea",
+        "avatar_decoration_data": {
+          "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+          "sku_id": "1427463138634109027",
+          "expires_at": null
+        },
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "interacted_message_id": "1436686466389377084"
+    },
+    "referenced_message": {
+      "type": 20,
+      "content": "Interaction timed out.\nPlease run the command again.",
+      "mentions": [],
+      "mention_roles": [],
+      "attachments": [],
+      "embeds": [],
+      "timestamp": "2025-11-08T11:59:05.931000+00:00",
+      "edited_timestamp": "2025-11-08T11:59:59.883000+00:00",
+      "flags": 0,
+      "components": [],
+      "id": "1436686466389377084",
+      "channel_id": "1273326546936922202",
+      "author": {
+        "id": "559426966151757824",
+        "username": "NQN",
+        "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+        "discriminator": "3454",
+        "public_flags": 65536,
+        "flags": 65536,
+        "bot": true,
+        "banner": null,
+        "accent_color": null,
+        "global_name": null,
+        "avatar_decoration_data": null,
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": null,
+        "primary_guild": null
+      },
+      "pinned": false,
+      "mention_everyone": false,
+      "tts": false,
+      "application_id": "559426966151757824",
+      "interaction": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "name": "pack save",
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        }
+      },
+      "webhook_id": "559426966151757824",
+      "interaction_metadata": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        },
+        "authorizing_integration_owners": {
+          "0": "1273323395655794688"
+        },
+        "name": "pack save",
+        "command_type": 1
+      }
+    }
+  },
+  {
+    "type": 19,
+    "content": "izamu.phx uploaded <a:EeveeDance:1436686646941581373>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-08T11:59:49.324000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1436686648393072741",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "559426966151757824",
+    "message_reference": {
+      "type": 0,
+      "channel_id": "1273326546936922202",
+      "message_id": "1436686466389377084",
+      "guild_id": "1273323395655794688"
+    },
+    "interaction_metadata": {
+      "id": "1436686643942654122",
+      "type": 3,
+      "user": {
+        "id": "619956172694224957",
+        "username": "izamu.phx",
+        "avatar": "1b51070dfea03f6ba11747465c58e722",
+        "discriminator": "0",
+        "public_flags": 128,
+        "flags": 128,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "I Love Sinestrea",
+        "avatar_decoration_data": {
+          "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+          "sku_id": "1427463138634109027",
+          "expires_at": null
+        },
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "interacted_message_id": "1436686466389377084"
+    },
+    "referenced_message": {
+      "type": 20,
+      "content": "Interaction timed out.\nPlease run the command again.",
+      "mentions": [],
+      "mention_roles": [],
+      "attachments": [],
+      "embeds": [],
+      "timestamp": "2025-11-08T11:59:05.931000+00:00",
+      "edited_timestamp": "2025-11-08T11:59:59.883000+00:00",
+      "flags": 0,
+      "components": [],
+      "id": "1436686466389377084",
+      "channel_id": "1273326546936922202",
+      "author": {
+        "id": "559426966151757824",
+        "username": "NQN",
+        "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+        "discriminator": "3454",
+        "public_flags": 65536,
+        "flags": 65536,
+        "bot": true,
+        "banner": null,
+        "accent_color": null,
+        "global_name": null,
+        "avatar_decoration_data": null,
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": null,
+        "primary_guild": null
+      },
+      "pinned": false,
+      "mention_everyone": false,
+      "tts": false,
+      "application_id": "559426966151757824",
+      "interaction": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "name": "pack save",
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        }
+      },
+      "webhook_id": "559426966151757824",
+      "interaction_metadata": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        },
+        "authorizing_integration_owners": {
+          "0": "1273323395655794688"
+        },
+        "name": "pack save",
+        "command_type": 1
+      }
+    }
+  },
+  {
+    "type": 19,
+    "content": "izamu.phx uploaded <:Dab:1436686611663421461>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-08T11:59:40.966000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1436686613336952914",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "559426966151757824",
+    "message_reference": {
+      "type": 0,
+      "channel_id": "1273326546936922202",
+      "message_id": "1436686466389377084",
+      "guild_id": "1273323395655794688"
+    },
+    "interaction_metadata": {
+      "id": "1436686609440309268",
+      "type": 3,
+      "user": {
+        "id": "619956172694224957",
+        "username": "izamu.phx",
+        "avatar": "1b51070dfea03f6ba11747465c58e722",
+        "discriminator": "0",
+        "public_flags": 128,
+        "flags": 128,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "I Love Sinestrea",
+        "avatar_decoration_data": {
+          "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+          "sku_id": "1427463138634109027",
+          "expires_at": null
+        },
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "interacted_message_id": "1436686466389377084"
+    },
+    "referenced_message": {
+      "type": 20,
+      "content": "Interaction timed out.\nPlease run the command again.",
+      "mentions": [],
+      "mention_roles": [],
+      "attachments": [],
+      "embeds": [],
+      "timestamp": "2025-11-08T11:59:05.931000+00:00",
+      "edited_timestamp": "2025-11-08T11:59:59.883000+00:00",
+      "flags": 0,
+      "components": [],
+      "id": "1436686466389377084",
+      "channel_id": "1273326546936922202",
+      "author": {
+        "id": "559426966151757824",
+        "username": "NQN",
+        "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+        "discriminator": "3454",
+        "public_flags": 65536,
+        "flags": 65536,
+        "bot": true,
+        "banner": null,
+        "accent_color": null,
+        "global_name": null,
+        "avatar_decoration_data": null,
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": null,
+        "primary_guild": null
+      },
+      "pinned": false,
+      "mention_everyone": false,
+      "tts": false,
+      "application_id": "559426966151757824",
+      "interaction": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "name": "pack save",
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        }
+      },
+      "webhook_id": "559426966151757824",
+      "interaction_metadata": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        },
+        "authorizing_integration_owners": {
+          "0": "1273323395655794688"
+        },
+        "name": "pack save",
+        "command_type": 1
+      }
+    }
+  },
+  {
+    "type": 19,
+    "content": "izamu.phx uploaded <:BulbaO:1436686544852222108>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-08T11:59:25.045000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1436686546559434834",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "559426966151757824",
+    "message_reference": {
+      "type": 0,
+      "channel_id": "1273326546936922202",
+      "message_id": "1436686466389377084",
+      "guild_id": "1273323395655794688"
+    },
+    "interaction_metadata": {
+      "id": "1436686542499217490",
+      "type": 3,
+      "user": {
+        "id": "619956172694224957",
+        "username": "izamu.phx",
+        "avatar": "1b51070dfea03f6ba11747465c58e722",
+        "discriminator": "0",
+        "public_flags": 128,
+        "flags": 128,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "I Love Sinestrea",
+        "avatar_decoration_data": {
+          "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+          "sku_id": "1427463138634109027",
+          "expires_at": null
+        },
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "interacted_message_id": "1436686466389377084"
+    },
+    "referenced_message": {
+      "type": 20,
+      "content": "Interaction timed out.\nPlease run the command again.",
+      "mentions": [],
+      "mention_roles": [],
+      "attachments": [],
+      "embeds": [],
+      "timestamp": "2025-11-08T11:59:05.931000+00:00",
+      "edited_timestamp": "2025-11-08T11:59:59.883000+00:00",
+      "flags": 0,
+      "components": [],
+      "id": "1436686466389377084",
+      "channel_id": "1273326546936922202",
+      "author": {
+        "id": "559426966151757824",
+        "username": "NQN",
+        "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+        "discriminator": "3454",
+        "public_flags": 65536,
+        "flags": 65536,
+        "bot": true,
+        "banner": null,
+        "accent_color": null,
+        "global_name": null,
+        "avatar_decoration_data": null,
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": null,
+        "primary_guild": null
+      },
+      "pinned": false,
+      "mention_everyone": false,
+      "tts": false,
+      "application_id": "559426966151757824",
+      "interaction": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "name": "pack save",
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        }
+      },
+      "webhook_id": "559426966151757824",
+      "interaction_metadata": {
+        "id": "1436686464766312589",
+        "type": 2,
+        "user": {
+          "id": "619956172694224957",
+          "username": "izamu.phx",
+          "avatar": "1b51070dfea03f6ba11747465c58e722",
+          "discriminator": "0",
+          "public_flags": 128,
+          "flags": 128,
+          "banner": null,
+          "accent_color": null,
+          "global_name": "I Love Sinestrea",
+          "avatar_decoration_data": {
+            "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+            "sku_id": "1427463138634109027",
+            "expires_at": null
+          },
+          "collectibles": null,
+          "display_name_styles": null,
+          "banner_color": null,
+          "clan": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          },
+          "primary_guild": {
+            "identity_guild_id": "1164979454557290546",
+            "identity_enabled": true,
+            "tag": "FC",
+            "badge": "a3290d71cdc373a5f63598746c8f1476"
+          }
+        },
+        "authorizing_integration_owners": {
+          "0": "1273323395655794688"
+        },
+        "name": "pack save",
+        "command_type": 1
+      }
+    }
+  },
+  {
+    "type": 20,
+    "content": "Interaction timed out.\nPlease run the command again.",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2025-11-08T11:59:05.931000+00:00",
+    "edited_timestamp": "2025-11-08T11:59:59.883000+00:00",
+    "flags": 0,
+    "components": [],
+    "id": "1436686466389377084",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "interaction": {
+      "id": "1436686464766312589",
+      "type": 2,
+      "name": "pack save",
+      "user": {
+        "id": "619956172694224957",
+        "username": "izamu.phx",
+        "avatar": "1b51070dfea03f6ba11747465c58e722",
+        "discriminator": "0",
+        "public_flags": 128,
+        "flags": 128,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "I Love Sinestrea",
+        "avatar_decoration_data": {
+          "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+          "sku_id": "1427463138634109027",
+          "expires_at": null
+        },
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        }
+      }
+    },
+    "webhook_id": "559426966151757824",
+    "interaction_metadata": {
+      "id": "1436686464766312589",
+      "type": 2,
+      "user": {
+        "id": "619956172694224957",
+        "username": "izamu.phx",
+        "avatar": "1b51070dfea03f6ba11747465c58e722",
+        "discriminator": "0",
+        "public_flags": 128,
+        "flags": 128,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "I Love Sinestrea",
+        "avatar_decoration_data": {
+          "asset": "a_f824f7f3d04732ce5e2ff0f3f05d1937",
+          "sku_id": "1427463138634109027",
+          "expires_at": null
+        },
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1164979454557290546",
+          "identity_enabled": true,
+          "tag": "FC",
+          "badge": "a3290d71cdc373a5f63598746c8f1476"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "name": "pack save",
+      "command_type": 1
+    }
+  },
+  {
+    "type": 0,
+    "content": "<:beluga:1273559242456174605><:catsus:1273559237993168947><:crythumbsup:1273554950886002768><:detectivpepe:1273554151887867966><:jebacie_ostro:1273552496102735974><:peepowait:1273559240132530266><:whatthehell:1273554952891011112><a:rainbowfire:1273554324424888445><a:alert:1273559226551373846><a:alert2:1273559222495215616><a:pepemoney:1273559235715661844>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:32:21.419000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273559898575081485",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1273554431455006720",
+      "username": "ԅ(¯﹃¯ԅ)",
+      "avatar": "6fd08f9d3e898e6210e4ee9dfe505b96",
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "global_name": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "1273554431455006720"
+  },
+  {
+    "type": 0,
+    "content": "<:jebacie_ostro:1273552496102735974><:31331detectivpepe:1273554151887867966>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:13:07.277000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273555057752805386",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "602819576551440393",
+      "username": "_chaiphat_t_",
+      "avatar": "55f1d89b14924635593f7908cc4e0f29",
+      "discriminator": "0",
+      "public_flags": 1048640,
+      "flags": 1048640,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "fuck you bitch",
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1106744790655176707",
+        "identity_enabled": true,
+        "tag": "ᓚᘏᗢ",
+        "badge": "d9896f71574f8746208d822f2520abd6"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1106744790655176707",
+        "identity_enabled": true,
+        "tag": "ᓚᘏᗢ",
+        "badge": "d9896f71574f8746208d822f2520abd6"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "<:crythumbsup:1273554950886002768><:whatthehell:1273554952891011112>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:13:04.467000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273555045966807060",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "602819576551440393",
+      "username": "_chaiphat_t_",
+      "avatar": "55f1d89b14924635593f7908cc4e0f29",
+      "discriminator": "0",
+      "public_flags": 1048640,
+      "flags": 1048640,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "fuck you bitch",
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1106744790655176707",
+        "identity_enabled": true,
+        "tag": "ᓚᘏᗢ",
+        "badge": "d9896f71574f8746208d822f2520abd6"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1106744790655176707",
+        "identity_enabled": true,
+        "tag": "ᓚᘏᗢ",
+        "badge": "d9896f71574f8746208d822f2520abd6"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "<a:rainbowfire:1273554324424888445>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:10:39.946000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273554439801929749",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1273554431455006720",
+      "username": "ԅ(¯﹃¯ԅ)",
+      "avatar": "6fd08f9d3e898e6210e4ee9dfe505b96",
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "global_name": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "1273554431455006720"
+  },
+  {
+    "type": 0,
+    "content": "<a:rainbowfire:1273554324424888445>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:10:39.307000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273554437121507388",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1273554431455006720",
+      "username": "ԅ(¯﹃¯ԅ)",
+      "avatar": "6fd08f9d3e898e6210e4ee9dfe505b96",
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "global_name": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "1273554431455006720"
+  },
+  {
+    "type": 0,
+    "content": "<a:rainbowfire:1273554324424888445>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:10:38.942000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273554435590852628",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1273554431455006720",
+      "username": "ԅ(¯﹃¯ԅ)",
+      "avatar": "6fd08f9d3e898e6210e4ee9dfe505b96",
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "global_name": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "1273554431455006720"
+  },
+  {
+    "type": 0,
+    "content": "<:jebacie_ostro:1273552496102735974><:31331detectivpepe:1273554151887867966>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:09:42.230000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273554197723222027",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "602819576551440393",
+      "username": "_chaiphat_t_",
+      "avatar": "55f1d89b14924635593f7908cc4e0f29",
+      "discriminator": "0",
+      "public_flags": 1048640,
+      "flags": 1048640,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "fuck you bitch",
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": {
+        "identity_guild_id": "1106744790655176707",
+        "identity_enabled": true,
+        "tag": "ᓚᘏᗢ",
+        "badge": "d9896f71574f8746208d822f2520abd6"
+      },
+      "primary_guild": {
+        "identity_guild_id": "1106744790655176707",
+        "identity_enabled": true,
+        "tag": "ᓚᘏᗢ",
+        "badge": "d9896f71574f8746208d822f2520abd6"
+      }
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 19,
+    "content": "_chaiphat_t_ uploaded <a:leftleft:1273552518261248020>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:03:02.171000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273552519754158111",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "559426966151757824",
+    "message_reference": {
+      "type": 0,
+      "channel_id": "1273326546936922202",
+      "message_id": "1273552423549407253",
+      "guild_id": "1273323395655794688"
+    },
+    "interaction_metadata": {
+      "id": "1273552515899854901",
+      "type": 3,
+      "user": {
+        "id": "602819576551440393",
+        "username": "_chaiphat_t_",
+        "avatar": "55f1d89b14924635593f7908cc4e0f29",
+        "discriminator": "0",
+        "public_flags": 1048640,
+        "flags": 1048640,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "fuck you bitch",
+        "avatar_decoration_data": null,
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1106744790655176707",
+          "identity_enabled": true,
+          "tag": "ᓚᘏᗢ",
+          "badge": "d9896f71574f8746208d822f2520abd6"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1106744790655176707",
+          "identity_enabled": true,
+          "tag": "ᓚᘏᗢ",
+          "badge": "d9896f71574f8746208d822f2520abd6"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "interacted_message_id": "1273552423549407253"
+    },
+    "referenced_message": null
+  },
+  {
+    "type": 19,
+    "content": "_chaiphat_t_ uploaded <:jebacie_ostro:1273552496102735974>",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-15T08:02:56.856000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273552497461563445",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "559426966151757824",
+      "username": "NQN",
+      "avatar": "c7c54eb85e591ced4c2f0864b7ea4e3e",
+      "discriminator": "3454",
+      "public_flags": 65536,
+      "flags": 65536,
+      "bot": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": null,
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false,
+    "application_id": "559426966151757824",
+    "webhook_id": "559426966151757824",
+    "message_reference": {
+      "type": 0,
+      "channel_id": "1273326546936922202",
+      "message_id": "1273552423549407253",
+      "guild_id": "1273323395655794688"
+    },
+    "interaction_metadata": {
+      "id": "1273552494479413304",
+      "type": 3,
+      "user": {
+        "id": "602819576551440393",
+        "username": "_chaiphat_t_",
+        "avatar": "55f1d89b14924635593f7908cc4e0f29",
+        "discriminator": "0",
+        "public_flags": 1048640,
+        "flags": 1048640,
+        "banner": null,
+        "accent_color": null,
+        "global_name": "fuck you bitch",
+        "avatar_decoration_data": null,
+        "collectibles": null,
+        "display_name_styles": null,
+        "banner_color": null,
+        "clan": {
+          "identity_guild_id": "1106744790655176707",
+          "identity_enabled": true,
+          "tag": "ᓚᘏᗢ",
+          "badge": "d9896f71574f8746208d822f2520abd6"
+        },
+        "primary_guild": {
+          "identity_guild_id": "1106744790655176707",
+          "identity_enabled": true,
+          "tag": "ᓚᘏᗢ",
+          "badge": "d9896f71574f8746208d822f2520abd6"
+        }
+      },
+      "authorizing_integration_owners": {
+        "0": "1273323395655794688"
+      },
+      "interacted_message_id": "1273552423549407253"
+    },
+    "referenced_message": null
+  },
+  {
+    "type": 24,
+    "content": "",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [
+      {
+        "type": "auto_moderation_notification",
+        "fields": [
+          {
+            "name": "notification_type",
+            "value": "activity_alerts_enabled",
+            "inline": false
+          },
+          {
+            "name": "action_by_user_id",
+            "value": "840303655231029248",
+            "inline": false
+          }
+        ],
+        "content_scan_version": 0
+      }
+    ],
+    "timestamp": "2024-08-14T17:05:27.712000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273326637781487698",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1008776202191634432",
+      "username": "automod",
+      "avatar": null,
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "system": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "Automod",
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 0,
+    "content": "This channel has been set up to receive official Discord announcements for admins and moderators of Community servers. We'll let you know about important updates, such as new moderation features or changes to your server's eligibility for Server Discovery, here.\n\nYou can change which channel these messages are sent to at any time inside Server Settings. We recommend choosing your staff channel, as some information may be sensitive to your server.\n\nThanks for choosing Discord as the place to build your community!",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [],
+    "timestamp": "2024-08-14T17:05:27.435000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273326636619796540",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "669627189624307712",
+      "username": "Community Updates",
+      "avatar": "a0389d52d24fdef878aca87e8d52cc2a",
+      "discriminator": "0001",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "system": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "Community Updates",
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  },
+  {
+    "type": 24,
+    "content": "",
+    "mentions": [],
+    "mention_roles": [],
+    "attachments": [],
+    "embeds": [
+      {
+        "type": "auto_moderation_notification",
+        "fields": [
+          {
+            "name": "notification_type",
+            "value": "activity_alerts_enabled",
+            "inline": false
+          },
+          {
+            "name": "action_by_user_id",
+            "value": "840303655231029248",
+            "inline": false
+          }
+        ],
+        "content_scan_version": 0
+      }
+    ],
+    "timestamp": "2024-08-14T17:05:27.310000+00:00",
+    "edited_timestamp": null,
+    "flags": 0,
+    "components": [],
+    "id": "1273326636095246347",
+    "channel_id": "1273326546936922202",
+    "author": {
+      "id": "1008776202191634432",
+      "username": "automod",
+      "avatar": null,
+      "discriminator": "0000",
+      "public_flags": 0,
+      "flags": 0,
+      "bot": true,
+      "system": true,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "Automod",
+      "avatar_decoration_data": null,
+      "collectibles": null,
+      "display_name_styles": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "pinned": false,
+    "mention_everyone": false,
+    "tts": false
+  }
+]

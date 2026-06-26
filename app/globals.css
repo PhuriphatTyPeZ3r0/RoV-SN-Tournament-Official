@@ -1,0 +1,693 @@
+@import "tailwindcss";
+
+/* Default Theme: Echo */
+:root, [data-theme="echo"] {
+  --theme-primary: #15C8FF;
+  --theme-primary-rgb: 21, 200, 255;
+  --theme-secondary: #E8F7FF;
+  --theme-secondary-rgb: 232, 247, 255;
+  --theme-bg-deep: #0a1628;
+  --theme-bg-surface: #0f1f35;
+  --theme-primary-light: #4dd9ff;
+  --theme-primary-dark: #0099cc;
+}
+
+/* Arena Theme: Crimson Fire */
+[data-theme="arena"] {
+  --theme-primary: #FF2E2E;
+  --theme-primary-rgb: 255, 46, 46;
+  --theme-secondary: #FFE5E5;
+  --theme-secondary-rgb: 255, 229, 229;
+  --theme-bg-deep: #160606;
+  --theme-bg-surface: #260f0f;
+  --theme-primary-light: #ff6666;
+  --theme-primary-dark: #b30000;
+}
+
+/* Cyberpunk Theme: Cyan-Pink (สีฟ้าชมพู) */
+[data-theme="cyberpunk"] {
+  --theme-primary: #FF007F; /* Neon Pink */
+  --theme-primary-rgb: 255, 0, 127;
+  --theme-secondary: #FFE5F2;
+  --theme-secondary-rgb: 255, 229, 242;
+  --theme-bg-deep: #001219;
+  --theme-bg-surface: #002233;
+  --theme-primary-light: #ff4da6;
+  --theme-primary-dark: #cc0066;
+}
+
+/* Void Theme: Abyssal Purple */
+[data-theme="void"] {
+  --theme-primary: #A855F7;
+  --theme-primary-rgb: 168, 85, 247;
+  --theme-secondary: #F3E8FF;
+  --theme-secondary-rgb: 243, 232, 255;
+  --theme-bg-deep: #0B0314;
+  --theme-bg-surface: #150926;
+  --theme-primary-light: #c084fc;
+  --theme-primary-dark: #7e22ce;
+}
+
+@theme {
+  /* Primary Colors mapped to CSS Variables */
+  --color-cyan-aura: var(--theme-primary);
+  --color-echo-white: var(--theme-secondary);
+
+  /* Background Colors (For Headers/Dark Sections) */
+  --color-deep-space: var(--theme-bg-deep);
+  --color-uefa-dark: var(--theme-bg-surface);
+
+  /* Accent Colors */
+  --color-cyan-light: var(--theme-primary-light);
+  --color-cyan-dark: var(--theme-primary-dark);
+
+  /* Fonts */
+  --font-family-sans: var(--font-prompt), sans-serif;
+  --font-family-display: var(--font-prompt), sans-serif;
+}
+
+/* --- GLOBAL STYLES --- */
+body {
+  background-color: #ffffff;
+  color: #1e293b;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  font-family: var(--font-prompt), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-prompt), sans-serif;
+}
+
+/* Selection highlight */
+::selection {
+  background-color: var(--theme-primary);
+  color: var(--theme-bg-deep);
+}
+
+/* --- NAVBAR --- */
+.navbar-custom {
+  background: linear-gradient(180deg, var(--theme-bg-surface) 0%, var(--theme-bg-deep) 100%);
+  border-bottom: 3px solid var(--theme-primary);
+  box-shadow: 0 4px 20px rgba(var(--theme-primary-rgb), 0.15);
+}
+
+.nav-link {
+  color: var(--theme-secondary);
+  font-family: var(--font-prompt), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.3s;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, var(--theme-primary), var(--theme-primary-light));
+  transition: width 0.3s;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: var(--theme-primary);
+}
+
+.nav-link.active {
+  color: var(--theme-primary);
+  text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5);
+}
+
+/* --- BUTTONS --- */
+.btn-primary {
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+  color: var(--theme-bg-deep);
+  font-weight: bold;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(var(--theme-primary-rgb), 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--theme-primary-light) 0%, var(--theme-primary) 100%);
+  box-shadow: 0 6px 25px rgba(var(--theme-primary-rgb), 0.5);
+  transform: translateY(-2px);
+}
+
+/* --- CARDS --- */
+.card-echo {
+  background: linear-gradient(135deg, rgba(var(--theme-secondary-rgb), 0.05) 0%, rgba(var(--theme-primary-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--theme-primary-rgb), 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.card-echo:hover {
+  border-color: rgba(var(--theme-primary-rgb), 0.4);
+  box-shadow: 0 0 30px rgba(var(--theme-primary-rgb), 0.15);
+}
+
+/* --- TABLES --- */
+.uefa-table th {
+  background: linear-gradient(180deg, #f8fafc 0%, var(--theme-secondary) 100%);
+  color: var(--theme-bg-surface);
+  font-family: var(--font-prompt), sans-serif;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--theme-primary);
+}
+
+.uefa-table tr {
+  border-bottom: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.uefa-table tr:hover {
+  background: linear-gradient(90deg, var(--theme-secondary) 0%, rgba(var(--theme-primary-rgb), 0.1) 100%);
+}
+
+/* Qualification zone highlight */
+.uefa-table tr.qualification-zone {
+  background: linear-gradient(90deg, rgba(var(--theme-primary-rgb), 0.1) 0%, transparent 100%);
+  border-left: 4px solid var(--theme-primary);
+}
+
+/* --- SKELETON LOADING --- */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, var(--theme-secondary) 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+/* --- ERROR STATES --- */
+.error-container {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+}
+
+/* --- RULE CARDS --- */
+.rule-card {
+  border-left: 5px solid var(--theme-primary);
+  background: linear-gradient(90deg, var(--theme-secondary) 0%, white 100%);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(var(--theme-primary-rgb), 0.1);
+  transition: all 0.3s;
+}
+
+.rule-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 20px rgba(var(--theme-primary-rgb), 0.2);
+}
+
+/* --- CAROUSEL --- */
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+}
+
+/* --- GLOW EFFECTS --- */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(var(--theme-primary-rgb), 0.4);
+}
+
+.glow-cyan-strong {
+  box-shadow: 0 0 40px rgba(var(--theme-primary-rgb), 0.6);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(var(--theme-primary-rgb), 0.5);
+}
+
+/* --- GRADIENT BACKGROUNDS --- */
+.bg-echo-gradient {
+  background: linear-gradient(135deg, var(--theme-bg-deep) 0%, var(--theme-bg-surface) 50%, var(--theme-bg-deep) 100%);
+}
+
+.bg-echo-gradient-light {
+  background: linear-gradient(135deg, var(--theme-secondary) 0%, #ffffff 50%, var(--theme-secondary) 100%);
+}
+
+/* --- BORDERS --- */
+.border-echo {
+  border-color: rgba(var(--theme-primary-rgb), 0.3);
+}
+
+.border-echo-strong {
+  border-color: var(--theme-primary);
+}
+
+/* --- ANIMATIONS --- */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(var(--theme-primary-rgb), 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(var(--theme-primary-rgb), 0.6);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-zoom-in {
+  animation: zoom-in 0.3s ease-out;
+}
+
+/* Prevent body scroll when menu is open */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* --- SCROLLBAR STYLING (Light Theme) --- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--theme-primary), var(--theme-primary-dark));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-primary-light);
+}
+
+/* ================================================
+   📱 MOBILE RESPONSIVE ADJUSTMENTS
+   ================================================ */
+
+/* Tablets and below */
+@media (max-width: 1024px) {
+
+  .uefa-table th,
+  .uefa-table td {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.4rem;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+
+  /* Typography scaling */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.1rem !important;
+  }
+
+  h4 {
+    font-size: 1rem !important;
+  }
+
+  /* Body text */
+  body {
+    font-size: 14px;
+  }
+
+  /* Tables - compact mode */
+  .uefa-table th,
+  .uefa-table td {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.25rem;
+    white-space: nowrap;
+  }
+
+  .uefa-table th:first-child,
+  .uefa-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 1;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+
+  /* Cards */
+  .rule-card {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Navbar adjustments */
+  .nav-link {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.25rem !important;
+  }
+
+  h2 {
+    font-size: 1.1rem !important;
+  }
+
+  h3 {
+    font-size: 1rem !important;
+  }
+
+  body {
+    font-size: 13px;
+  }
+
+  .uefa-table th,
+  .uefa-table td {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.2rem;
+  }
+
+  /* Hide less important columns on very small screens */
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* ================================================
+   🎛️ ADMIN PANEL RESPONSIVE STYLES
+   ================================================ */
+
+/* iPad / Tablet Portrait */
+@media (max-width: 1024px) and (min-width: 769px) {
+
+  /* Admin cards grid */
+  .admin-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Admin form layout */
+  .admin-form-row {
+    flex-direction: column;
+  }
+
+  .admin-form-row>div {
+    width: 100%;
+  }
+}
+
+/* Mobile Admin Styles */
+@media (max-width: 768px) {
+
+  /* Admin cards - single column */
+  .admin-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  /* Admin tables */
+  .admin-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 600px;
+  }
+
+  /* Admin form inputs */
+  .admin-input {
+    font-size: 16px !important;
+    /* Prevent zoom on iOS */
+    padding: 0.75rem !important;
+  }
+
+  /* Admin buttons - full width on mobile */
+  .admin-btn-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .admin-btn-row button {
+    width: 100%;
+  }
+
+  /* Admin select dropdowns */
+  .admin-select {
+    font-size: 16px !important;
+    padding: 0.75rem !important;
+  }
+
+  /* Admin modal - full screen on mobile */
+  .admin-modal {
+    width: 95vw !important;
+    max-width: none !important;
+    margin: 0.5rem !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  /* Admin logo upload area */
+  .admin-upload-area {
+    padding: 1.5rem !important;
+  }
+
+  /* Team logo grid - more compact */
+  .team-logo-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem;
+  }
+}
+
+/* Small Mobile Admin */
+@media (max-width: 480px) {
+
+  /* Even more compact grid */
+  .team-logo-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem;
+  }
+
+  /* Smaller team logo cards */
+  .team-logo-card {
+    padding: 0.5rem !important;
+  }
+
+  .team-logo-card img,
+  .team-logo-card .logo-placeholder {
+    width: 3rem !important;
+    height: 3rem !important;
+  }
+
+  /* Admin stats cards */
+  .admin-stat-card {
+    padding: 0.75rem !important;
+  }
+
+  .admin-stat-card h3 {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Prompt Font Custom Utilities */
+.prompt-thin {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.prompt-extralight {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.prompt-light {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.prompt-regular {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.prompt-medium {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.prompt-semibold {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.prompt-bold {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.prompt-extrabold {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.prompt-black {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.prompt-thin-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.prompt-extralight-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.prompt-light-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.prompt-regular-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.prompt-medium-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.prompt-semibold-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.prompt-bold-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.prompt-extrabold-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.prompt-black-italic {
+  font-family: var(--font-prompt), sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}

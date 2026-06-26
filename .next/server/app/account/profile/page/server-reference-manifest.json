@@ -1,0 +1,20 @@
+{
+  "node": {
+    "400d411d7d7d87b6e6cfaf5757135bc053c3658dbe": {
+      "workers": {
+        "app/account/profile/page": {
+          "moduleId": 74851,
+          "async": false,
+          "exportedName": "updateProfileAction",
+          "filename": "features/auth/profile-actions.ts"
+        }
+      },
+      "layer": {
+        "app/account/profile/page": "action-browser"
+      },
+      "exportedName": "updateProfileAction",
+      "filename": "features/auth/profile-actions.ts"
+    }
+  },
+  "edge": {}
+}

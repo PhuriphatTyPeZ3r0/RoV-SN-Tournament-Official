@@ -1,0 +1,65 @@
+{
+  "node": {
+    "0086f2ca8c8dcc04e668a5e2938b2cdaf9dbf00176": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/analytics/dashboard-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getAdminDashboardKPIsAction",
+          "filename": "features/analytics/dashboard-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "exportedName": "getAdminDashboardKPIsAction",
+      "filename": "features/analytics/dashboard-actions.ts"
+    },
+    "40e6e8655afdc09c9c58551844152497ca34ff2cb2": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/analytics/dashboard-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getRecentActivityAction",
+          "filename": "features/analytics/dashboard-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "exportedName": "getRecentActivityAction",
+      "filename": "features/analytics/dashboard-actions.ts"
+    },
+    "00ae9b2741cebcd3f4730e33812b4b515cedc2ed32": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/analytics/dashboard-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getDashboardTopPerformersAction",
+          "filename": "features/analytics/dashboard-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "exportedName": "getDashboardTopPerformersAction",
+      "filename": "features/analytics/dashboard-actions.ts"
+    },
+    "00922306ddf08e9258f6c8114646d4cb8269d509d3": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/analytics/dashboard-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getDashboardToDosAction",
+          "filename": "features/analytics/dashboard-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "exportedName": "getDashboardToDosAction",
+      "filename": "features/analytics/dashboard-actions.ts"
+    }
+  },
+  "edge": {}
+}

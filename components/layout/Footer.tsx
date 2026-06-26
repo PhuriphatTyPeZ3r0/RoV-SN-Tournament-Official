@@ -1,0 +1,89 @@
+'use client';
+
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useLanguage } from '@/components/providers/LanguageProvider';
+
+export default function Footer() {
+    const { t } = useLanguage();
+    const [currentYear, setCurrentYear] = useState(2026); // Static for SSR
+
+    useEffect(() => {
+        setCurrentYear(new Date().getFullYear());
+    }, []);
+
+    return (
+        <footer className="bg-uefa-dark text-gray-400 py-12 mt-auto">
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Brand */}
+                    <div>
+                        <h3 className="text-white font-display text-xl font-bold mb-4">
+                            RoV SN <span className="text-cyan-aura">TOURNAMENT</span>
+                        </h3>
+                        <p className="text-sm leading-relaxed">
+                            {t.common.footerDesc}
+                        </p>
+                    </div>
+
+                    {/* Quick Links */}
+                    <div>
+                        <h4 className="text-white font-display text-lg font-bold mb-4">Quick Links</h4>
+                        <ul className="space-y-2 text-sm">
+                            <li>
+                                <Link href="/" className="hover:text-cyan-aura transition-colors">
+                                    {t.nav.home}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/fixtures" className="hover:text-cyan-aura transition-colors">
+                                    {t.nav.fixtures}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/standings" className="hover:text-cyan-aura transition-colors">
+                                    {t.nav.standings}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/stats" className="hover:text-cyan-aura transition-colors">
+                                    {t.nav.stats}
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Social */}
+                    <div>
+                        <h4 className="text-white font-display text-lg font-bold mb-4">Follow Us</h4>
+                        <div className="flex gap-4">
+                            <a
+                                href="https://www.facebook.com/groups/663933613696478/user/61573326877157"
+                                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all"
+                            >
+                                <i className="fab fa-facebook-f"></i>
+                            </a>
+                            <a
+                                href="https://www.instagram.com/sapa_sn?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-pink-500 hover:text-white transition-all"
+                            >
+                                <i className="fab fa-instagram"></i>
+                            </a>
+                            <a
+                                href="https://discord.gg/Atcmc6kmYY"
+                                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-pink-500 hover:text-white transition-all"
+                            >
+                                <i className="fab fa-discord"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Copyright */}
+                <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm">
+                    <p>© {currentYear} RoV SN Tournament. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    );
+}

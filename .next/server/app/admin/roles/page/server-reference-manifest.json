@@ -1,0 +1,35 @@
+{
+  "node": {
+    "00a8ea7a29ffc65f613f86c78f85087a3050e5aa05": {
+      "workers": {
+        "app/admin/roles/page": {
+          "moduleId": 98303,
+          "async": false,
+          "exportedName": "getAllUsersWithRolesAction",
+          "filename": "features/analytics/dashboard-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/roles/page": "action-browser"
+      },
+      "exportedName": "getAllUsersWithRolesAction",
+      "filename": "features/analytics/dashboard-actions.ts"
+    },
+    "6046b875281eefaa1145a1ba1bbb2502d580f8b20e": {
+      "workers": {
+        "app/admin/roles/page": {
+          "moduleId": 98303,
+          "async": false,
+          "exportedName": "updateUserRoleAction",
+          "filename": "features/analytics/dashboard-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/roles/page": "action-browser"
+      },
+      "exportedName": "updateUserRoleAction",
+      "filename": "features/analytics/dashboard-actions.ts"
+    }
+  },
+  "edge": {}
+}

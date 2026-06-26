@@ -1,0 +1,35 @@
+{
+  "node": {
+    "0002502eeb1352edcdb027bc5779d770a68f9929d6": {
+      "workers": {
+        "app/admin/registrations/page": {
+          "moduleId": 35206,
+          "async": false,
+          "exportedName": "getPendingRegistrations",
+          "filename": "features/auth/student-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/registrations/page": "action-browser"
+      },
+      "exportedName": "getPendingRegistrations",
+      "filename": "features/auth/student-actions.ts"
+    },
+    "707e311a5b07a3808caadf69098987d460d5f787ca": {
+      "workers": {
+        "app/admin/registrations/page": {
+          "moduleId": 35206,
+          "async": false,
+          "exportedName": "updateRegistrationStatus",
+          "filename": "features/auth/student-actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/registrations/page": "action-browser"
+      },
+      "exportedName": "updateRegistrationStatus",
+      "filename": "features/auth/student-actions.ts"
+    }
+  },
+  "edge": {}
+}

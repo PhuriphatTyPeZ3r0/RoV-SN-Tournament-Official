@@ -1,0 +1,3 @@
+module.exports=[2022,a=>{"use strict";var b=a.i(87924),c=a.i(71987),d=a.i(72131);let e={sm:"w-6 h-6",md:"w-8 h-8",lg:"w-10 h-10",xl:"w-16 h-16",xxl:"w-24 h-24"},f={sm:24,md:32,lg:40,xl:64,xxl:96};function g({teamName:a,logoUrl:g,size:h="md"}){let[i,j]=(0,d.useState)(!1),k=e[h]||e.md,l=f[h]||f.md;return!g||i?(0,b.jsx)("div",{className:`${k} bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0`,children:(0,b.jsx)("i",{className:"fas fa-shield-alt text-gray-400"})}):(0,b.jsx)("div",{className:`${k} relative flex-shrink-0`,children:(0,b.jsx)(c.default,{src:g,alt:a,width:l,height:l,className:"object-contain",onError:()=>j(!0),unoptimized:!0})})}a.s(["default",()=>g])}];
+
+//# sourceMappingURL=components_common_TeamLogo_tsx_24a964a3._.js.map

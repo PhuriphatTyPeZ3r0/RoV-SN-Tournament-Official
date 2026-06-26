@@ -1,0 +1,35 @@
+{
+  "node": {
+    "00957d232de174bd3f9b91ab8dc0c65dd219969aa1": {
+      "workers": {
+        "app/admin/teams/page": {
+          "moduleId": 92209,
+          "async": false,
+          "exportedName": "getAllTeamsAction",
+          "filename": "features/teams/actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/teams/page": "action-browser"
+      },
+      "exportedName": "getAllTeamsAction",
+      "filename": "features/teams/actions.ts"
+    },
+    "60ffa6fa32f659c70b35ff9a0ff0802048f3cfb478": {
+      "workers": {
+        "app/admin/teams/page": {
+          "moduleId": 92209,
+          "async": false,
+          "exportedName": "updateTeamStatusAction",
+          "filename": "features/teams/actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/teams/page": "action-browser"
+      },
+      "exportedName": "updateTeamStatusAction",
+      "filename": "features/teams/actions.ts"
+    }
+  },
+  "edge": {}
+}

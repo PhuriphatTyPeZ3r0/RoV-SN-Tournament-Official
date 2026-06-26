@@ -1,0 +1,315 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/:path*",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.supabase.co https://flagcdn.com https://res.cloudinary.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
+        }
+      ],
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    }
+  ],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/account/profile",
+      "regex": "^/account/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/profile(?:/)?$"
+    },
+    {
+      "page": "/account/settings",
+      "regex": "^/account/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/account/settings(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/draw",
+      "regex": "^/admin/draw(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/draw(?:/)?$"
+    },
+    {
+      "page": "/admin/game-stats",
+      "regex": "^/admin/game\\-stats(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/game\\-stats(?:/)?$"
+    },
+    {
+      "page": "/admin/heroes",
+      "regex": "^/admin/heroes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/heroes(?:/)?$"
+    },
+    {
+      "page": "/admin/history",
+      "regex": "^/admin/history(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/history(?:/)?$"
+    },
+    {
+      "page": "/admin/login",
+      "regex": "^/admin/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/login(?:/)?$"
+    },
+    {
+      "page": "/admin/logos",
+      "regex": "^/admin/logos(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/logos(?:/)?$"
+    },
+    {
+      "page": "/admin/players",
+      "regex": "^/admin/players(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/players(?:/)?$"
+    },
+    {
+      "page": "/admin/registrations",
+      "regex": "^/admin/registrations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/registrations(?:/)?$"
+    },
+    {
+      "page": "/admin/result-history",
+      "regex": "^/admin/result\\-history(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/result\\-history(?:/)?$"
+    },
+    {
+      "page": "/admin/results",
+      "regex": "^/admin/results(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/results(?:/)?$"
+    },
+    {
+      "page": "/admin/roles",
+      "regex": "^/admin/roles(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/roles(?:/)?$"
+    },
+    {
+      "page": "/admin/schedule",
+      "regex": "^/admin/schedule(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/schedule(?:/)?$"
+    },
+    {
+      "page": "/admin/teams",
+      "regex": "^/admin/teams(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/teams(?:/)?$"
+    },
+    {
+      "page": "/admin/themes",
+      "regex": "^/admin/themes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/themes(?:/)?$"
+    },
+    {
+      "page": "/auth/callback",
+      "regex": "^/auth/callback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/callback(?:/)?$"
+    },
+    {
+      "page": "/auth/change-password",
+      "regex": "^/auth/change\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/change\\-password(?:/)?$"
+    },
+    {
+      "page": "/auth/verify-otp",
+      "regex": "^/auth/verify\\-otp(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/auth/verify\\-otp(?:/)?$"
+    },
+    {
+      "page": "/brackets",
+      "regex": "^/brackets(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/brackets(?:/)?$"
+    },
+    {
+      "page": "/clubs",
+      "regex": "^/clubs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/clubs(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/fixtures",
+      "regex": "^/fixtures(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/fixtures(?:/)?$"
+    },
+    {
+      "page": "/format",
+      "regex": "^/format(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/format(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
+    },
+    {
+      "page": "/register/onboarding",
+      "regex": "^/register/onboarding(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register/onboarding(?:/)?$"
+    },
+    {
+      "page": "/registration-status",
+      "regex": "^/registration\\-status(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/registration\\-status(?:/)?$"
+    },
+    {
+      "page": "/standings",
+      "regex": "^/standings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/standings(?:/)?$"
+    },
+    {
+      "page": "/stats",
+      "regex": "^/stats(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/stats(?:/)?$"
+    },
+    {
+      "page": "/stats/player",
+      "regex": "^/stats/player(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/stats/player(?:/)?$"
+    },
+    {
+      "page": "/stats/team",
+      "regex": "^/stats/team(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/stats/team(?:/)?$"
+    },
+    {
+      "page": "/student-info",
+      "regex": "^/student\\-info(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/student\\-info(?:/)?$"
+    },
+    {
+      "page": "/team",
+      "regex": "^/team(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/team(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

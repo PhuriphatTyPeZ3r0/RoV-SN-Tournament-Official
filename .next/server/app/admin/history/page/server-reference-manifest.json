@@ -1,0 +1,20 @@
+{
+  "node": {
+    "40993b1f0182cae3fe6c3d1fd210e55951b6d9c757": {
+      "workers": {
+        "app/admin/history/page": {
+          "moduleId": 2143,
+          "async": false,
+          "exportedName": "getResultHistoryAction",
+          "filename": "features/tournament/actions.ts"
+        }
+      },
+      "layer": {
+        "app/admin/history/page": "action-browser"
+      },
+      "exportedName": "getResultHistoryAction",
+      "filename": "features/tournament/actions.ts"
+    }
+  },
+  "edge": {}
+}
