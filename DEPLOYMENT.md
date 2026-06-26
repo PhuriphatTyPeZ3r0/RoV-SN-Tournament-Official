@@ -13,6 +13,7 @@
 5. [การจัดการหลัง Deploy](#5-การจัดการหลัง-deploy)
 6. [Troubleshooting](#6-troubleshooting)
 7. [ค่าใช้จ่าย](#7-ค่าใช้จ่าย)
+8. [การจัดการสาขาและสภาพแวดล้อม (Branches & Environments)](#8-การจัดการสาขาและสภาพแวดล้อม-branches--environments)
 
 ---
 
@@ -307,6 +308,43 @@ git push origin main
 | Bandwidth เกิน 100GB | Vercel Pro ($20/เดือน) |
 | Database เกิน 500MB | Supabase Pro ($25/เดือน) |
 | ต้องการ Daily Backup มากกว่า 7 วัน | Supabase Pro |
+
+---
+
+## 8. การจัดการสาขาและสภาพแวดล้อม (Branches & Environments)
+
+ระบบใช้โครงสร้างการแยกสภาพแวดล้อมแบบ 3 ระดับ เพื่อความปลอดภัยของข้อมูลและการทดสอบที่เสถียร:
+
+### 8.1 ตารางการแมปสาขาและสภาพแวดล้อม (Mapping Matrix)
+
+| สภาพแวดล้อม (Environment) | Git Branch | Vercel Deployment | Supabase Project | สิทธิ์การเข้าถึง |
+|---|---|---|---|---|
+| **Development (DEV)** | `dev` | Preview (ผูกกับ branch `dev`) | `rov-sn-dev` | นักพัฒนาเท่านั้น (Dev Team) |
+| **User Acceptance (UAT)** | `uat` | Preview (ผูกกับ branch `uat`) | `rov-sn-uat` | ทีมทดสอบ, สตาฟ และผู้ตรวจรับงาน |
+| **Production (PROD)** | `main` | Production (ค่าเริ่มต้น) | `rov-sn-prod` | ผู้ใช้ทั่วไป, ผู้เล่น, แอดมินหลัก |
+
+### 8.2 ลำดับขั้นการส่งมอบงาน (Git Flow & Promotion)
+การเปลี่ยนโค้ดขึ้นระบบต้องทำตามขั้นตอนอย่างเป็นระเบียบผ่าน Pull Request (PR):
+1. **พัฒนาฟีเจอร์:** แตกสาขาจาก `dev` เป็น `feature/your-feature-name`
+2. **ทดสอบระบบ DEV:** เปิด PR เข้าหา `dev` → Vercel จะ build ทดสอบบนระบบ dev-project อัตโนมัติ
+3. **ทดสอบระบบ UAT:** เปิด PR จาก `dev` เข้าหา `uat` (ห้าม push ตรงเข้า uat) → เมื่อ merge แล้ว จะขึ้น uat-project เพื่อเริ่มกระบวนการตรวจรับ
+4. **ขึ้น Production:** เมื่อ UAT ได้รับการยอมรับ เปิด PR จาก `uat` เข้าหา `main` → เมื่อ merge แล้ว ระบบจะถูก deploy สู่โปรเจกต์จริง (Production)
+
+> 🔒 **ข้อแนะนำด้านความปลอดภัย:** ควรตั้งค่า Branch Protection Rules บน GitHub สำหรับสาขา `main` และ `uat` เพื่อบล็อกการ Push โค้ดตรงโดยไม่ผ่าน Pull Request และต้องการผลการทดสอบที่ผ่านเท่านั้น
+
+### 8.3 การจัดการ Database Migrations (Supabase CLI)
+เนื่องจากเรามี database 3 ตัวที่เป็นอิสระจากกัน:
+- ในโฟลเดอร์ `supabase/migrations/` จะเก็บไฟล์ migration ทั้งหมดที่รันแบบลำดับขั้น
+- การทดสอบใน local/dev จะรันผ่าน local CLI
+- เมื่อ merge เข้า `uat`: ให้นักพัฒนาทำการ link CLI ไปยัง UAT project แล้วสั่ง `supabase db push`
+- เมื่อ merge เข้า `main`: ให้นักพัฒนาทำการ link CLI ไปยัง Production project แล้วสั่ง `supabase db push`
+
+### 8.4 การตั้งค่า Environment Variables บน Vercel
+ในโปรเจกต์ Vercel ตัวเดียวกัน ให้เพิ่มตัวแปรระบบตามสัดส่วนของแต่ละ Environment:
+- **`NEXT_PUBLIC_SUPABASE_URL`** และ **`NEXT_PUBLIC_SUPABASE_ANON_KEY`**
+  - เลือก Scopes: **Production** (ผูกกับ branch `main`) -> ใช้ของ `rov-sn-prod`
+  - เลือก Scopes: **Preview** (ผูกกับ branch `uat`) -> ใช้ของ `rov-sn-uat`
+  - เลือก Scopes: **Development** (ผูกกับ branch `dev`) -> ใช้ของ `rov-sn-dev`
 
 ---
 
