@@ -76,20 +76,36 @@ export async function completeOnboardingAction(formData: FormData) {
     return { error: 'กรุณาอัปโหลดรูปภาพหลักฐานแสดงตัวตน' };
   }
 
-  // 0. Auto-generate Username if not exists
-  const { data: currentProfile } = await supabase.from('profiles').select('username').eq('id', user.id).single();
-  let username = currentProfile?.username;
+  // 0. Auto-generate Username based on English name
+  const cleanFirst = data.firstNameEn.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  const cleanLast = data.lastNameEn.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  
+  let username = '';
+  let isUnique = false;
+  let lastNameIndex = 1;
+  while (!isUnique && lastNameIndex <= cleanLast.length) {
+    username = `${cleanFirst}.${cleanLast.substring(0, lastNameIndex)}`;
+    const { count } = await supabase
+      .from('profiles')
+      .select('username', { count: 'exact', head: true })
+      .eq('username', username)
+      .neq('id', user.id);
+    if (count === 0) isUnique = true;
+    else lastNameIndex++;
+  }
 
-  if (!username) {
-    let isUnique = false;
-    let lastNameIndex = 1;
-    while (!isUnique && lastNameIndex <= data.lastNameEn.length) {
-      username = `${data.firstNameEn}.${data.lastNameEn.substring(0, lastNameIndex)}`;
-      const { count } = await supabase.from('profiles').select('username', { count: 'exact', head: true }).eq('username', username);
+  if (!isUnique) {
+    let seq = 1;
+    while (!isUnique) {
+      username = `${cleanFirst}.${cleanLast}${seq}`;
+      const { count } = await supabase
+        .from('profiles')
+        .select('username', { count: 'exact', head: true })
+        .eq('username', username)
+        .neq('id', user.id);
       if (count === 0) isUnique = true;
-      else lastNameIndex++;
+      else seq++;
     }
-    if (!isUnique) username = `${data.firstNameEn}.${data.lastNameEn}.${Math.floor(Math.random() * 999)}`;
   }
 
   // Determine status and role based on application type
@@ -244,6 +260,9 @@ export async function sendOTPAction() {
   // 3. Check for Resend API key to send email, or fall back to development mock
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
+    if (process.env.NODE_ENV === 'production') {
+      return { error: 'ระบบส่งอีเมลขัดข้อง: ขออภัยในความไม่สะดวก กรุณาติดต่อผู้ดูแลระบบ (Missing Mail API Key)' };
+    }
     console.log('\n============================================================');
     console.log(`[DEVELOPMENT ONLY] OTP Code for ${user.email}: ${otpCode}`);
     console.log('============================================================\n');
@@ -508,4 +527,157 @@ export async function getPlayerGamingProfile() {
   }
 
   return player;
+}
+
+
+export async function updateStudentRegistrationAction(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'กรุณาเข้าสู่ระบบก่อนดำเนินการ' };
+  }
+
+  // 1. Validate fields
+  const rawData = {
+    firstNameTh: formData.get('firstNameTh'),
+    lastNameTh: formData.get('lastNameTh'),
+    firstNameEn: formData.get('firstNameEn'),
+    lastNameEn: formData.get('lastNameEn'),
+    studentId: formData.get('studentId'),
+    grade: formData.get('grade'),
+    openId: formData.get('openId'),
+    inGameName: formData.get('inGameName'),
+  };
+
+  const validated = onboardingSchema.safeParse(rawData);
+  if (!validated.success) {
+    return { error: validated.error.issues[0].message };
+  }
+
+  const data = validated.data;
+
+  const status = 'pending';
+
+  // Auto-generate/update Username based on English name
+  const cleanFirst = data.firstNameEn.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  const cleanLast = data.lastNameEn.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  
+  let username = '';
+  let isUnique = false;
+  let lastNameIndex = 1;
+  while (!isUnique && lastNameIndex <= cleanLast.length) {
+    username = `${cleanFirst}.${cleanLast.substring(0, lastNameIndex)}`;
+    const { count } = await supabase
+      .from('profiles')
+      .select('username', { count: 'exact', head: true })
+      .eq('username', username)
+      .neq('id', user.id);
+    if (count === 0) isUnique = true;
+    else lastNameIndex++;
+  }
+
+  if (!isUnique) {
+    let seq = 1;
+    while (!isUnique) {
+      username = `${cleanFirst}.${cleanLast}${seq}`;
+      const { count } = await supabase
+        .from('profiles')
+        .select('username', { count: 'exact', head: true })
+        .eq('username', username)
+        .neq('id', user.id);
+      if (count === 0) isUnique = true;
+      else seq++;
+    }
+  }
+
+  // 2. Update public.profiles
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      username,
+      full_name: `${data.firstNameTh} ${data.lastNameTh}`,
+      first_name_th: data.firstNameTh,
+      last_name_th: data.lastNameTh,
+      first_name_en: data.firstNameEn,
+      last_name_en: data.lastNameEn,
+      student_id: data.studentId,
+      class_grade: data.grade,
+      open_id: data.openId,
+      in_game_name: data.inGameName,
+      registration_status: status, // set back to pending
+    })
+    .eq('id', user.id);
+
+  if (error) {
+    return { error: `บันทึกข้อมูลไม่สำเร็จ: ${error.message}` };
+  }
+
+  // 3. Update registrations table
+  const { error: regError } = await supabase
+    .from('registrations')
+    .update({
+      full_name: `${data.firstNameTh} ${data.lastNameTh}`,
+      first_name_th: data.firstNameTh,
+      last_name_th: data.lastNameTh,
+      first_name_en: data.firstNameEn,
+      last_name_en: data.lastNameEn,
+      student_id: data.studentId,
+      grade: data.grade,
+      open_id: data.openId,
+      in_game_name: data.inGameName,
+      status: status,
+    })
+    .eq('user_id', user.id);
+
+  if (regError) {
+    return { error: `Registration request failed: ${regError.message}` };
+  }
+
+  revalidatePath('/student-info');
+  revalidatePath('/', 'layout');
+  return { success: true };
+}
+
+export async function updateAvatarAction(avatarUrl: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'กรุณาเข้าสู่ระบบก่อนดำเนินการ' };
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ avatar_url: avatarUrl })
+    .eq('id', user.id);
+
+  if (error) {
+    return { error: `บันทึกรูปโปรไฟล์ไม่สำเร็จ: ${error.message}` };
+  }
+
+  revalidatePath('/student-info');
+  revalidatePath('/', 'layout');
+  return { success: true };
+}
+
+export async function updateCustomStatusAction(status: string | null) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: 'กรุณาเข้าสู่ระบบก่อนดำเนินการ' };
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ custom_status: status })
+    .eq('id', user.id);
+
+  if (error) {
+    return { error: `บันทึกสถานะไม่สำเร็จ: ${error.message}` };
+  }
+
+  revalidatePath('/student-info');
+  return { success: true };
 }
