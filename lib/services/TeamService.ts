@@ -7,7 +7,7 @@ export class TeamService extends BaseService {
      */
     public static async getTeamLogos(): Promise<Record<string, string>> {
         try {
-            const supabase = await this.getSupabaseClient();
+            const supabase = this.getPublicClient();
             const { data: teamsData, error } = await supabase
                 .from('teams')
                 .select('name, logo_url');
@@ -29,10 +29,13 @@ export class TeamService extends BaseService {
      */
     public static async getClubsPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
+            const supabase = this.getPublicClient();
             
-            // Resolve tournament ID
-            const tournamentId = await this.getActiveTournamentId(season);
+            // Resolve tournament ID & Fetch all tournaments in parallel
+            const [tournamentId, { data: tournaments }] = await Promise.all([
+                this.getActiveTournamentId(season),
+                supabase.from('tournaments').select('*').order('season', { ascending: false })
+            ]);
 
             // Fetch current tournament info
             let currentTournament = null;
@@ -44,12 +47,6 @@ export class TeamService extends BaseService {
                     .single();
                 currentTournament = data;
             }
-
-            // Fetch all tournaments for the selector
-            const { data: tournaments } = await supabase
-                .from('tournaments')
-                .select('*')
-                .order('season', { ascending: false });
 
             // If no tournament resolved, return empty
             if (!currentTournament) {

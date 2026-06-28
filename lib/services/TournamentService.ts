@@ -7,7 +7,7 @@ export class TournamentService extends BaseService {
      */
     public static async getTournaments() {
         try {
-            const supabase = await this.getSupabaseClient();
+            const supabase = this.getPublicClient();
             const { data, error } = await supabase
                 .from('tournaments')
                 .select('*')

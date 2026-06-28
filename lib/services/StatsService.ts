@@ -25,8 +25,11 @@ export class StatsService extends BaseService {
      */
     public static async getStandingsPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
-            const tournamentId = await this.getActiveTournamentId(season);
+            const supabase = this.getPublicClient();
+            const [tournamentId, teamLogos] = await Promise.all([
+                this.getActiveTournamentId(season),
+                TeamService.getTeamLogos()
+            ]);
 
             let standings: ProcessedStanding[] = [];
 
@@ -48,7 +51,6 @@ export class StatsService extends BaseService {
                 }));
             }
 
-            const teamLogos = await TeamService.getTeamLogos();
             return { standings, teamLogos };
         } catch (error: any) {
             throw new DatabaseError(`Failed to fetch standings data: ${error.message}`);
@@ -60,8 +62,14 @@ export class StatsService extends BaseService {
      */
     public static async getSeasonStatsPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
-            const tournamentId = await this.getActiveTournamentId(season);
+            const supabase = this.getPublicClient();
+            const [tournamentId, { data: heroesData, error: heroesError }, teamLogos] = await Promise.all([
+                this.getActiveTournamentId(season),
+                supabase.from('heroes').select('*').order('name', { ascending: true }),
+                TeamService.getTeamLogos()
+            ]);
+
+            if (heroesError) throw heroesError;
 
             let seasonStats: SeasonStats | null = null;
 
@@ -73,13 +81,6 @@ export class StatsService extends BaseService {
                 seasonStats = data as SeasonStats | null;
             }
 
-            const { data: heroesData, error: heroesError } = await supabase
-                .from('heroes')
-                .select('*')
-                .order('name', { ascending: true });
-
-            if (heroesError) throw heroesError;
-
             const heroes: Hero[] = (heroesData || []).map((h) => ({
                 _id: h.id,
                 name: h.name,
@@ -87,7 +88,6 @@ export class StatsService extends BaseService {
                 createdAt: h.created_at,
             }));
 
-            const teamLogos = await TeamService.getTeamLogos();
             return { seasonStats, heroes, teamLogos };
         } catch (error: any) {
             throw new DatabaseError(`Failed to fetch season stats: ${error.message}`);
@@ -99,8 +99,11 @@ export class StatsService extends BaseService {
      */
     public static async getTeamStatsPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
-            const tournamentId = await this.getActiveTournamentId(season);
+            const supabase = this.getPublicClient();
+            const [tournamentId, teamLogos] = await Promise.all([
+                this.getActiveTournamentId(season),
+                TeamService.getTeamLogos()
+            ]);
 
             let teamStats: TeamStat[] = [];
 
@@ -129,7 +132,6 @@ export class StatsService extends BaseService {
                 }));
             }
 
-            const teamLogos = await TeamService.getTeamLogos();
             return { teamStats, teamLogos };
         } catch (error: any) {
             throw new DatabaseError(`Failed to fetch team stats page data: ${error.message}`);
@@ -141,19 +143,32 @@ export class StatsService extends BaseService {
      */
     public static async getPlayerStatsPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
-            const tournamentId = await this.getActiveTournamentId(season);
+            const supabase = this.getPublicClient();
+            const [tournamentId, { data: heroesData, error: heroesError }, teamLogos] = await Promise.all([
+                this.getActiveTournamentId(season),
+                supabase.from('heroes').select('*').order('name', { ascending: true }),
+                TeamService.getTeamLogos()
+            ]);
+
+            if (heroesError) throw heroesError;
 
             let playerStats: PlayerStat[] = [];
             let playerHeroStats: PlayerHeroStat[] = [];
 
             if (tournamentId) {
-                // Player leaderboard via RPC
-                const { data: leaderboard, error: leaderboardError } = await supabase.rpc('get_player_leaderboard', {
-                    p_tournament_id: tournamentId,
-                });
+                // Fetch player leaderboard and hero stats in parallel
+                const [leaderboardRes, heroStatsRes] = await Promise.all([
+                    supabase.rpc('get_player_leaderboard', { p_tournament_id: tournamentId }),
+                    supabase.from('game_stats')
+                        .select('player_name, hero_name, win, match_id!inner(tournament_id)')
+                        .eq('match_id.tournament_id', tournamentId)
+                ]);
+
+                const { data: leaderboard, error: leaderboardError } = leaderboardRes;
+                const { data: heroStats, error: heroStatsError } = heroStatsRes;
 
                 if (leaderboardError) throw leaderboardError;
+                if (heroStatsError) throw heroStatsError;
 
                 playerStats = (leaderboard || []).map((p: Record<string, any>) => ({
                     realName: p.real_name as string,
@@ -172,14 +187,6 @@ export class StatsService extends BaseService {
                     mvpRate: Number(p.mvp_rate) || 0,
                     kda: Number(p.kda) || 0,
                 }));
-
-                // Player hero stats
-                const { data: heroStats, error: heroStatsError } = await supabase
-                    .from('game_stats')
-                    .select('player_name, hero_name, win, match_id!inner(tournament_id)')
-                    .eq('match_id.tournament_id', tournamentId);
-
-                if (heroStatsError) throw heroStatsError;
 
                 if (heroStats) {
                     const playerHeroMap = new Map<string, Map<string, { gp: number; w: number; k: number; d: number; a: number }>>();
@@ -211,13 +218,6 @@ export class StatsService extends BaseService {
                 }
             }
 
-            const { data: heroesData, error: heroesError } = await supabase
-                .from('heroes')
-                .select('*')
-                .order('name', { ascending: true });
-
-            if (heroesError) throw heroesError;
-
             const heroes: Hero[] = (heroesData || []).map((h) => ({
                 _id: h.id,
                 name: h.name,
@@ -225,7 +225,6 @@ export class StatsService extends BaseService {
                 createdAt: h.created_at,
             }));
 
-            const teamLogos = await TeamService.getTeamLogos();
             return { playerStats, playerHeroStats, heroes, teamLogos };
         } catch (error: any) {
             throw new DatabaseError(`Failed to fetch player stats page data: ${error.message}`);

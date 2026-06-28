@@ -5,6 +5,7 @@
  */
 
 import { createClient } from '@/utils/supabase/server';
+import { publicClient } from '@/utils/supabase/public';
 import { TournamentService } from './services/TournamentService';
 import { TeamService } from './services/TeamService';
 import { MatchService } from './services/MatchService';
@@ -60,7 +61,7 @@ export const serverApi = {
      * Get home page layout data (coordinates multiple services)
      */
     getHomePageData: async (season?: number) => {
-        const supabase = await createClient();
+        const supabase = publicClient;
 
         // 1. Resolve tournament
         const { data: activeTourData } = season

@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
-import { createClient } from '@/utils/supabase/server';
+import { publicClient } from '@/utils/supabase/public';
 
 const prompt = Prompt({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -15,7 +15,7 @@ const prompt = Prompt({
 
 async function getActiveSeason() {
   try {
-    const supabase = await createClient();
+    const supabase = publicClient;
     const { data } = await supabase
       .from('tournaments')
       .select('season')
@@ -69,7 +69,7 @@ function hexToRgb(hex: string): string {
 
 async function getActiveTheme() {
   try {
-    const supabase = await createClient();
+    const supabase = publicClient;
     const { data: tour } = await supabase
       .from('tournaments')
       .select('theme_style')

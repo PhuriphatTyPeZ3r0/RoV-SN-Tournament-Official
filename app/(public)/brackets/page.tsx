@@ -21,8 +21,10 @@ export default async function BracketsPage({ searchParams }: PageProps) {
     const params = await searchParams;
     const seasonNumber = params.season ? parseInt(params.season, 10) : undefined;
 
-    const data = await serverApi.getBracketsPageData(seasonNumber);
-    const tournaments = await serverApi.getTournaments();
+    const [data, tournaments] = await Promise.all([
+        serverApi.getBracketsPageData(seasonNumber),
+        serverApi.getTournaments()
+    ]);
 
     // Find resolved season or fallback to active
     const currentSeason = seasonNumber || (tournaments.find(t => t.status === 'active')?.season || 2027);

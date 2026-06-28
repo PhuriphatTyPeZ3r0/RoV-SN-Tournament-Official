@@ -39,8 +39,11 @@ export class MatchService extends BaseService {
      */
     public static async getBracketsPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
-            const tournamentId = await this.getActiveTournamentId(season);
+            const supabase = this.getPublicClient();
+            const [tournamentId, teamLogos] = await Promise.all([
+                this.getActiveTournamentId(season),
+                TeamService.getTeamLogos()
+            ]);
 
             let matches: any[] = [];
             if (tournamentId) {
@@ -56,7 +59,6 @@ export class MatchService extends BaseService {
                 matches = data || [];
             }
 
-            const teamLogos = await TeamService.getTeamLogos();
             return { matches, teamLogos };
         } catch (error: any) {
             throw new DatabaseError(`Failed to fetch brackets page data: ${error.message}`);
@@ -68,8 +70,11 @@ export class MatchService extends BaseService {
      */
     public static async getFixturesPageData(season?: number) {
         try {
-            const supabase = await this.getSupabaseClient();
-            const tournamentId = await this.getActiveTournamentId(season);
+            const supabase = this.getPublicClient();
+            const [tournamentId, teamLogos] = await Promise.all([
+                this.getActiveTournamentId(season),
+                TeamService.getTeamLogos()
+            ]);
 
             let schedule: ScheduleRound[] = [];
             let results: Record<string, unknown>[] = [];
@@ -146,8 +151,6 @@ export class MatchService extends BaseService {
                     }
                 }
             }
-
-            const teamLogos = await TeamService.getTeamLogos();
             return { schedule, results, teamLogos };
         } catch (error: any) {
             throw new DatabaseError(`Failed to fetch fixtures page data: ${error.message}`);
