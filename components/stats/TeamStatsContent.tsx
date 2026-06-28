@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import type { TeamStat } from '@/types';
@@ -16,7 +17,7 @@ export default function TeamStatsContent({ teamStats, teamLogos }: TeamStatsCont
     if (teamStats.length === 0) {
         return (
             <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                <i className="fas fa-users text-6xl text-gray-300 mb-4"></i>
+                <Icon name="groups" className="text-6xl text-gray-300 mb-4" />
                 <p className="text-gray-500 text-lg">{t.common.noData}</p>
             </div>
         );
@@ -99,7 +100,7 @@ export default function TeamStatsContent({ teamStats, teamLogos }: TeamStatsCont
                                         <td className="p-3 text-center">
                                             {team.mvpCount > 0 ? (
                                                 <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold text-sm">
-                                                    <i className="fas fa-crown text-xs"></i>
+                                                    <Icon name="workspace_premium" className="text-xs" />
                                                     {team.mvpCount}
                                                 </span>
                                             ) : (

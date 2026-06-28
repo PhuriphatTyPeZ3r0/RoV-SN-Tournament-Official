@@ -24,7 +24,7 @@ export const serverApi = {
     /**
      * Get page data for the clubs directory
      */
-    getClubsPageData: () => TeamService.getClubsPageData(),
+    getClubsPageData: (season?: number) => TeamService.getClubsPageData(season),
 
     /**
      * Get brackets page data

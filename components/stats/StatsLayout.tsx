@@ -5,6 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import ShareButton from '@/components/common/ShareButton';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import SeasonSelector from '@/components/common/SeasonSelector';
+import Icon, { IconName } from '@/components/common/Icon';
 
 interface StatsLayoutProps {
     children: React.ReactNode;
@@ -28,10 +29,10 @@ export default function StatsLayout({ children, tournaments }: StatsLayoutProps)
 
     const activeTab = getActiveTab();
 
-    const tabs = [
-        { path: '/stats', id: 'season', label: t.stats.overview, icon: 'fa-chart-pie' },
-        { path: '/stats/team', id: 'team', label: t.stats.team, icon: 'fa-users' },
-        { path: '/stats/player', id: 'player', label: t.stats.player, icon: 'fa-user-ninja' },
+    const tabs: { path: string; id: string; label: string; icon: IconName }[] = [
+        { path: '/stats', id: 'season', label: t.stats.overview, icon: 'pie_chart' },
+        { path: '/stats/team', id: 'team', label: t.stats.team, icon: 'groups' },
+        { path: '/stats/player', id: 'player', label: t.stats.player, icon: 'sports_martial_arts' },
     ];
 
     return (
@@ -68,7 +69,7 @@ export default function StatsLayout({ children, tournaments }: StatsLayoutProps)
                                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                                     }`}
                             >
-                                <i className={`fas ${tab.icon} text-sm lg:text-base`}></i>
+                                <Icon name={tab.icon} className="text-sm lg:text-base" />
                                 <span className="text-center leading-tight">{tab.label}</span>
                             </Link>
                         );

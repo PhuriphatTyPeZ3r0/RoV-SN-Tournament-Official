@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -92,7 +93,7 @@ export default function StudentRegisterPage() {
             <div className="p-8">
                 {error && (
                     <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm mb-6 border border-red-100 flex items-center gap-2">
-                        <i className="fas fa-exclamation-circle"></i>
+                        <Icon name="error" />
                         {error}
                     </div>
                 )}
@@ -162,7 +163,7 @@ export default function StudentRegisterPage() {
                         className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? (
-                            <><i className="fas fa-spinner fa-spin"></i> {t.register.processing}</>
+                            <><Icon name="progress_activity" spin /> {t.register.processing}</>
                         ) : (
                             t.register.submit
                         )}

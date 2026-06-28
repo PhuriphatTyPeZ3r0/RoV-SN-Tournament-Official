@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import Icon from '@/components/common/Icon';
 
 interface TeamLogoProps {
     teamName: string;
@@ -33,7 +34,7 @@ export default function TeamLogo({ teamName, logoUrl, size = 'md' }: TeamLogoPro
     if (!logoUrl || hasError) {
         return (
             <div className={`${sizeClass} bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0`}>
-                <i className="fas fa-shield-alt text-gray-400"></i>
+                <Icon name="shield" className="text-gray-400" />
             </div>
         );
     }

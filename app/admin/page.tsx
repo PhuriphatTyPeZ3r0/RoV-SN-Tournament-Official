@@ -10,6 +10,7 @@ import {
     getDashboardToDosAction
 } from '@/features/analytics/dashboard-actions';
 import Image from 'next/image';
+import Icon from '@/components/common/Icon';
 
 export default function AdminDashboard() {
     const { t, language } = useLanguage();
@@ -53,10 +54,10 @@ export default function AdminDashboard() {
     }
 
     const statsCards = [
-        { label: t.admin.dashboard.totalTeams, value: kpis.teams.total, icon: 'fas fa-users', color: 'bg-blue-500', link: '/admin/teams' },
-        { label: t.admin.dashboard.readyTeams, value: kpis.teams.ready, icon: 'fas fa-check-double', color: 'bg-green-500', link: '/admin/teams' },
-        { label: t.admin.dashboard.pendingReg, value: kpis.registrations.pending, icon: 'fas fa-user-clock', color: 'bg-orange-500', link: '/admin/registrations', alert: kpis.registrations.pending > 0 },
-        { label: t.admin.dashboard.totalPlayers, value: kpis.players.total, icon: 'fas fa-user-friends', color: 'bg-cyan-500', link: '/admin/players' },
+        { label: t.admin.dashboard.totalTeams, value: kpis.teams.total, icon: 'groups' as const, color: 'bg-blue-500', link: '/admin/teams' },
+        {label: t.admin.dashboard.readyTeams, value: kpis.teams.ready, icon: 'done_all' as const, color: 'bg-green-500', link: '/admin/teams' },
+        { label: t.admin.dashboard.pendingReg, value: kpis.registrations.pending, icon: 'pending_actions' as const, color: 'bg-orange-500', link: '/admin/registrations', alert: kpis.registrations.pending > 0 },
+        { label: t.admin.dashboard.totalPlayers, value: kpis.players.total, icon: 'groups' as const, color: 'bg-cyan-500', link: '/admin/players' },
     ];
 
     return (
@@ -75,10 +76,10 @@ export default function AdminDashboard() {
                         className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-cyan-aura transition-all shadow-sm"
                         title={t.admin.dashboard.refreshData}
                     >
-                        <i className={`fas fa-sync-alt ${isPending ? 'fa-spin' : ''}`}></i>
+                        <Icon name="refresh" spin={isPending} />
                     </button>
                     <div className="px-4 py-2 bg-uefa-dark text-white rounded-xl text-sm font-bold shadow-lg">
-                        <i className="fas fa-calendar-day mr-2 text-cyan-aura"></i>
+                        <Icon name="event" className="mr-2 text-cyan-aura" />
                         {new Date().toLocaleDateString(language === 'th' ? 'th-TH' : 'en-US', { day: 'numeric', month: 'long' })}
                     </div>
                 </div>
@@ -94,7 +95,7 @@ export default function AdminDashboard() {
                             )}
                             <div className="flex items-center gap-4">
                                 <div className={`w-14 h-14 ${stat.color} rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-${stat.color.split('-')[1]}-500/20 group-hover:scale-110 transition-transform`}>
-                                    <i className={stat.icon}></i>
+                                    <Icon name={stat.icon} />
                                 </div>
                                 <div>
                                     <div className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</div>
@@ -110,14 +111,14 @@ export default function AdminDashboard() {
             {(todos?.registrations.length > 0 || todos?.teams.length > 0 || todos?.matches.length > 0) && (
                 <div className="bg-orange-50/30 border border-orange-100 rounded-3xl p-6 animate-slideUp">
                     <h3 className="text-sm font-black uppercase tracking-widest text-orange-600 mb-4 flex items-center gap-2">
-                        <i className="fas fa-exclamation-triangle"></i> {t.admin.dashboard.actionRequired}
+                        <Icon name="warning" className="text-base" /> {t.admin.dashboard.actionRequired}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {todos.registrations.length > 0 && (
                             <Link href="/admin/registrations" className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all group">
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="text-[10px] font-black text-orange-500 uppercase">{t.admin.dashboard.pendingRegistration}</span>
-                                    <i className="fas fa-chevron-right text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                                    <Icon name="chevron_right" className="text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform" />
                                 </div>
                                 <div className="text-xs font-bold text-uefa-dark">{todos.registrations[0].full_name}</div>
                                 <div className="text-[10px] text-gray-400">{t.admin.dashboard.waitScreening}</div>
@@ -127,7 +128,7 @@ export default function AdminDashboard() {
                             <Link href="/admin/teams" className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all group">
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="text-[10px] font-black text-orange-500 uppercase">{t.admin.dashboard.teamNeedsApproval}</span>
-                                    <i className="fas fa-chevron-right text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                                    <Icon name="chevron_right" className="text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform" />
                                 </div>
                                 <div className="text-xs font-bold text-uefa-dark">{todos.teams[0].name}</div>
                                 <div className="text-[10px] text-gray-400">{t.admin.dashboard.readyForReview}</div>
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
                             <Link href="/admin/results" className="bg-white p-4 rounded-2xl border border-orange-100 shadow-sm hover:shadow-md transition-all group">
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="text-[10px] font-black text-orange-500 uppercase">{t.admin.dashboard.matchPendingResult}</span>
-                                    <i className="fas fa-chevron-right text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform"></i>
+                                    <Icon name="chevron_right" className="text-[10px] text-gray-300 group-hover:translate-x-1 transition-transform" />
                                 </div>
                                 <div className="text-xs font-bold text-uefa-dark truncate">
                                     {todos.matches[0].team_blue_name} vs {todos.matches[0].team_red_name}
@@ -177,10 +178,10 @@ export default function AdminDashboard() {
 
                         <div className="grid grid-cols-2 gap-4">
                             <Link href="/admin/draw" className="flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-xs font-bold uppercase">
-                                <i className="fas fa-dice"></i> {t.admin.dashboard.draw}
+                                <Icon name="casino" className="text-base" /> {t.admin.dashboard.draw}
                             </Link>
                             <Link href="/admin/results" className="flex items-center justify-center gap-2 py-3 bg-cyan-aura text-uefa-dark hover:bg-white rounded-2xl transition-all text-xs font-bold uppercase">
-                                <i className="fas fa-edit"></i> {t.admin.dashboard.recordResult}
+                                <Icon name="edit" className="text-base" /> {t.admin.dashboard.recordResult}
                             </Link>
                         </div>
                     </div>
@@ -188,7 +189,7 @@ export default function AdminDashboard() {
                     {/* Top Performers */}
                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
                         <h3 className="text-sm font-black uppercase tracking-widest text-uefa-dark mb-6 flex items-center gap-2">
-                            <i className="fas fa-fire text-orange-500"></i>
+                            <Icon name="local_fire_department" className="text-orange-500" />
                             {t.admin.dashboard.hotPerformance}
                         </h3>
 
@@ -225,7 +226,7 @@ export default function AdminDashboard() {
                                                         {h.count}
                                                     </div>
                                                     <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
-                                                        <i className="fas fa-mask"></i>
+                                                        <Icon name="theater_comedy" />
                                                     </div>
                                                 </div>
                                                 <div className="text-[10px] font-black text-uefa-dark truncate">{h.name}</div>
@@ -247,7 +248,7 @@ export default function AdminDashboard() {
                     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 h-full overflow-hidden flex flex-col">
                         <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
                             <h3 className="text-sm font-black uppercase tracking-widest text-uefa-dark flex items-center gap-2">
-                                <i className="fas fa-history text-cyan-aura"></i>
+                                <Icon name="history" className="text-cyan-aura" />
                                 {t.admin.dashboard.auditTrail}
                             </h3>
                             <span className="text-[10px] font-bold text-gray-400 bg-white px-3 py-1 rounded-full border border-gray-100 uppercase">{t.admin.dashboard.systemWideActions}</span>
@@ -264,11 +265,11 @@ export default function AdminDashboard() {
                                                     log.action_type === 'UPDATE' ? 'bg-blue-100 text-blue-600' :
                                                     'bg-red-100 text-red-600'
                                                 }`}>
-                                                    <i className={`fas ${
-                                                        log.action_type === 'INSERT' ? 'fa-plus' :
-                                                        log.action_type === 'UPDATE' ? 'fa-pen' :
-                                                        'fa-trash'
-                                                    }`}></i>
+                                                    <Icon name={
+                                                        log.action_type === 'INSERT' ? 'add' :
+                                                        log.action_type === 'UPDATE' ? 'edit' :
+                                                        'delete'
+                                                    } />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center justify-between mb-1">
@@ -307,7 +308,7 @@ export default function AdminDashboard() {
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center py-20 text-gray-300">
                                     <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                                        <i className="fas fa-scroll text-2xl opacity-20"></i>
+                                        <Icon name="scroll" className="text-2xl opacity-20" />
                                     </div>
                                     <p className="text-xs font-bold uppercase tracking-widest">{t.admin.dashboard.noActivities}</p>
                                 </div>
@@ -315,7 +316,7 @@ export default function AdminDashboard() {
                         </div>
                         
                         <Link href="/admin/history" className="p-4 bg-gray-50 text-center text-[10px] font-black uppercase text-gray-400 hover:text-cyan-aura hover:bg-gray-100 transition-all border-t border-gray-50">
-                            {t.admin.dashboard.viewDetailedHistory} <i className="fas fa-chevron-right ml-1"></i>
+                            {t.admin.dashboard.viewDetailedHistory} <Icon name="chevron_right" className="ml-1 text-xs" />
                         </Link>
                     </div>
                 </div>
@@ -326,12 +327,12 @@ export default function AdminDashboard() {
                 <h3 className="text-sm font-black uppercase tracking-widest text-uefa-dark mb-6 text-center">{t.admin.dashboard.quickNavigation}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {[
-                        { label: t.admin.dashboard.draw, href: '/admin/draw', icon: 'fas fa-random', color: 'text-blue-500' },
-                        { label: language === 'th' ? 'บันทึกผล' : 'Results', href: '/admin/results', icon: 'fas fa-trophy', color: 'text-yellow-500' },
-                        { label: t.admin.dashboard.manageTeams, href: '/admin/teams', icon: 'fas fa-users-cog', color: 'text-green-500' },
-                        { label: language === 'th' ? 'การสมัครแข่ง' : 'Registrations', href: '/admin/registrations', icon: 'fas fa-user-check', color: 'text-orange-500' },
-                        { label: t.admin.dashboard.manageHeroes, href: '/admin/heroes', icon: 'fas fa-mask', color: 'text-pink-500' },
-                        { label: t.nav.standings, href: '/standings', icon: 'fas fa-list-ol', color: 'text-cyan-500', external: true },
+                        { label: t.admin.dashboard.draw, href: '/admin/draw', icon: 'swap_horiz' as const, color: 'text-blue-500' },
+                        { label: language === 'th' ? 'บันทึกผล' : 'Results', href: '/admin/results', icon: 'emoji_events' as const, color: 'text-yellow-500' },
+                        { label: t.admin.dashboard.manageTeams, href: '/admin/teams', icon: 'supervised_user_circle' as const, color: 'text-green-500' },
+                        { label: language === 'th' ? 'การสมัครแข่ง' : 'Registrations', href: '/admin/registrations', icon: 'verified_user' as const, color: 'text-orange-500' },
+                        { label: t.admin.dashboard.manageHeroes, href: '/admin/heroes', icon: 'sports_martial_arts' as const, color: 'text-pink-500' },
+                        { label: t.nav.standings, href: '/standings', icon: 'format_list_numbered' as const, color: 'text-cyan-500', external: true },
                     ].map((item, i) => (
                         <Link 
                             key={i} 
@@ -339,7 +340,7 @@ export default function AdminDashboard() {
                             target={item.external ? '_blank' : undefined}
                             className="flex flex-col items-center gap-3 p-4 bg-white rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all border border-gray-50 group"
                         >
-                            <i className={`${item.icon} text-xl ${item.color} group-hover:scale-110 transition-transform`}></i>
+                            <Icon name={item.icon} className={`text-xl ${item.color} group-hover:scale-110 transition-transform`} />
                             <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{item.label}</span>
                         </Link>
                     ))}

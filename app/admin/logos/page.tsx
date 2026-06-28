@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import apiService from '@/lib/api-client';
@@ -123,7 +124,7 @@ export default function AdminLogosPage() {
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                <i className="fas fa-upload mr-3 text-cyan-aura"></i>
+                <Icon name="upload" className="mr-3 text-cyan-aura" />
                 {t.admin.logosPage?.title || 'Manage Team Logos'}
             </h1>
 
@@ -185,12 +186,12 @@ export default function AdminLogosPage() {
                                         onChange={handleFileChange}
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                     />
-                                    <i className="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                    <Icon name="cloud_upload" className="text-4xl text-gray-400 mb-3" />
                                     <p className="text-gray-600 font-medium">Drag & drop or click to upload</p>
                                     <p className="text-xs text-gray-400 mt-1">PNG, JPG, SVG (Max 2MB)</p>
                                     {logoFile && (
                                         <div className="mt-4 text-cyan-aura font-bold bg-white inline-block px-3 py-1 rounded shadow-sm border border-cyan-100">
-                                            <i className="fas fa-check mr-2"></i>
+                                            <Icon name="done" className="mr-2" />
                                             {logoFile.name}
                                         </div>
                                     )}
@@ -238,7 +239,7 @@ export default function AdminLogosPage() {
                     {message && (
                         <div className={`mt-6 p-4 rounded-lg flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
                             }`}>
-                            <i className={`fas ${message.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
+                            <Icon name={message.type === 'success' ? 'check_circle' : 'error'} />
                             {message.text}
                         </div>
                     )}
@@ -250,9 +251,9 @@ export default function AdminLogosPage() {
                         className="mt-6 w-full py-3.5 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-cyan-aura/50 disabled:opacity-50 disabled:shadow-none transition-all transform active:scale-[0.99]"
                     >
                         {loading ? (
-                            <span><i className="fas fa-spinner fa-spin mr-2"></i> Uploading...</span>
+                            <span><Icon name="progress_activity" spin className="mr-2" /> Uploading...</span>
                         ) : (
-                            <span><i className="fas fa-save mr-2"></i> Save Logo</span>
+                            <span><Icon name="save" className="mr-2" /> Save Logo</span>
                         )}
                     </button>
                 </form>
@@ -290,7 +291,7 @@ export default function AdminLogosPage() {
                                                     className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors"
                                                     title="Delete Logo"
                                                 >
-                                                    <i className="fas fa-trash-alt"></i>
+                                                    <Icon name="delete_outline" />
                                                 </button>
                                             )}
                                         </div>

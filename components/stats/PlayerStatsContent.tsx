@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState } from 'react';
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -32,7 +33,7 @@ export default function PlayerStatsContent({ playerStats, playerHeroStats, heroe
     if (playerStats.length === 0) {
         return (
             <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                <i className="fas fa-user-ninja text-6xl text-gray-300 mb-4"></i>
+                <Icon name="sports_martial_arts" className="text-6xl text-gray-300 mb-4" />
                 <p className="text-gray-500 text-lg">{t.common.noData}</p>
             </div>
         );
@@ -164,7 +165,7 @@ export default function PlayerStatsContent({ playerStats, playerHeroStats, heroe
     return (
         <div className="space-y-4">
             <div className="bg-cyan-aura/10 border border-cyan-aura/20 p-4 rounded-2xl flex items-center gap-3 text-cyan-aura text-xs md:text-sm font-sans mb-2">
-                <i className="fas fa-info-circle text-base"></i>
+                <Icon name="info" className="text-base" />
                 <span>{t.stats.clickHint}</span>
             </div>
 
@@ -264,7 +265,7 @@ export default function PlayerStatsContent({ playerStats, playerHeroStats, heroe
                                         <td className="p-3 text-center">
                                             {p.mvpCount > 0 ? (
                                                 <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold text-sm">
-                                                    <i className="fas fa-crown text-xs"></i>
+                                                    <Icon name="workspace_premium" className="text-xs" />
                                                     {p.mvpCount}
                                                 </span>
                                             ) : (
@@ -378,7 +379,7 @@ export default function PlayerStatsContent({ playerStats, playerHeroStats, heroe
                             onClick={() => setSelectedPlayer(null)}
                             className="absolute top-4 right-4 text-white/50 hover:text-white bg-white/5 hover:bg-white/15 w-8 h-8 rounded-full flex items-center justify-center transition-all z-10"
                         >
-                            <i className="fas fa-times text-lg"></i>
+                            <Icon name="close" className="text-lg" />
                         </button>
 
                         {/* Modal Header */}

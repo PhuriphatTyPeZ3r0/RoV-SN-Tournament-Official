@@ -61,7 +61,10 @@ export default function AdminHeroesPage() {
                 // Upload to Supabase Storage
                 const { error: uploadError } = await supabase.storage
                     .from('hero-images')
-                    .upload(path, file, { upsert: true });
+                    .upload(path, file, { 
+                        upsert: true,
+                        contentType: file.type || 'image/png'
+                    });
 
                 if (uploadError) {
                     console.error(`Failed to upload ${heroName}:`, uploadError);
@@ -276,7 +279,7 @@ export default function AdminHeroesPage() {
                             className="group relative aspect-square bg-white rounded-xl shadow-sm overflow-hidden border-2 border-transparent hover:border-cyan-aura transition-all cursor-pointer"
                         >
                             <img
-                                src={hero.imageUrl}
+                                src={hero.imageUrl || 'https://via.placeholder.com/100?text=' + encodeURIComponent(hero.name)}
                                 alt={hero.name}
                                 className="w-full h-full object-cover"
                                 onError={(e: any) => {

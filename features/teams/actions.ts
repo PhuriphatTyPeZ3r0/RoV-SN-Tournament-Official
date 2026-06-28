@@ -24,7 +24,7 @@ const updateTeamContactInfoSchema = z.object({
 const updatePlayerPersonalDetailsSchema = z.object({
   nickname: z.string().max(30, "ชื่อเล่นต้องไม่เกิน 30 ตัวอักษร").nullable(),
   phone: z.string().max(20, "เบอร์โทรศัพท์ต้องไม่เกิน 20 ตัวอักษร").nullable(),
-  favoriteHeroes: z.array(z.string()).max(5, "เลือกฮีโร่โปรดได้สูงสุด 5 ตัว")
+  topHeroes: z.array(z.string()).max(3, "เลือกฮีโร่ถนัดได้สูงสุด 3 ตัว")
 })
 
 import { ROV_RANKS } from './constants'
@@ -32,12 +32,12 @@ import { ROV_RANKS } from './constants'
 
 const updateGamingProfileSchema = z.object({
   currentRank: z.enum(ROV_RANKS).nullable(),
+  lineupRole: z.enum(['dark_slayer', 'abyssal_dragon', 'mid_lane', 'jungle', 'support', 'substitute']).nullable().optional(),
   secondaryRole: z.enum(['dark_slayer', 'abyssal_dragon', 'mid_lane', 'jungle', 'support']).nullable(),
   topHeroes: z.array(z.string()).max(3, 'เลือก Hero ถนัดได้สูงสุด 3 ตัว'),
   experienceBio: z.string().max(500, 'ประสบการณ์ต้องไม่เกิน 500 ตัวอักษร').nullable(),
   nickname: z.string().max(30, "ชื่อเล่นต้องไม่เกิน 30 ตัวอักษร").nullable().optional(),
   phone: z.string().max(20, "เบอร์โทรศัพท์ต้องไม่เกิน 20 ตัวอักษร").nullable().optional(),
-  favoriteHeroes: z.array(z.string()).max(5, "เลือกฮีโร่โปรดได้สูงสุด 5 ตัว").optional(),
 })
 
 
@@ -199,7 +199,7 @@ export async function getMyTeamData() {
     .from('teams')
     .select(`
       *,
-      members:players!team_id(*)
+      members:players!team_id(*, profile:profiles(avatar_url))
     `)
     .eq('id', player.team_id)
     .single()
@@ -548,12 +548,12 @@ export async function updateTeamContactInfoAction(payload: { contactPhone: strin
   return { success: true }
 }
 
-export async function updatePlayerPersonalDetailsAction(payload: { nickname: string | null; phone: string | null; favoriteHeroes: string[] }) {
+export async function updatePlayerPersonalDetailsAction(payload: { nickname: string | null; phone: string | null; topHeroes: string[] }) {
   const parsed = updatePlayerPersonalDetailsSchema.safeParse(payload)
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message }
   }
-  const { nickname, phone, favoriteHeroes } = parsed.data
+  const { nickname, phone, topHeroes } = parsed.data
 
   const supabase = await createClient()
   const player = await getPlayerProfile(supabase)
@@ -567,7 +567,7 @@ export async function updatePlayerPersonalDetailsAction(payload: { nickname: str
     .update({ 
       nickname, 
       phone, 
-      favorite_heroes: favoriteHeroes 
+      top_heroes: topHeroes 
     })
     .eq('id', player.id)
 
@@ -581,18 +581,18 @@ export async function updatePlayerPersonalDetailsAction(payload: { nickname: str
 
 export async function updateGamingProfileAction(payload: {
   currentRank: string | null;
+  lineupRole?: string | null;
   secondaryRole: string | null;
   topHeroes: string[];
   experienceBio: string | null;
   nickname?: string | null;
   phone?: string | null;
-  favoriteHeroes?: string[];
 }) {
   const parsed = updateGamingProfileSchema.safeParse(payload)
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message }
   }
-  const { currentRank, secondaryRole, topHeroes, experienceBio, nickname, phone, favoriteHeroes } = parsed.data
+  const { currentRank, lineupRole, secondaryRole, topHeroes, experienceBio, nickname, phone } = parsed.data
 
   const supabase = await createClient()
   const player = await getPlayerProfile(supabase)
@@ -608,9 +608,9 @@ export async function updateGamingProfileAction(payload: {
     experience_bio: experienceBio,
   }
 
+  if (lineupRole !== undefined) updateData.lineup_role = lineupRole;
   if (nickname !== undefined) updateData.nickname = nickname;
   if (phone !== undefined) updateData.phone = phone;
-  if (favoriteHeroes !== undefined) updateData.favorite_heroes = favoriteHeroes;
 
   const { error: updateError } = await supabase
     .from('players')
@@ -625,3 +625,102 @@ export async function updateGamingProfileAction(payload: {
   revalidatePath('/team')
   return { success: true }
 }
+
+export async function getAllTeamsWithSeasonsAction() {
+  const supabase = await createClient()
+
+  // 1. Fetch all teams and their members
+  const { data: teams, error: teamsError } = await supabase
+    .from('teams')
+    .select(`
+      *,
+      members:players!team_id(*)
+    `)
+    .order('name', { ascending: true })
+
+  if (teamsError) {
+    console.error('Error fetching all teams:', teamsError)
+    return { teams: [], tournaments: [] }
+  }
+
+  // 2. Fetch all tournaments
+  const { data: tournaments, error: tournamentsError } = await supabase
+    .from('tournaments')
+    .select('*')
+    .order('created_at', { ascending: true })
+
+  if (tournamentsError) {
+    console.error('Error fetching tournaments:', tournamentsError)
+    return { teams: [], tournaments: [] }
+  }
+
+  // 3. Fetch all matches to see which teams have played in which tournament
+  const { data: matches, error: matchesError } = await supabase
+    .from('matches')
+    .select('tournament_id, team_blue_id, team_red_id')
+
+  if (matchesError) {
+    console.error('Error fetching matches:', matchesError)
+    return { teams: mappedTeamsFallback(teams, tournaments || []), tournaments: tournaments || [] }
+  }
+
+  // 4. Map each team to a season based on matches or created_at
+  const mappedTeams = teams.map((team: any) => {
+    // Check if team has any matches
+    const teamMatch = matches?.find(
+      (m: any) => m.team_blue_id === team.id || m.team_red_id === team.id
+    )
+    
+    let season = 2026 // Fallback
+    let tournamentStatus = 'completed'
+    
+    if (teamMatch) {
+      const tournament = tournaments?.find((t: any) => t.id === teamMatch.tournament_id)
+      if (tournament) {
+        season = tournament.season
+        tournamentStatus = tournament.status
+      }
+    } else {
+      // Find tournament created closest to but before team creation
+      let matchedTournament = tournaments?.[0]
+      for (const t of tournaments || []) {
+        if (new Date(team.created_at).getTime() >= new Date(t.created_at).getTime()) {
+          matchedTournament = t
+        }
+      }
+      if (matchedTournament) {
+        season = matchedTournament.season
+        tournamentStatus = matchedTournament.status
+      }
+    }
+
+    return {
+      ...team,
+      season,
+      tournamentStatus
+    }
+  })
+
+  return {
+    teams: mappedTeams,
+    tournaments: tournaments || []
+  }
+}
+
+// Fallback helper in case matches fetch fails
+function mappedTeamsFallback(teams: any[], tournaments: any[]) {
+  return teams.map((team: any) => {
+    let matchedTournament = tournaments?.[0]
+    for (const t of tournaments) {
+      if (new Date(team.created_at).getTime() >= new Date(t.created_at).getTime()) {
+        matchedTournament = t
+      }
+    }
+    return {
+      ...team,
+      season: matchedTournament?.season || 2026,
+      tournamentStatus: matchedTournament?.status || 'completed'
+    }
+  })
+}
+

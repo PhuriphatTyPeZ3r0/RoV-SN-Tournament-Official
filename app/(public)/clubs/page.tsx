@@ -13,14 +13,23 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-export default async function ClubsPage() {
-    const data = await serverApi.getClubsPageData();
+interface PageProps {
+    searchParams: Promise<{ season?: string }>;
+}
+
+export default async function ClubsPage({ searchParams }: PageProps) {
+    const params = await searchParams;
+    const seasonNumber = params.season ? parseInt(params.season, 10) : undefined;
+
+    const data = await serverApi.getClubsPageData(seasonNumber);
 
     return (
         <div className="min-h-screen bg-gray-50 pb-12">
             <ClubsContent
                 teams={data.teams}
                 teamLogos={data.teamLogos}
+                tournaments={data.tournaments}
+                currentSeason={data.currentSeason}
             />
         </div>
     );

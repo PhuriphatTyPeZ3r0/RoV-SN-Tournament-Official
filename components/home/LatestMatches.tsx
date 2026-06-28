@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import TeamLogo from '@/components/common/TeamLogo';
 import type { MatchResult } from '@/types';
 import type { ScheduleMatch, MatchWithResult } from '@/lib/api';
@@ -63,7 +64,7 @@ export default function LatestMatches({ latestMatches, upcomingMatches, teamLogo
     if (latestMatches.length === 0 && upcomingMatches.length === 0) {
         return (
             <div className="bg-white border border-gray-100 p-8 rounded-xl text-center">
-                <i className="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+                <Icon name="event_busy" className="text-4xl text-gray-300 mb-4" />
                 <p className="text-gray-500">{t.home.noMatches}</p>
             </div>
         );
@@ -123,7 +124,7 @@ export default function LatestMatches({ latestMatches, upcomingMatches, teamLogo
                             {/* Match Date */}
                             {date && (
                                 <span className="text-gray-500 flex items-center gap-1" suppressHydrationWarning>
-                                    <i className="far fa-calendar text-cyan-aura/70"></i>
+                                    <Icon name="calendar_today" className="text-cyan-aura/70" />
                                     {formatMatchDate(date)}
                                 </span>
                             )}
@@ -131,7 +132,7 @@ export default function LatestMatches({ latestMatches, upcomingMatches, teamLogo
                             {/* MVP */}
                             {result && result.mvp && (
                                 <span className="text-gray-600 flex items-center gap-1.5 ml-auto">
-                                    <i className="fas fa-crown text-yellow-500 text-[10px]"></i>
+                                    <Icon name="workspace_premium" className="text-yellow-500 text-[10px]" />
                                     MVP: <span className="font-bold text-uefa-dark">{result.mvp}</span>
                                 </span>
                             )}

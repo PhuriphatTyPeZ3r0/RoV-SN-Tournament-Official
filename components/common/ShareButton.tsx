@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Icon from '@/components/common/Icon';
 
 interface ShareButtonProps {
     title?: string;
@@ -42,7 +43,7 @@ export default function ShareButton({ title = 'RoV SN Tournament', url, classNam
             className={`flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-bold transition-all ${className}`}
             title={copied ? 'Copied!' : 'Share'}
         >
-            <i className={`fas ${copied ? 'fa-check' : 'fa-share-alt'}`}></i>
+            <Icon name={copied ? 'done' : 'share'} />
             {copied && <span>Copied!</span>}
         </button>
     );

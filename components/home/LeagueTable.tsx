@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import type { ProcessedStanding } from '@/lib/api';
@@ -16,7 +17,7 @@ export default function LeagueTable({ standings, teamLogos }: LeagueTableProps) 
     if (standings.length === 0) {
         return (
             <div className="p-8 text-center">
-                <i className="fas fa-trophy text-4xl text-gray-300 mb-4"></i>
+                <Icon name="emoji_events" className="text-4xl text-gray-300 mb-4" />
                 <p className="text-gray-500">{t.standings.noStandings}</p>
             </div>
         );

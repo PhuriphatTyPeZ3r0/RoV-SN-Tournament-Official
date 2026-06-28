@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect, useTransition } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -230,7 +231,7 @@ export default function AdminResultsPage() {
         });
     };
 
-    if (loading) return <div className="p-8 text-center"><i className="fas fa-spinner fa-spin mr-2"></i> Loading...</div>;
+    if (loading) return <div className="p-8 text-center"><Icon name="progress_activity" spin className="mr-2" /> Loading...</div>;
 
     const days = Array.from(new Set(matches.map(m => m.match_day))).sort((a, b) => a - b);
     const currentMatches = matches.filter(m => m.match_day === selectedDay);
@@ -238,7 +239,7 @@ export default function AdminResultsPage() {
     return (
         <div className="space-y-6 animate-fadeIn">
             <h1 className="text-2xl font-display font-bold text-uefa-dark uppercase">
-                <i className="fas fa-edit mr-3 text-cyan-aura"></i>
+                <Icon name="edit" className="mr-3 text-cyan-aura" />
                 Match <span className="text-cyan-aura">Results</span>
             </h1>
 
@@ -288,7 +289,7 @@ export default function AdminResultsPage() {
                                         </div>
                                         <div className="text-[10px] text-gray-400 mt-1 flex justify-between">
                                             <span>Current: {match.score_blue} - {match.score_red}</span>
-                                            {match.winner_name && <span className="text-green-500"><i className="fas fa-check-circle"></i> Result Set</span>}
+                                            {match.winner_name && <span className="text-green-500"><Icon name="check_circle" /> Result Set</span>}
                                         </div>
                                     </div>
                                 </button>
@@ -355,7 +356,7 @@ export default function AdminResultsPage() {
                                 <div className="flex flex-col items-center gap-4">
                                     <label className="flex items-center gap-3 cursor-pointer group">
                                         <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${formData.isByeWin ? 'bg-cyan-aura border-cyan-aura' : 'border-gray-300 group-hover:border-cyan-aura'}`}>
-                                            {formData.isByeWin && <i className="fas fa-check text-white text-xs"></i>}
+                                            {formData.isByeWin && <Icon name="done" className="text-white text-xs" />}
                                         </div>
                                         <input
                                             type="checkbox"
@@ -371,7 +372,7 @@ export default function AdminResultsPage() {
                                 <div className="border-t border-gray-100 pt-8">
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="font-black text-uefa-dark uppercase text-sm tracking-wider flex items-center gap-2">
-                                            <i className="fas fa-chart-line text-cyan-aura"></i>
+                                            <Icon name="show_chart" className="text-cyan-aura" />
                                             {t.admin.resultsPage.recordGameStats}
                                         </h3>
                                         <span className="text-[10px] text-gray-400 font-bold uppercase">Best of 5</span>
@@ -389,7 +390,7 @@ export default function AdminResultsPage() {
                                                     }`}
                                             >
                                                 <span className="text-[10px] font-black uppercase">Game {i + 1}</span>
-                                                <i className={`fas ${gameStats[i] ? 'fa-check-circle' : 'fa-plus-circle'} text-lg`}></i>
+                                                <Icon name={gameStats[i] ? 'check_circle' : 'add_circle'} className="text-lg" />
                                                 {gameStats[i]?.winner && <span className="text-[8px] font-bold uppercase">{gameStats[i].winner} Win</span>}
                                             </button>
                                         ))}
@@ -427,7 +428,7 @@ export default function AdminResultsPage() {
                                         disabled={isPending}
                                         className="flex-[2] py-4 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-black rounded-2xl shadow-xl shadow-cyan-aura/20 hover:shadow-cyan-aura/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase text-sm tracking-widest disabled:opacity-50"
                                     >
-                                        {isPending ? <><i className="fas fa-spinner fa-spin mr-2"></i> {t.admin.resultsPage.saving}</> : t.admin.resultsPage.saveAllBtn}
+                                        {isPending ? <><Icon name="progress_activity" spin className="mr-2" /> {t.admin.resultsPage.saving}</> : t.admin.resultsPage.saveAllBtn}
                                     </button>
                                 </div>
                             </form>
@@ -435,7 +436,7 @@ export default function AdminResultsPage() {
                     ) : (
                         <div className="h-full min-h-[500px] flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200 p-12 text-gray-300">
                             <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                                <i className="fas fa-hand-pointer text-4xl animate-bounce text-gray-200"></i>
+                                <Icon name="touch_app" className="text-4xl animate-bounce text-gray-200" />
                             </div>
                             <p className="font-bold text-gray-400 uppercase tracking-widest text-sm">{t.admin.resultsPage.pleaseSelectMatch}</p>
                             <p className="text-xs mt-2">{t.admin.resultsPage.selectMatchDesc}</p>

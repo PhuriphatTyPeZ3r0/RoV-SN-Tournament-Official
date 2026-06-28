@@ -3,6 +3,7 @@
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import type { SeasonStats, Hero } from '@/types';
+import Icon from '@/components/common/Icon';
 
 interface SeasonStatsContentProps {
     seasonStats: SeasonStats | null;
@@ -30,7 +31,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
     if (!seasonStats) {
         return (
             <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                <i className="fas fa-chart-bar text-6xl text-gray-300 mb-4"></i>
+                <Icon name="bar_chart" className="text-6xl text-gray-300 mb-4" />
                 <p className="text-gray-500 text-lg">{t.common.noData}</p>
             </div>
         );
@@ -39,28 +40,28 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
     // Stat Cards Data
     const statCards = [
         {
-            icon: 'fa-trophy',
+            icon: 'emoji_events' as const,
             label: t.stats.totalMatches,
             value: seasonStats.totalMatches || 0,
             color: 'from-cyan-500 to-blue-600',
             bgColor: 'bg-gradient-to-br from-cyan-500/10 to-blue-600/10',
         },
         {
-            icon: 'fa-gamepad',
+            icon: 'sports_esports' as const,
             label: t.stats.totalGames,
             value: seasonStats.totalGames || 0,
             color: 'from-purple-500 to-pink-600',
             bgColor: 'bg-gradient-to-br from-purple-500/10 to-pink-600/10',
         },
         {
-            icon: 'fa-clock',
+            icon: 'schedule' as const,
             label: t.stats.avgGameTime,
             value: formatDuration(seasonStats.avgGameDuration),
             color: 'from-green-500 to-emerald-600',
             bgColor: 'bg-gradient-to-br from-green-500/10 to-emerald-600/10',
         },
         {
-            icon: 'fa-skull-crossbones',
+            icon: 'skull' as const,
             label: t.stats.bloodiestGame,
             value: seasonStats.highestKillGame?.kills || 0,
             subtext: seasonStats.highestKillGame?.match !== '-' ? `${seasonStats.highestKillGame?.match}` : null,
@@ -72,7 +73,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
     // Highlight Cards (Players, Team, Hero)
     const highlightCards = [
         seasonStats.topMVPPlayer && {
-            icon: 'fa-crown',
+            icon: 'workspace_premium' as const,
             title: t.stats.topMVP,
             name: seasonStats.topMVPPlayer.name,
             team: seasonStats.topMVPPlayer.team,
@@ -80,7 +81,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
             color: 'from-yellow-400 to-amber-500',
         },
         seasonStats.topKillerPlayer && {
-            icon: 'fa-crosshairs',
+            icon: 'my_location' as const,
             title: t.stats.topKiller,
             name: seasonStats.topKillerPlayer.name,
             team: seasonStats.topKillerPlayer.team,
@@ -88,7 +89,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
             color: 'from-red-500 to-rose-600',
         },
         seasonStats.bestTeam && {
-            icon: 'fa-users',
+            icon: 'groups' as const,
             title: t.stats.bestTeamWR,
             name: seasonStats.bestTeam.name,
             value: `${seasonStats.bestTeam.winRate}%`,
@@ -97,7 +98,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
             isTeam: true,
         },
         seasonStats.mostPickedHero && {
-            icon: 'fa-mask',
+            icon: 'sports_martial_arts' as const,
             title: t.stats.mostPickedHero,
             name: seasonStats.mostPickedHero.name,
             value: `${seasonStats.mostPickedHero.picks} ${t.stats.picksCount}`,
@@ -106,7 +107,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
             heroImage: getHeroImage(seasonStats.mostPickedHero.name),
         },
         seasonStats.bestWinRateHero && {
-            icon: 'fa-star',
+            icon: 'star' as const,
             title: t.stats.bestHeroWR,
             name: seasonStats.bestWinRateHero.name,
             value: `${seasonStats.bestWinRateHero.winRate}%`,
@@ -114,7 +115,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
             color: 'from-emerald-500 to-green-600',
             heroImage: getHeroImage(seasonStats.bestWinRateHero.name),
         },
-    ].filter(Boolean) as { icon: string; title: string; name: string; value: string; color: string; team?: string; subtext?: string; isTeam?: boolean; heroImage?: string | null }[];
+    ].filter(Boolean) as { icon: any; title: string; name: string; value: string; color: string; team?: string; subtext?: string; isTeam?: boolean; heroImage?: string | null }[];
 
     return (
         <div className="space-y-6">
@@ -126,7 +127,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
                         className={`${card.bgColor} rounded-xl p-4 md:p-5 border border-gray-200/50 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]`}
                     >
                         <div className={`inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br ${card.color} text-white mb-3 shadow-lg`}>
-                            <i className={`fas ${card.icon} text-lg md:text-xl`}></i>
+                            <Icon name={card.icon} className="text-lg md:text-xl" />
                         </div>
                         <p className="text-xs md:text-sm text-gray-500 font-medium mb-1">{card.label}</p>
                         <p className={`text-2xl md:text-3xl font-bold bg-gradient-to-r ${card.color} bg-clip-text text-transparent`}>
@@ -149,7 +150,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
                         {/* Header */}
                         <div className="flex items-center gap-2 mb-4">
                             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center`}>
-                                <i className={`fas ${card.icon} text-white text-sm`}></i>
+                                <Icon name={card.icon} className="text-white text-sm" />
                             </div>
                             <span className="text-sm font-semibold text-gray-600">{card.title}</span>
                         </div>
@@ -195,7 +196,7 @@ export default function SeasonStatsContent({ seasonStats, heroes, teamLogos }: S
                 <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200/50">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white">
-                            <i className="fas fa-hourglass-half"></i>
+                            <Icon name="pending" />
                         </div>
                         <div>
                             <p className="text-sm text-amber-700 font-medium">{t.stats.longestGame}</p>

@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { updateAccountSettingsAction } from '@/features/auth/profile-actions';
@@ -44,7 +45,7 @@ export default function UserSettingsPage() {
                 <div className="bg-uefa-dark p-8 flex justify-between items-center">
                     <div className="flex items-center gap-4">
                         <Link href="/account/profile" className="text-white/60 hover:text-white">
-                            <i className="fas fa-chevron-left"></i>
+                            <Icon name="chevron_left" />
                         </Link>
                         <h1 className="text-2xl font-display font-bold text-white uppercase">Account <span className="text-cyan-aura">Settings</span></h1>
                     </div>

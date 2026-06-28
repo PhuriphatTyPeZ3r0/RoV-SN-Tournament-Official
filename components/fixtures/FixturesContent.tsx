@@ -6,6 +6,7 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import type { ScheduleRound } from '@/lib/api';
 import type { MatchResult } from '@/types';
 import SeasonSelector from '@/components/common/SeasonSelector';
+import Icon from '@/components/common/Icon';
 
 interface FixturesContentProps {
     schedule: ScheduleRound[];
@@ -62,7 +63,7 @@ export default function FixturesContent({ schedule, results, teamLogos, tourname
                 </div>
                 <div className="container mx-auto px-4">
                     <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                        <i className="fas fa-calendar-alt text-6xl text-gray-300 mb-4"></i>
+                        <Icon name="calendar_today" className="text-6xl text-gray-300 mb-4" />
                         <p className="text-gray-500 text-lg">{t.common.noData}</p>
                     </div>
                 </div>
@@ -102,7 +103,7 @@ export default function FixturesContent({ schedule, results, teamLogos, tourname
                                 {/* Show round date if available */}
                                 {round.date && (
                                     <span className="text-gray-500 text-xs md:text-sm font-medium flex items-center gap-1.5">
-                                        <i className="fas fa-calendar-alt text-cyan-aura"></i>
+                                        <Icon name="calendar_today" className="text-cyan-aura" />
                                         {formatMatchDate(round.date)}
                                     </span>
                                 )}
@@ -174,7 +175,7 @@ export default function FixturesContent({ schedule, results, teamLogos, tourname
                                                     {/* Match Date */}
                                                     {matchDate && (
                                                         <span className="text-gray-500 flex items-center gap-1">
-                                                            <i className="far fa-calendar text-cyan-aura/70"></i>
+                                                            <Icon name="calendar_today" className="text-cyan-aura/70" />
                                                             {formatMatchDate(matchDate)}
                                                         </span>
                                                     )}
@@ -182,7 +183,7 @@ export default function FixturesContent({ schedule, results, teamLogos, tourname
                                                     {/* MVP */}
                                                     {result && result.mvp && (
                                                         <span className="text-gray-600 flex items-center gap-1.5 ml-auto">
-                                                            <i className="fas fa-crown text-yellow-500"></i>
+                                                            <Icon name="workspace_premium" className="text-yellow-500" filled />
                                                             MVP: <span className="font-bold text-uefa-dark">{result.mvp}</span>
                                                         </span>
                                                     )}

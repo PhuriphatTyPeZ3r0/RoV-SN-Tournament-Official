@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -319,7 +320,7 @@ export default function GameStatsModal({
                 <div className="flex justify-between items-center mb-6 border-b pb-4">
                     <div className="flex items-center gap-4">
                         <h3 className="text-2xl font-bold font-display text-uefa-dark flex items-center gap-3">
-                            <i className="fas fa-chart-bar text-cyan-aura"></i>
+                            <Icon name="bar_chart" className="text-cyan-aura" />
                             {t.admin.gameStatsModal.title} <span className="text-gray-400 text-lg">|</span> {t.admin.gameStatsModal.gameNumber} {gameNumber}
                         </h3>
 
@@ -341,16 +342,16 @@ export default function GameStatsModal({
                                     }`}
                             >
                                 {uploading ? (
-                                    <><i className="fas fa-spinner fa-spin"></i> {t.admin.gameStatsModal.aiAnalyzing}</>
+                                    <><Icon name="progress_activity" spin /> {t.admin.gameStatsModal.aiAnalyzing}</>
                                 ) : (
-                                    <><i className="fas fa-magic"></i> {t.admin.gameStatsModal.aiAutofill}</>
+                                    <><Icon name="auto_fix_high" /> {t.admin.gameStatsModal.aiAutofill}</>
                                 )}
                             </label>
                         </div>
                     </div>
 
                     <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
-                        <i className="fas fa-times text-2xl"></i>
+                        <Icon name="close" className="text-2xl" />
                     </button>
                 </div>
 
@@ -439,7 +440,7 @@ export default function GameStatsModal({
                                                             className="w-full h-full object-cover"
                                                         />
                                                     ) : (
-                                                        <i className="fas fa-plus text-gray-400 text-xs"></i>
+                                                        <Icon name="add" className="text-gray-400 text-xs" />
                                                     )}
                                                 </button>
                                             </td>
@@ -506,7 +507,7 @@ export default function GameStatsModal({
                                                             className="w-full h-full object-cover"
                                                         />
                                                     ) : (
-                                                        <i className="fas fa-plus text-gray-400 text-xs"></i>
+                                                        <Icon name="add" className="text-gray-400 text-xs" />
                                                     )}
                                                 </button>
                                             </td>
@@ -551,7 +552,7 @@ export default function GameStatsModal({
                                         onClick={handleSave}
                                         className="px-6 py-2.5 bg-gradient-to-r from-cyan-aura to-blue-600 text-white rounded-lg font-bold shadow-lg hover:shadow-cyan-aura/50 transition-all"
                                     >
-                                        <i className="fas fa-save mr-2"></i>
+                                        <Icon name="save" className="mr-2" />
                                         {t.admin.gameStatsModal.saveConfirm}
                                     </button>
                                 </div>
@@ -563,20 +564,20 @@ export default function GameStatsModal({
                     <div className="bg-white rounded-xl w-full max-w-2xl p-6 shadow-2xl m-4 max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-4">
                             <h4 className="text-xl font-bold text-gray-800">
-                                <i className="fas fa-mask mr-2 text-cyan-aura"></i>
+                                <Icon name="sports_martial_arts" className="mr-2 text-cyan-aura" />
                                 {t.admin.gameStatsModal.selectHero}
                             </h4>
                             <button
                                 onClick={() => setHeroPickerOpen({ open: false, team: null, index: null })}
                                 className="text-gray-400 hover:text-gray-600"
                             >
-                                <i className="fas fa-times text-xl"></i>
+                                <Icon name="close" className="text-xl" />
                             </button>
                         </div>
 
                         {/* Search */}
                         <div className="relative mb-4">
-                            <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
                                 ref={heroSearchRef}
                                 type="text"
@@ -591,7 +592,7 @@ export default function GameStatsModal({
                         <div className="overflow-y-auto flex-1">
                             {allHeroes.length === 0 ? (
                                 <div className="text-center py-8 text-gray-500">
-                                    <i className="fas fa-ghost text-4xl mb-2"></i>
+                                    <Icon name="ghost" className="text-4xl mb-2" />
                                     <p>{t.admin.gameStatsModal.noHeroes}</p>
                                     <p className="text-sm">{t.admin.gameStatsModal.uploadHeroHint}</p>
                                 </div>
@@ -603,7 +604,7 @@ export default function GameStatsModal({
                                         className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-red-400 hover:bg-red-50 transition"
                                         title={t.admin.gameStatsModal.noHeroSelected}
                                     >
-                                        <i className="fas fa-times text-gray-400"></i>
+                                        <Icon name="close" className="text-gray-400" />
                                     </button>
                                     {filteredHeroes.map(hero => (
                                         <button

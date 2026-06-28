@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect, useTransition } from 'react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { 
@@ -290,7 +291,7 @@ export default function AdminThemesPage() {
                     onClick={openCreateModal}
                     className="bg-cyan-aura hover:bg-cyan-500 text-uefa-dark font-bold px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 text-sm"
                 >
-                    <i className="fas fa-plus"></i>
+                    <Icon name="add" />
                     {t.admin.themesPage.newThemeBtn}
                 </button>
             </div>
@@ -300,7 +301,7 @@ export default function AdminThemesPage() {
                 <div className="lg:col-span-1 space-y-4">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-uefa-dark mb-4 flex items-center gap-2">
-                            <i className="fas fa-trophy text-cyan-aura"></i>
+                            <Icon name="emoji_events" className="text-cyan-aura" />
                             {t.admin.themesPage.selectTournament}
                         </h3>
                         
@@ -343,7 +344,7 @@ export default function AdminThemesPage() {
                 <div className="lg:col-span-2 space-y-4">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-uefa-dark mb-4 flex items-center gap-2 border-b pb-3">
-                            <i className="fas fa-palette text-cyan-aura"></i>
+                            <Icon name="palette" className="text-cyan-aura" />
                             {t.admin.themesPage.activeThemeFor}: <span className="text-cyan-aura">{currentTour?.name}</span>
                         </h3>
 
@@ -378,7 +379,7 @@ export default function AdminThemesPage() {
                                                             className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 hover:bg-cyan-100 hover:text-cyan-600 flex items-center justify-center transition-colors text-xs"
                                                             title={t.admin.themesPage.editTheme}
                                                         >
-                                                            <i className="fas fa-edit"></i>
+                                                            <Icon name="edit" />
                                                         </button>
                                                         {!theme.is_preset && (
                                                             <button 
@@ -386,13 +387,13 @@ export default function AdminThemesPage() {
                                                                 className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition-colors text-xs"
                                                                 title={t.admin.themesPage.deleteTheme}
                                                             >
-                                                                <i className="fas fa-trash-alt"></i>
+                                                                <Icon name="delete_outline" />
                                                             </button>
                                                         )}
                                                     </div>
                                                     {isSelected && (
                                                         <span className="w-5 h-5 rounded-full bg-cyan-aura text-uefa-dark flex items-center justify-center text-[10px] font-bold">
-                                                            <i className="fas fa-check"></i>
+                                                            <Icon name="done" />
                                                         </span>
                                                     )}
                                                 </div>
@@ -448,12 +449,12 @@ export default function AdminThemesPage() {
                             >
                                 {isPending ? (
                                     <>
-                                        <i className="fas fa-spinner fa-spin"></i>
+                                        <Icon name="progress_activity" spin />
                                         {t.admin.themesPage.saving}
                                     </>
                                 ) : (
                                     <>
-                                        <i className="fas fa-save"></i>
+                                        <Icon name="save" />
                                         {t.admin.themesPage.saveThemeSettings}
                                     </>
                                 )}
@@ -470,14 +471,14 @@ export default function AdminThemesPage() {
                         {/* Modal Header */}
                         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                             <h3 className="text-xl font-bold text-uefa-dark flex items-center gap-2">
-                                <i className="fas fa-magic text-cyan-aura"></i>
+                                <Icon name="auto_fix_high" className="text-cyan-aura" />
                                 {modalMode === 'create' ? t.admin.themesPage.createThemeHeader : `${t.admin.themesPage.editThemeHeader}: ${formData.name}`}
                             </h3>
                             <button 
                                 onClick={() => setIsModalOpen(false)}
                                 className="text-gray-400 hover:text-gray-600 transition-colors"
                             >
-                                <i className="fas fa-times text-lg"></i>
+                                <Icon name="close" className="text-lg" />
                             </button>
                         </div>
 
@@ -542,7 +543,7 @@ export default function AdminThemesPage() {
                                         onClick={handleAutoGenerateColors}
                                         className="text-xs text-cyan-aura hover:text-cyan-500 font-bold flex items-center gap-1.5 transition-colors"
                                     >
-                                        <i className="fas fa-wand-magic-sparkles"></i>
+                                        <Icon name="auto_fix_high" />
                                         {t.admin.themesPage.autoGenerate}
                                     </button>
                                 </div>

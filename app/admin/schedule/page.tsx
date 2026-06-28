@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -154,7 +155,7 @@ export default function AdminSchedulePage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                        <i className="fas fa-calendar-check mr-3 text-cyan-aura"></i>
+                        <Icon name="event_available" className="mr-3 text-cyan-aura" />
                         {t.admin.schedulePage.title}
                     </h1>
                     <p className="text-gray-500 mt-1">
@@ -165,7 +166,7 @@ export default function AdminSchedulePage() {
                     onClick={handleRefresh}
                     className="px-4 py-2 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500 transition-colors"
                 >
-                    <i className="fas fa-sync-alt mr-2"></i>
+                    <Icon name="refresh" className="mr-2" />
                     {t.admin.schedulePage.refresh}
                 </button>
             </div>
@@ -173,7 +174,7 @@ export default function AdminSchedulePage() {
             {/* Search */}
             <div className="bg-white rounded-xl shadow-sm p-4">
                 <div className="relative">
-                    <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
                         type="text"
                         placeholder={t.admin.teamsPage.search}
@@ -189,7 +190,7 @@ export default function AdminSchedulePage() {
                 <div className="lg:col-span-1">
                     <div className="bg-white rounded-xl shadow-sm p-4 sticky top-4">
                         <h3 className="font-bold text-uefa-dark mb-4">
-                            <i className="fas fa-calendar-day mr-2 text-cyan-aura"></i>
+                            <Icon name="event" className="mr-2 text-cyan-aura" />
                             {t.admin.schedulePage.matchDays}
                         </h3>
                         <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -209,7 +210,7 @@ export default function AdminSchedulePage() {
                                         <div className="flex items-center justify-between">
                                             <span className="font-bold">{getDayLabel(day.day)}</span>
                                             {isCompleted ? (
-                                                <i className={`fas fa-check-circle ${selectedDay === day.day ? 'text-white' : 'text-green-500'}`}></i>
+                                                <Icon name="check_circle" className={selectedDay === day.day ? 'text-white' : 'text-green-500'} />
                                             ) : (
                                                 <span className={`text-xs ${selectedDay === day.day ? 'text-white/80' : 'text-gray-400'}`}>
                                                     {stats.completed}/{stats.total}
@@ -231,7 +232,7 @@ export default function AdminSchedulePage() {
                     <div className="bg-white rounded-xl shadow-sm">
                         <div className="p-5 border-b border-gray-100">
                             <h3 className="font-bold text-uefa-dark">
-                                <i className="fas fa-gamepad mr-2 text-cyan-aura"></i>
+                                <Icon name="sports_esports" className="mr-2 text-cyan-aura" />
                                 {selectedDay ? `${getDayLabel(selectedDay)} - ${selectedDayData?.matches?.length || 0} ${t.admin.schedulePage.matches}` : t.admin.schedulePage.selectDay}
                             </h3>
                         </div>
@@ -302,7 +303,7 @@ export default function AdminSchedulePage() {
                                 </div>
                             ) : (
                                 <div className="text-center py-12">
-                                    <i className="fas fa-calendar-times text-5xl text-gray-300 mb-4"></i>
+                                    <Icon name="event_busy" className="text-5xl text-gray-300 mb-4" />
                                     <p className="text-gray-500">{t.admin.schedulePage.noMatchesToday}</p>
                                 </div>
                             )}
@@ -313,14 +314,14 @@ export default function AdminSchedulePage() {
 
             {schedule.length === 0 && (
                 <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-                    <i className="fas fa-calendar-plus text-6xl text-gray-300 mb-4"></i>
+                    <Icon name="calendar_add_on" className="text-6xl text-gray-300 mb-4" />
                     <h3 className="text-xl font-bold text-gray-600 mb-2">{t.admin.schedulePage.noSchedule}</h3>
                     <p className="text-gray-400 mb-6">{t.admin.schedulePage.createScheduleHint}</p>
                     <a
                         href="/admin/draw"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500 transition-colors"
                     >
-                        <i className="fas fa-random"></i>
+                        <Icon name="swap_horiz" />
                         {t.admin.schedulePage.goToDraw}
                     </a>
                 </div>

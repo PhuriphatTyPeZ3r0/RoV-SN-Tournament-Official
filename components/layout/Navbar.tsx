@@ -7,6 +7,7 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useThemeMode } from '@/components/providers/ThemeModeProvider';
 import Image from 'next/image';
+import Icon from '@/components/common/Icon';
 
 export default function Navbar() {
     const { t, language, changeLanguage } = useLanguage();
@@ -56,12 +57,12 @@ export default function Navbar() {
     const flagUrl = language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png";
 
     return (
-        // lg: breakpoint (1024px) used throughout — iPad landscape and below uses hamburger menu
-        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-uefa-dark shadow-lg py-2' : 'bg-gradient-to-b from-uefa-dark to-transparent py-3 lg:py-4'}`}>
+        // xl: breakpoint (1280px) used throughout — iPad landscape/portrait and below uses hamburger menu
+        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-uefa-dark shadow-lg py-2' : 'bg-gradient-to-b from-uefa-dark to-transparent py-3 xl:py-4'}`}>
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
+                    <Link href="/" className="flex items-center gap-1.5 xl:gap-2 2xl:gap-3 group">
                         <div className="relative">
                             <Image
                                 src="/images/logo/RoV-Logo.png"
@@ -69,24 +70,24 @@ export default function Navbar() {
                                 width={48}
                                 height={48}
                                 priority
-                                className="h-9 lg:h-12 w-auto transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(21,200,255,0.5)]"
+                                className="h-9 xl:h-10 2xl:h-12 w-auto transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(21,200,255,0.5)]"
                             />
                             <div className="absolute inset-0 bg-cyan-aura mix-blend-overlay opacity-0 group-hover:opacity-50 blur-lg transition-opacity"></div>
                         </div>
                         <div className="hidden sm:block">
-                            <h1 className="text-white font-display font-bold text-base lg:text-lg tracking-wider leading-none group-hover:text-cyan-aura transition-colors">
-                                RoV SN<br /><span className="text-cyan-aura text-xs lg:text-sm font-normal tracking-[0.2em]">TOURNAMENT</span>
+                            <h1 className="text-white font-display font-bold text-sm xl:text-sm 2xl:text-lg tracking-wider leading-none group-hover:text-cyan-aura transition-colors">
+                                RoV SN<br /><span className="text-cyan-aura text-[10px] xl:text-[11px] 2xl:text-sm font-normal tracking-wide 2xl:tracking-[0.2em]">TOURNAMENT</span>
                             </h1>
                         </div>
                     </Link>
 
-                    {/* Desktop Menu — hidden below lg (1024px) */}
-                    <div className="hidden lg:flex items-center gap-1 bg-uefa-dark/80 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/10 shadow-lg">
+                    {/* Desktop Menu — hidden below xl (1280px) */}
+                    <div className="hidden xl:flex items-center gap-0.5 2xl:gap-1 bg-uefa-dark/80 backdrop-blur-md px-1 py-1 2xl:px-2 2xl:py-1.5 rounded-full border border-white/10 shadow-lg">
                         {navItems.map((item) => (
                             <Link
                                 key={item.path}
                                 href={item.path}
-                                className={`px-3 xl:px-4 py-2 rounded-full font-display text-xs xl:text-sm uppercase tracking-wide transition-all ${pathname === item.path
+                                className={`px-2 xl:px-2.5 2xl:px-4 py-1.5 2xl:py-2 rounded-full font-display text-[11px] xl:text-xs 2xl:text-sm uppercase tracking-wide transition-all ${pathname === item.path
                                     ? 'bg-cyan-aura text-uefa-dark font-bold shadow-[0_0_15px_rgba(21,200,255,0.4)]'
                                     : 'text-gray-300 hover:text-white hover:bg-white/5'
                                     }`}
@@ -98,53 +99,54 @@ export default function Navbar() {
                         {isAuthenticated && (
                             <Link
                                 href="/team"
-                                className={`px-3 xl:px-4 py-2 rounded-full font-display text-xs xl:text-sm uppercase tracking-wide transition-all ${pathname === '/team'
+                                className={`px-2 xl:px-2.5 2xl:px-4 py-1.5 2xl:py-2 rounded-full font-display text-[11px] xl:text-xs 2xl:text-sm uppercase tracking-wide transition-all ${pathname === '/team'
                                     ? 'bg-cyan-aura text-uefa-dark font-bold'
                                     : 'text-cyan-aura hover:bg-cyan-aura/10'
                                     }`}
                             >
-                                <i className="fas fa-users mr-1.5"></i>
+                                <Icon name="groups" className="mr-1.5" />
                                 {t.nav.myTeam}
                             </Link>
                         )}
                     </div>
 
                     {/* Desktop Right Actions: Language + Dark Mode Toggle + Login */}
-                    <div className="hidden lg:flex items-center gap-3 xl:gap-4">
+                    <div className="hidden xl:flex items-center gap-1.5 xl:gap-2.5 2xl:gap-4">
                         {/* Dark / Light Mode Toggle */}
                         <button
                             onClick={toggleMode}
                             aria-label="Toggle dark/light mode"
-                            className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 backdrop-blur-sm transition-all hover:scale-110 group"
+                            className="w-8 h-8 2xl:w-9 2xl:h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 backdrop-blur-sm transition-all hover:scale-110 group"
                         >
-                            <i
-                                className={`fas ${
-                                    mode === 'dark' ? 'fa-sun text-yellow-400' : 'fa-moon text-slate-400'
-                                } transition-transform duration-300 group-hover:rotate-12`}
-                            ></i>
+                            <Icon
+                                name={mode === 'dark' ? 'light_mode' : 'dark_mode'}
+                                className={`transition-transform duration-300 group-hover:rotate-12 ${
+                                    mode === 'dark' ? 'text-yellow-400' : 'text-slate-400'
+                                }`}
+                            />
                         </button>
                         <button
                             onClick={toggleLanguage}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all group bg-uefa-dark/50 backdrop-blur-sm"
+                            className="flex items-center gap-1.5 px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all group bg-uefa-dark/50 backdrop-blur-sm"
                         >
                             <Image
                                 src={flagUrl}
                                 alt={language}
-                                width={20}
-                                height={15}
-                                className="w-5 h-auto rounded shadow-sm opacity-80 group-hover:opacity-100 transition-opacity"
+                                width={18}
+                                height={13}
+                                className="w-4.5 h-auto rounded shadow-sm opacity-80 group-hover:opacity-100 transition-opacity"
                                 style={{ width: 'auto', height: 'auto' }}
                                 unoptimized
                             />
-                            <span className="text-gray-300 text-sm font-bold group-hover:text-cyan-aura">{language.toUpperCase()}</span>
+                            <span className="text-gray-300 text-xs xl:text-sm font-bold group-hover:text-cyan-aura">{language.toUpperCase()}</span>
                         </button>
 
                         {isAuthenticated && (user?.role === 'admin' || user?.role === 'super_admin') && (
                             <Link 
                                 href="/admin"
-                                className="bg-cyan-aura hover:bg-cyan-aura/90 text-uefa-dark px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(21,200,255,0.3)] hover:scale-105"
+                                className="bg-cyan-aura hover:bg-cyan-aura/90 text-uefa-dark px-2.5 xl:px-3 2xl:px-4 py-1.5 2xl:py-2 rounded-lg text-xs 2xl:text-sm font-bold transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(21,200,255,0.3)] hover:scale-105"
                             >
-                                <i className="fas fa-user-shield"></i>
+                                <Icon name="admin_panel_settings" />
                                 {t.nav.adminPanel}
                             </Link>
                         )}
@@ -152,15 +154,19 @@ export default function Navbar() {
                         {isAuthenticated ? (
                             <Link 
                                 href="/student-info"
-                                className="bg-white/10 hover:bg-white/20 text-white px-3 xl:px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 border border-white/10 hover:scale-105"
+                                className="bg-white/10 hover:bg-white/20 text-white px-2.5 xl:px-3 2xl:px-4 py-1.5 2xl:py-2 rounded-lg text-xs 2xl:text-sm font-bold transition-all flex items-center gap-1.5 border border-white/10 hover:scale-105"
                             >
-                                <i className="fas fa-user-circle"></i>
-                                {user?.username}
+                                {user?.avatarUrl ? (
+                                    <img src={user.avatarUrl} alt="" className="w-5 h-5 rounded-full object-cover border border-white/20" />
+                                ) : (
+                                    <Icon name="account_circle" />
+                                )}
+                                <span className="truncate max-w-[80px] xl:max-w-[120px]">{user?.username}</span>
                             </Link>
                         ) : (
                             <Link 
                                 href="/login"
-                                className="bg-gradient-to-r from-cyan-aura to-cyan-dark text-uefa-dark px-4 xl:px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-cyan-aura/20 hover:scale-105 transition-all"
+                                className="bg-gradient-to-r from-cyan-aura to-cyan-dark text-uefa-dark px-3 xl:px-4 2xl:px-6 py-1.5 2xl:py-2 rounded-lg text-xs 2xl:text-sm font-bold shadow-lg shadow-cyan-aura/20 hover:scale-105 transition-all"
                             >
                                 {t.nav.login}
                             </Link>
@@ -168,18 +174,17 @@ export default function Navbar() {
                     </div>
 
                     {/* Tablet/Mobile Right Area: Dark Mode + Language + Hamburger Toggle */}
-                    <div className="lg:hidden flex items-center gap-2">
+                    <div className="xl:hidden flex items-center gap-2">
                         {/* Dark / Light Mode Toggle — always visible */}
                         <button
                             onClick={toggleMode}
                             aria-label="Toggle dark/light mode"
                             className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-white/5 transition-all"
                         >
-                            <i
-                                className={`fas ${
-                                    mode === 'dark' ? 'fa-sun text-yellow-400' : 'fa-moon text-slate-400'
-                                } text-sm`}
-                            ></i>
+                            <Icon
+                                name={mode === 'dark' ? 'light_mode' : 'dark_mode'}
+                                className={mode === 'dark' ? 'text-yellow-400' : 'text-slate-400'}
+                            />
                         </button>
                         {/* Language toggle visible on tablet+ (sm breakpoint) */}
                         <button
@@ -204,7 +209,7 @@ export default function Navbar() {
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle menu"
                         >
-                            <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+                            <Icon name={isMenuOpen ? 'close' : 'menu'} />
                         </button>
                     </div>
                 </div>
@@ -212,12 +217,12 @@ export default function Navbar() {
 
             {/* Mobile/Tablet Menu Overlay */}
             <div
-                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 xl:hidden ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsMenuOpen(false)}
             />
 
             {/* Mobile/Tablet Menu Panel */}
-            <div className={`fixed top-0 right-0 h-full w-[75%] max-w-xs sm:max-w-sm bg-uefa-dark shadow-2xl z-50 transform transition-transform duration-300 lg:hidden border-l border-white/10 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className={`fixed top-0 right-0 h-full w-[75%] max-w-xs sm:max-w-sm bg-uefa-dark shadow-2xl z-50 transform transition-transform duration-300 xl:hidden border-l border-white/10 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex flex-col h-full">
                     {/* Mobile Menu Header */}
                     <div className="p-5 border-b border-white/10 flex justify-between items-center bg-gradient-to-r from-uefa-dark to-deep-space">
@@ -242,9 +247,9 @@ export default function Navbar() {
                             {/* Close Button */}
                             <button
                                 onClick={() => setIsMenuOpen(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
                             >
-                                <i className="fas fa-times"></i>
+                                <Icon name="close" />
                             </button>
                         </div>
                     </div>
@@ -264,7 +269,7 @@ export default function Navbar() {
                             >
                                 <div className="flex items-center justify-between">
                                     <span>{item.label}</span>
-                                    {pathname === item.path && <i className="fas fa-chevron-right text-sm opacity-50"></i>}
+                                    {pathname === item.path && <Icon name="chevron_right" className="text-sm opacity-50" />}
                                 </div>
                             </Link>
                         ))}
@@ -279,8 +284,8 @@ export default function Navbar() {
                                     className={`block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent ${pathname === '/team' ? 'bg-cyan-aura text-uefa-dark font-bold' : 'text-cyan-aura hover:bg-cyan-aura/10 hover:pl-7'}`}
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span><i className="fas fa-users mr-3"></i>{t.nav.myTeam}</span>
-                                        {pathname === '/team' && <i className="fas fa-chevron-right text-sm opacity-50"></i>}
+                                        <span className="flex items-center gap-3"><Icon name="groups" />{t.nav.myTeam}</span>
+                                        {pathname === '/team' && <Icon name="chevron_right" className="text-sm opacity-50" />}
                                     </div>
                                 </Link>
 
@@ -291,8 +296,8 @@ export default function Navbar() {
                                         className="block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent text-cyan-aura bg-cyan-aura/5 hover:bg-cyan-aura/20 hover:pl-7"
                                     >
                                         <div className="flex items-center justify-between">
-                                            <span><i className="fas fa-user-shield mr-3"></i>{t.nav.adminPanel}</span>
-                                            {pathname === '/admin' && <i className="fas fa-chevron-right text-sm opacity-50"></i>}
+                                            <span className="flex items-center gap-3"><Icon name="admin_panel_settings" />{t.nav.adminPanel}</span>
+                                            {pathname === '/admin' && <Icon name="chevron_right" className="text-sm opacity-50" />}
                                         </div>
                                     </Link>
                                 )}
@@ -303,8 +308,15 @@ export default function Navbar() {
                                     className={`block px-5 py-3.5 rounded-xl text-base font-display uppercase tracking-wider transition-all border border-transparent ${pathname === '/student-info' ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white hover:pl-7'}`}
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span><i className="fas fa-user-circle mr-3"></i>{user?.username}</span>
-                                        {pathname === '/student-info' && <i className="fas fa-chevron-right text-sm opacity-50"></i>}
+                                        <span className="flex items-center gap-3">
+                                            {user?.avatarUrl ? (
+                                                <img src={user.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover border border-white/20" />
+                                            ) : (
+                                                <Icon name="account_circle" />
+                                            )}
+                                            {user?.username}
+                                        </span>
+                                        {pathname === '/student-info' && <Icon name="chevron_right" className="text-sm opacity-50" />}
                                     </div>
                                 </Link>
                             </>

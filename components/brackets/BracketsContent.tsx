@@ -5,6 +5,7 @@ import TeamLogo from '@/components/common/TeamLogo';
 import ShareButton from '@/components/common/ShareButton';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import SeasonSelector from '@/components/common/SeasonSelector';
+import Icon from '@/components/common/Icon';
 
 interface Match {
     id: string;
@@ -166,7 +167,7 @@ export default function BracketsContent({ matches, teamLogos, tournaments, curre
             <div className="container mx-auto px-4">
                 {semiFinals.length === 0 && !grandFinal ? (
                     <div className="bg-white rounded-2xl shadow-lg p-12 text-center max-w-lg mx-auto">
-                        <i className="fas fa-sitemap text-6xl text-gray-300 mb-4"></i>
+                        <Icon name="account_tree" className="text-6xl text-gray-300 mb-4" />
                         <p className="text-gray-500 text-lg font-medium">{t.brackets.notReady}</p>
                         <p className="text-gray-400 text-sm mt-1">{t.brackets.waitAdmin}</p>
                     </div>
@@ -176,24 +177,24 @@ export default function BracketsContent({ matches, teamLogos, tournaments, curre
                         <div className="flex md:hidden bg-white/60 p-1.5 rounded-2xl mb-8 border border-gray-200/50 shadow-sm backdrop-blur-md max-w-md mx-auto">
                             <button
                                 onClick={() => setActiveStage('semi')}
-                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl transition-all duration-300 ${
+                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
                                     activeStage === 'semi'
                                         ? 'bg-uefa-dark text-white shadow-md shadow-uefa-dark/15 scale-100'
                                         : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100/50'
                                 }`}
                             >
-                                <i className="fas fa-sitemap mr-2"></i>
+                                <Icon name="account_tree" />
                                 {t.brackets.semiFinals}
                             </button>
                             <button
                                 onClick={() => setActiveStage('finals')}
-                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl transition-all duration-300 ${
+                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
                                     activeStage === 'finals'
                                         ? 'bg-uefa-dark text-white shadow-md shadow-uefa-dark/15 scale-100'
                                         : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100/50'
                                 }`}
                             >
-                                <i className="fas fa-trophy mr-2"></i>
+                                <Icon name="emoji_events" />
                                 {t.brackets.finals}
                             </button>
                         </div>
@@ -288,7 +289,7 @@ export default function BracketsContent({ matches, teamLogos, tournaments, curre
                                     {/* Champion Display */}
                                     <div className={`w-[240px] p-6 rounded-3xl text-center border-2 transition-all duration-500 flex flex-col items-center justify-center gap-3 ${championName ? 'bg-gradient-to-b from-yellow-400/10 via-yellow-500/5 to-white border-yellow-400 shadow-xl shadow-yellow-500/10 scale-105' : 'bg-white border-dashed border-gray-300'}`}>
                                         <div className={`w-14 h-14 rounded-full flex items-center justify-center ${championName ? 'bg-yellow-400 text-white animate-bounce' : 'bg-gray-100 text-gray-400'}`}>
-                                            <i className="fas fa-trophy text-2xl"></i>
+                                            <Icon name="emoji_events" className="text-2xl" />
                                         </div>
                                         
                                         <div>
@@ -318,7 +319,7 @@ export default function BracketsContent({ matches, teamLogos, tournaments, curre
                                     {/* 3rd Place Display */}
                                     <div className={`w-[240px] p-5 rounded-3xl text-center border transition-all duration-500 flex flex-col items-center justify-center gap-3 ${thirdPlaceWinnerName ? 'bg-gradient-to-b from-amber-600/10 via-amber-700/5 to-white border-amber-600/60 shadow-lg scale-100' : 'bg-white border-dashed border-gray-200'}`}>
                                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${thirdPlaceWinnerName ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                                            <i className="fas fa-medal text-lg"></i>
+                                            <Icon name="military_tech" className="text-lg" />
                                         </div>
                                         
                                         <div>

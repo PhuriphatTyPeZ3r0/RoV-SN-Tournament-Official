@@ -3,13 +3,17 @@
 import TeamLogo from '@/components/common/TeamLogo';
 import ShareButton from '@/components/common/ShareButton';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import SeasonSelector from '@/components/common/SeasonSelector';
+import Icon from '@/components/common/Icon';
 
 interface ClubsContentProps {
     teams: string[];
     teamLogos: Record<string, string>;
+    tournaments: any[];
+    currentSeason: number;
 }
 
-export default function ClubsContent({ teams, teamLogos }: ClubsContentProps) {
+export default function ClubsContent({ teams, teamLogos, tournaments, currentSeason }: ClubsContentProps) {
     const { t, language } = useLanguage();
     const isThai = language === 'th';
 
@@ -26,7 +30,8 @@ export default function ClubsContent({ teams, teamLogos }: ClubsContentProps) {
                             {t.clubs.subtitle}
                         </p>
                     </div>
-                    <div className="flex-shrink-0 ml-2">
+                    <div className="flex items-center gap-3 flex-shrink-0 ml-2">
+                        <SeasonSelector tournaments={tournaments} currentSeason={currentSeason} />
                         <ShareButton title={`${t.nav.teams} - RoV SN Tournament`} />
                     </div>
                 </div>
@@ -35,7 +40,7 @@ export default function ClubsContent({ teams, teamLogos }: ClubsContentProps) {
             <div className="container mx-auto px-4">
                 {teams.length === 0 ? (
                     <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                        <i className="fas fa-users-slash text-6xl text-gray-300 mb-4"></i>
+                        <Icon name="person_remove" className="text-6xl text-gray-300 mb-4" />
                         <h3 className="text-xl font-bold text-gray-700 mb-2">{t.clubs.noTeams}</h3>
                         <p className="text-gray-500">{t.clubs.noTeamsDesc}</p>
                     </div>

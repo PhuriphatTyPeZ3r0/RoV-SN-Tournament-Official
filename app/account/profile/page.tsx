@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { updateProfileAction } from '@/features/auth/profile-actions';
@@ -42,7 +43,7 @@ export default function UserProfilePage() {
                 <div className="bg-uefa-dark p-8 flex justify-between items-center">
                     <h1 className="text-2xl font-display font-bold text-white uppercase">User <span className="text-cyan-aura">Profile</span></h1>
                     <Link href="/team" className="text-white/60 hover:text-white transition-colors">
-                        <i className="fas fa-times text-xl"></i>
+                        <Icon name="close" className="text-xl" />
                     </Link>
                 </div>
 
@@ -56,7 +57,7 @@ export default function UserProfilePage() {
                                     <Image src={profile.avatar_url} alt="Avatar" fill className="object-cover" />
                                 ) : (
                                     <div className="flex items-center justify-center h-full text-gray-400 text-3xl">
-                                        <i className="fas fa-user"></i>
+                                        <Icon name="person" />
                                     </div>
                                 )}
                             </div>

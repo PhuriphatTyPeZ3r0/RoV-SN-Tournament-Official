@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { AdminRealtimeListener } from '@/components/admin/AdminRealtimeListener';
+import Icon from '@/components/common/Icon';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, loading, isAuthenticated } = useAuth();
@@ -22,18 +23,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }, [loading, isAuthenticated]);
 
     const menuItems = [
-        { path: '/admin', label: t.admin.dashboard.title, icon: 'fas fa-tachometer-alt', exact: true },
-        { path: '/admin/registrations', label: t.admin.dashboard.registrations, icon: 'fas fa-user-check' },
-        { path: '/admin/draw', label: t.admin.dashboard.draw, icon: 'fas fa-random' },
-        { path: '/admin/schedule', label: t.admin.dashboard.manageSchedule, icon: 'fas fa-calendar-check' },
-        { path: '/admin/results', label: t.admin.dashboard.recordResult, icon: 'fas fa-trophy' },
-        { path: '/admin/history', label: t.admin.historyTitle || 'History', icon: 'fas fa-history' },
-        { path: '/admin/teams', label: t.admin.dashboard.manageTeams, icon: 'fas fa-users-cog' },
-        { path: '/admin/players', label: t.admin.dashboard.managePlayers, icon: 'fas fa-user-friends' },
-        { path: '/admin/game-stats', label: t.admin.playerStatsTitle || t.admin.dashboard.gameStats, icon: 'fas fa-chart-line' },
-        { path: '/admin/heroes', label: t.admin.dashboard.manageHeroes, icon: 'fas fa-mask' },
-        { path: '/admin/logos', label: t.admin.dashboard.manageLogos, icon: 'fas fa-image' },
-        { path: '/admin/themes', label: t.admin.dashboard.themes, icon: 'fas fa-palette' },
+        { path: '/admin', label: t.admin.dashboard.title, icon: 'speed' as const, exact: true },
+        { path: '/admin/registrations', label: t.admin.dashboard.registrations, icon: 'verified_user' as const },
+        { path: '/admin/draw', label: t.admin.dashboard.draw, icon: 'swap_horiz' as const },
+        { path: '/admin/schedule', label: t.admin.dashboard.manageSchedule, icon: 'event_available' as const },
+        { path: '/admin/results', label: t.admin.dashboard.recordResult, icon: 'emoji_events' as const },
+        { path: '/admin/history', label: t.admin.historyTitle || 'History', icon: 'history' as const },
+        { path: '/admin/teams', label: t.admin.dashboard.manageTeams, icon: 'supervised_user_circle' as const },
+        { path: '/admin/players', label: t.admin.dashboard.managePlayers, icon: 'groups' as const },
+        { path: '/admin/game-stats', label: t.admin.playerStatsTitle || t.admin.dashboard.gameStats, icon: 'show_chart' as const },
+        { path: '/admin/heroes', label: t.admin.dashboard.manageHeroes, icon: 'sports_martial_arts' as const },
+        { path: '/admin/logos', label: t.admin.dashboard.manageLogos, icon: 'image' as const },
+        { path: '/admin/themes', label: t.admin.dashboard.themes, icon: 'palette' as const },
     ];
 
     const handleLogout = async () => {
@@ -88,7 +89,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="p-4 lg:p-6 border-b border-gray-700">
                     <Link href="/" className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-cyan-aura to-blue-600 rounded-full flex items-center justify-center">
-                            <i className="fas fa-shield-alt text-white"></i>
+                            <Icon name="security" className="text-white" />
                         </div>
                         <div>
                             <div className="font-display font-bold text-lg">ADMIN</div>
@@ -108,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 : 'text-gray-300 hover:bg-white/5 hover:text-white border-transparent'
                                 }`}
                         >
-                            <i className={`${item.icon} w-5`}></i>
+                            <Icon name={item.icon} className="w-5" />
                             <span>{item.label}</span>
                         </Link>
                     ))}
@@ -128,13 +129,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             <span className="text-sm font-medium text-gray-200">
                                 {language === 'th' ? 'ภาษาไทย' : 'English'}
                             </span>
-                            <i className="fas fa-chevron-right text-xs text-gray-500 ml-1"></i>
+                            <Icon name="chevron_right" className="text-xs text-gray-500 ml-1" />
                         </button>
                     </div>
 
                     <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 bg-cyan-aura/20 rounded-full flex items-center justify-center">
-                            <i className="fas fa-user text-cyan-aura"></i>
+                            <Icon name="person" className="text-cyan-aura" />
                         </div>
                         <div>
                             <div className="font-bold text-sm">{user?.username || 'Admin'}</div>
@@ -145,14 +146,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         href="/"
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 mb-2 bg-cyan-aura/20 text-cyan-aura rounded-lg hover:bg-cyan-aura/30 transition-all text-sm font-bold shadow-sm"
                     >
-                        <i className="fas fa-home"></i>
+                        <Icon name="home" />
                         {t.admin.dashboard.backToMain}
                     </Link>
                     <button
                         onClick={handleLogout}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors text-sm"
                     >
-                        <i className="fas fa-sign-out-alt"></i>
+                        <Icon name="logout" />
                         {t.admin.dashboard.logout}
                     </button>
                 </div>
@@ -167,7 +168,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         onClick={() => setSidebarOpen(true)}
                         className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-cyan-aura transition-colors"
                     >
-                        <i className="fas fa-bars text-xl"></i>
+                        <Icon name="menu" className="text-xl" />
                     </button>
 
                     <div className="flex-1 lg:flex-none">

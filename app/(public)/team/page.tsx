@@ -1,5 +1,7 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
+
 import { useState, useEffect } from 'react';
 import { 
     createTeamAction, 
@@ -18,6 +20,7 @@ import {
 import { getHeroesAction } from '@/features/players/actions';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import { getRankImageUrl, getPositionImageUrl } from '@/features/teams/constants';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 
@@ -50,6 +53,7 @@ export default function TeamPage() {
     const [isPersonalModalOpen, setIsPersonalModalOpen] = useState(false);
     const [editNickname, setEditNickname] = useState('');
     const [editPersonalPhone, setEditPersonalPhone] = useState('');
+    const [openDropdownMemberId, setOpenDropdownMemberId] = useState<string | null>(null);
     const [editFavoriteHeroes, setEditFavoriteHeroes] = useState<string[]>([]);
     
     // Autocomplete Search States
@@ -316,7 +320,7 @@ export default function TeamPage() {
         const result = await updatePlayerPersonalDetailsAction({
             nickname: editNickname || null,
             phone: editPersonalPhone || null,
-            favoriteHeroes: editFavoriteHeroes
+            topHeroes: editFavoriteHeroes
         });
         if (result.error) {
             Swal.fire(t.team.errorTitle, result.error, 'error');
@@ -357,7 +361,8 @@ export default function TeamPage() {
 
     if (!teamData) {
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="max-w-5xl mx-auto py-8 px-4 animate-fadeIn">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Create Team */}
                 <div className="bg-white rounded-none shadow-xl p-8 border border-gray-100">
                     <div className="w-16 h-16 bg-cyan-aura/10 rounded-full flex items-center justify-center mb-6">
@@ -418,6 +423,7 @@ export default function TeamPage() {
                     </form>
                 </div>
             </div>
+        </div>
         );
     }
 
@@ -439,13 +445,19 @@ export default function TeamPage() {
         return role ? `${role.icon} ${role.label}` : roleKey;
     };
 
+    const getRoleLabelTextOnly = (roleKey: string) => {
+        if (!roleKey) return t.team.rolePlaceholder || 'ยังไม่กำหนด';
+        const role = lineupRoles.find(r => r.value === roleKey);
+        return role ? role.label : roleKey;
+    };
+
     const filteredHeroes = heroList.filter(hero => 
         hero.name.toLowerCase().includes(heroSearch.toLowerCase()) &&
         !editFavoriteHeroes.includes(hero.name)
     );
 
     return (
-        <div className="space-y-8">
+        <div className="max-w-5xl mx-auto py-8 px-4 space-y-8 animate-fadeIn">
             {/* Status Warning / Info Banner */}
             {isLocked && (
                 <div className="bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl p-4 flex items-center gap-3 text-sm animate-fadeIn">
@@ -455,11 +467,11 @@ export default function TeamPage() {
             )}
 
             {/* Team Overview */}
-            <div className="bg-uefa-dark rounded-none p-8 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-uefa-dark rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-aura/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                 
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                    <div className="w-32 h-32 bg-white/10 rounded-none flex items-center justify-center border border-white/20 backdrop-blur-md overflow-hidden relative">
+                    <div className="w-32 h-32 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur-md overflow-hidden relative">
                         {teamData.logo_url ? (
                             <img src={teamData.logo_url} alt={teamData.name} className="w-full h-full object-contain p-2" />
                         ) : (
@@ -543,7 +555,7 @@ export default function TeamPage() {
             {/* Contact Info and Personal Profile Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Team Contact Info Card */}
-                <div className="bg-white rounded-none shadow-xl p-6 border border-gray-100 flex flex-col justify-between animate-fadeIn">
+                <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100 flex flex-col justify-between animate-fadeIn">
                     <div className="space-y-4">
                         <div className="flex justify-between items-center border-b border-gray-50 pb-3">
                             <h3 className="text-md font-bold text-uefa-dark uppercase flex items-center gap-2">
@@ -608,7 +620,7 @@ export default function TeamPage() {
                 </div>
 
                 {/* Personal Profile Card */}
-                <div className="bg-white rounded-none shadow-xl p-6 border border-gray-100 flex flex-col justify-between animate-fadeIn">
+                <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100 flex flex-col justify-between animate-fadeIn">
                     <div className="space-y-4">
                         <div className="flex justify-between items-center border-b border-gray-50 pb-3">
                             <h3 className="text-md font-bold text-uefa-dark uppercase flex items-center gap-2">
@@ -647,26 +659,7 @@ export default function TeamPage() {
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">{t.team.favHeroesLabel}</p>
-                                        <div className="flex flex-wrap gap-1.5">
-                                            {currentPlayer?.favorite_heroes && currentPlayer.favorite_heroes.length > 0 ? (
-                                                currentPlayer.favorite_heroes.map((heroName: string) => {
-                                                    const heroObj = heroList.find(h => h.name === heroName);
-                                                    return (
-                                                        <span key={heroName} className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-gray-100 text-uefa-dark rounded-full text-xs font-semibold border border-gray-150 shadow-sm">
-                                                            {heroObj?.image_url && (
-                                                                <img src={heroObj.image_url} alt={heroName} className="w-3.5 h-3.5 rounded-full object-cover border border-gray-250" />
-                                                            )}
-                                                            {heroName}
-                                                        </span>
-                                                    );
-                                                })
-                                            ) : (
-                                                <span className="text-gray-300 italic text-xs">{t.team.noFavHeroes}</span>
-                                            )}
-                                        </div>
-                                    </div>
+
                                 </div>
                             );
                         })()}
@@ -740,7 +733,7 @@ export default function TeamPage() {
             )}
 
             {/* Members List */}
-            <div className="bg-white rounded-none shadow-xl overflow-hidden border border-gray-100 animate-fadeIn">
+            <div className="bg-white rounded-none shadow-xl border border-gray-100 animate-fadeIn">
                 <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                     <h3 className="text-lg font-bold text-uefa-dark uppercase flex items-center gap-2">
                         <i className="fas fa-user-friends text-cyan-aura"></i>
@@ -749,21 +742,40 @@ export default function TeamPage() {
                 </div>
                 
                 <div className="divide-y divide-gray-50">
-                    {teamData.members.map((member: any) => (
+                    {teamData.members.map((member: any, idx: number) => (
                         <div key={member.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-gray-50/50 transition-colors gap-4">
-                            <div className="flex items-center gap-4">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${member.id === teamData.captain_id ? 'bg-cyan-aura text-uefa-dark' : 'bg-gray-100 text-gray-400'}`}>
-                                    {member.name.charAt(0)}
+                            <div className="flex items-center gap-4 w-full sm:w-auto">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold overflow-hidden ${member.id === teamData.captain_id ? 'bg-cyan-aura text-uefa-dark' : 'bg-gray-100 text-gray-400'}`}>
+                                    {member.profile?.avatar_url ? (
+                                        <img src={member.profile.avatar_url} alt={member.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        member.name.charAt(0)
+                                    )}
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="font-bold text-uefa-dark">{member.name}</span>
-                                        {member.nickname && (
-                                            <span className="text-xs text-gray-500 font-medium bg-gray-50 border border-gray-150 rounded px-1.5 py-0.5">({member.nickname})</span>
-                                        )}
-                                        {member.id === teamData.captain_id && (
-                                            <span className="text-[10px] bg-cyan-aura/20 text-cyan-aura font-bold px-2 py-0.5 rounded-full uppercase">{t.team.captainLabel}</span>
-                                        )}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-4 w-full">
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="font-bold text-uefa-dark">{member.name}</span>
+                                            {member.nickname && (
+                                                <span className="text-xs text-gray-500 font-medium bg-gray-50 border border-gray-150 rounded px-1.5 py-0.5">({member.nickname})</span>
+                                            )}
+                                            {member.id === teamData.captain_id && (
+                                                <span className="text-[10px] bg-cyan-aura/20 text-cyan-aura font-bold px-2 py-0.5 rounded-full uppercase">{t.team.captainLabel}</span>
+                                            )}
+                                        </div>
+                                        {/* Mobile Kick Button */}
+                                        <div className="sm:hidden flex-shrink-0">
+                                            {isCaptain && member.id !== teamData.captain_id ? (
+                                                <button 
+                                                    onClick={() => handleKickPlayer(member.id, member.name)}
+                                                    disabled={isLocked || actionLoading}
+                                                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
+                                                    title={t.team.kickTooltip}
+                                                >
+                                                    <i className="fas fa-user-minus text-sm"></i>
+                                                </button>
+                                            ) : null}
+                                        </div>
                                     </div>
                                     <div className="text-xs text-gray-500 mt-1">
                                         {t.team.ignLabel}: <span className="font-medium text-uefa-dark">{member.in_game_name}</span> | {t.team.gradeLabel}: <span className="font-medium text-uefa-dark">{member.grade}</span>
@@ -771,76 +783,113 @@ export default function TeamPage() {
                                             <span className="ml-2 font-medium">| 📞: {member.phone}</span>
                                         )}
                                     </div>
-                                    
-                                    {/* Favorite Heroes */}
-                                    {member.favorite_heroes && member.favorite_heroes.length > 0 && (
-                                        <div className="flex items-center gap-1.5 mt-2 flex-wrap animate-fadeIn">
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{language === 'th' ? 'ฮีโร่โปรด:' : 'Favs:'}</span>
-                                            {member.favorite_heroes.map((heroName: string) => {
-                                                const heroObj = heroList.find(h => h.name === heroName);
-                                                return (
-                                                    <span key={heroName} className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-50 border border-gray-205 text-[10px] text-gray-600 rounded font-medium shadow-sm">
-                                                        {heroObj?.image_url && (
-                                                            <img src={heroObj.image_url} alt={heroName} className="w-3 h-3 rounded-full object-cover border border-gray-250" />
-                                                        )}
-                                                        {heroName}
-                                                    </span>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                             
-                            <div className="flex items-center justify-between sm:justify-end gap-6">
-                                {/* Role / Position Dropdown or Badge */}
-                                <div className="min-w-[180px] w-full sm:w-auto">
-                                    {isCaptain && !isLocked ? (
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.team.roleLabel}</span>
-                                            <select
-                                                value={member.lineup_role || 'not_set'}
-                                                onChange={(e) => handleRoleChange(member.id, e.target.value)}
-                                                disabled={actionLoading}
-                                                className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 focus:ring-1 focus:ring-cyan-aura focus:border-cyan-aura outline-none w-full text-uefa-dark font-medium cursor-pointer"
-                                            >
-                                                <option value="not_set">{t.team.rolePlaceholder}</option>
-                                                {lineupRoles.map((role) => (
-                                                    <option key={role.value} value={role.value}>
-                                                        {role.icon} {role.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col gap-0.5">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.team.roleLabel}</span>
-                                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
-                                                member.lineup_role === 'dark_slayer' ? 'bg-slate-100 text-slate-700 border border-slate-200/50' :
-                                                member.lineup_role === 'abyssal_dragon' ? 'bg-amber-50 text-amber-700 border border-amber-200/50' :
-                                                member.lineup_role === 'mid_lane' ? 'bg-purple-50 text-purple-700 border border-purple-200/50' :
-                                                member.lineup_role === 'jungle' ? 'bg-red-50 text-red-700 border border-red-200/50' :
-                                                member.lineup_role === 'support' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' :
-                                                member.lineup_role === 'substitute' ? 'bg-blue-50 text-blue-700 border border-blue-200/50' :
-                                                'bg-gray-50 text-gray-400 border border-gray-150'
-                                            }`}>
-                                                {getRoleLabel(member.lineup_role)}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
+                            <div className="flex flex-col gap-1 w-full sm:w-auto">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.team.roleLabel}</span>
+                                <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                                    {/* Role / Position Dropdown or Badge */}
+                                    <div className="w-full sm:w-52 flex-shrink-0">
+                                        {isCaptain && !isLocked ? (
+                                            <div className="relative">
+                                                {/* Toggle Button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setOpenDropdownMemberId(openDropdownMemberId === member.id ? null : member.id)}
+                                                    disabled={actionLoading}
+                                                    className="text-xs bg-gray-50 dark:bg-zinc-800/40 border border-gray-200 dark:border-zinc-700/50 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-cyan-aura focus:border-cyan-aura outline-none w-full text-uefa-dark dark:text-zinc-300 font-medium cursor-pointer flex items-center justify-between gap-2 min-h-[34px] text-left"
+                                                >
+                                                    <span className="flex items-center gap-1.5 truncate">
+                                                        {getPositionImageUrl(member.lineup_role) ? (
+                                                            <img src={getPositionImageUrl(member.lineup_role) || undefined} alt="" className="w-4 h-4 object-contain flex-shrink-0" />
+                                                        ) : member.lineup_role === 'substitute' ? (
+                                                            <span className="flex-shrink-0">🔄</span>
+                                                        ) : (
+                                                            <span className="flex-shrink-0">📍</span>
+                                                        )}
+                                                        <span className="truncate">{getRoleLabelTextOnly(member.lineup_role)}</span>
+                                                    </span>
+                                                    <Icon name="expand_more" className="text-gray-400 flex-shrink-0" />
+                                                </button>
 
-                                <div className="flex items-center gap-2">
-                                    {isCaptain && member.id !== teamData.captain_id && (
-                                        <button 
-                                            onClick={() => handleKickPlayer(member.id, member.name)}
-                                            disabled={isLocked || actionLoading}
-                                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
-                                            title={t.team.kickTooltip}
-                                        >
-                                            <i className="fas fa-user-minus text-sm"></i>
-                                        </button>
-                                    )}
+                                                {/* Dropdown Options List */}
+                                                {openDropdownMemberId === member.id && (
+                                                    <>
+                                                        <div 
+                                                            className="fixed inset-0 z-40 cursor-default" 
+                                                            onClick={() => setOpenDropdownMemberId(null)}
+                                                        />
+                                                        <div className={`absolute left-0 right-0 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-850 rounded-lg shadow-lg z-50 overflow-hidden divide-y divide-gray-100 dark:divide-zinc-800 max-h-48 overflow-y-auto animate-fadeIn min-w-[180px] ${
+                                                            idx >= teamData.members.length - 2 && teamData.members.length > 2
+                                                                ? 'bottom-full mb-1'
+                                                                : 'top-full mt-1'
+                                                        }`}>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    handleRoleChange(member.id, 'not_set');
+                                                                    setOpenDropdownMemberId(null);
+                                                                }}
+                                                                className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-zinc-800/50 text-gray-500 dark:text-gray-400 flex items-center gap-2 cursor-pointer transition-colors"
+                                                            >
+                                                                <span className="flex-shrink-0">📍</span>
+                                                                <span className="truncate">{t.team.rolePlaceholder}</span>
+                                                            </button>
+                                                            {lineupRoles.map((role) => (
+                                                                <button
+                                                                    key={role.value}
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        handleRoleChange(member.id, role.value);
+                                                                        setOpenDropdownMemberId(null);
+                                                                    }}
+                                                                    className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-zinc-800/50 text-uefa-dark dark:text-zinc-300 flex items-center gap-2 cursor-pointer transition-colors"
+                                                                >
+                                                                    {getPositionImageUrl(role.value) ? (
+                                                                        <img src={getPositionImageUrl(role.value) || undefined} alt="" className="w-4 h-4 object-contain flex-shrink-0" />
+                                                                    ) : role.value === 'substitute' ? (
+                                                                        <span className="flex-shrink-0">🔄</span>
+                                                                    ) : (
+                                                                        <span className="flex-shrink-0">📍</span>
+                                                                    )}
+                                                                    <span className="truncate">{role.label}</span>
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
+                                                member.lineup_role === 'dark_slayer' ? 'bg-zinc-100 dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 border border-zinc-200/50 dark:border-zinc-700/50' :
+                                                member.lineup_role === 'abyssal_dragon' ? 'bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-200/50 dark:border-amber-900/30' :
+                                                member.lineup_role === 'mid_lane' ? 'bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 border border-purple-200/50 dark:border-purple-900/30' :
+                                                member.lineup_role === 'jungle' ? 'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300 border border-red-200/50 dark:border-red-900/30' :
+                                                member.lineup_role === 'support' ? 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-900/30' :
+                                                member.lineup_role === 'substitute' ? 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border border-blue-200/50 dark:border-blue-900/30' :
+                                                'bg-zinc-100 dark:bg-zinc-800/40 text-zinc-400 dark:text-zinc-500 border border-zinc-200/50 dark:border-zinc-700/50'
+                                            }`}>
+                                                {getPositionImageUrl(member.lineup_role) && (
+                                                    <img src={getPositionImageUrl(member.lineup_role) || undefined} alt="" className="w-3.5 h-3.5 object-contain mr-1.5 inline-block" />
+                                                )}
+                                                {getPositionImageUrl(member.lineup_role) ? getRoleLabelTextOnly(member.lineup_role) : getRoleLabel(member.lineup_role)}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="hidden sm:flex w-10 justify-center items-center flex-shrink-0">
+                                        {isCaptain && member.id !== teamData.captain_id ? (
+                                            <button 
+                                                onClick={() => handleKickPlayer(member.id, member.name)}
+                                                disabled={isLocked || actionLoading}
+                                                className="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
+                                                title={t.team.kickTooltip}
+                                            >
+                                                <i className="fas fa-user-minus text-sm"></i>
+                                            </button>
+                                        ) : null}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -864,7 +913,7 @@ export default function TeamPage() {
             {/* Edit Team Info Modal */}
             {isEditModalOpen && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-none max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
+                    <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
                                 <i className="fas fa-edit text-cyan-aura"></i>
@@ -966,7 +1015,7 @@ export default function TeamPage() {
             {/* Team Contact Info Modal */}
             {isContactModalOpen && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-none max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
+                    <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
                                 <i className="fas fa-address-book text-cyan-aura"></i>
@@ -1039,7 +1088,7 @@ export default function TeamPage() {
             {/* Personal Profile Modal */}
             {isPersonalModalOpen && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-none max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
+                    <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
                                 <i className="fas fa-user-edit text-cyan-aura"></i>
@@ -1076,85 +1125,7 @@ export default function TeamPage() {
                                 />
                             </div>
 
-                            {/* Autocomplete Input */}
-                            <div className="relative">
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.favHeroesLabel}</label>
-                                <div className="flex flex-wrap gap-2 mb-2">
-                                    {editFavoriteHeroes.map((heroName) => {
-                                        const heroObj = heroList.find(h => h.name === heroName);
-                                        return (
-                                            <span key={heroName} className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-aura/10 border border-cyan-aura/20 text-cyan-aura rounded-full text-xs font-bold shadow-sm">
-                                                {heroObj?.image_url && (
-                                                    <img src={heroObj.image_url} alt={heroName} className="w-4 h-4 rounded-full object-cover border border-gray-200" />
-                                                )}
-                                                {heroName}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveHero(heroName)}
-                                                    className="hover:text-red-500 transition-colors ml-1 font-bold text-xs cursor-pointer"
-                                                >
-                                                    &times;
-                                                </button>
-                                            </span>
-                                        );
-                                    })}
-                                </div>
-                                
-                                {editFavoriteHeroes.length < 5 && (
-                                    <input
-                                        type="text"
-                                        value={heroSearch}
-                                        onChange={(e) => {
-                                            setHeroSearch(e.target.value);
-                                            setShowHeroDropdown(true);
-                                        }}
-                                        onFocus={() => setShowHeroDropdown(true)}
-                                        onBlur={() => setTimeout(() => setShowHeroDropdown(false), 200)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                if (heroSearch.trim()) {
-                                                    handleAddHero(heroSearch.trim());
-                                                }
-                                            }
-                                        }}
-                                        placeholder={t.team.favHeroesPlaceholder}
-                                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none text-sm text-uefa-dark"
-                                    />
-                                )}
-                                
-                                {showHeroDropdown && heroSearch.trim() && (
-                                    <div className="absolute z-55 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto divide-y divide-gray-50">
-                                        {filteredHeroes.map((hero) => (
-                                            <button
-                                                key={hero.id}
-                                                type="button"
-                                                onMouseDown={(e) => {
-                                                    e.preventDefault();
-                                                    handleAddHero(hero.name);
-                                                }}
-                                                className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 text-uefa-dark flex items-center gap-3 transition-colors cursor-pointer"
-                                            >
-                                                {hero.image_url && (
-                                                    <img src={hero.image_url} alt={hero.name} className="w-6 h-6 rounded-full object-cover border border-gray-200" />
-                                                )}
-                                                <span className="font-medium">{hero.name}</span>
-                                            </button>
-                                        ))}
-                                        <button
-                                            type="button"
-                                            onMouseDown={(e) => {
-                                                e.preventDefault();
-                                                handleAddHero(heroSearch.trim());
-                                            }}
-                                            className="w-full px-4 py-2.5 text-left text-sm font-semibold text-cyan-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer"
-                                        >
-                                            <span>{language === 'th' ? `เพิ่ม "${heroSearch.trim()}"` : `Add "${heroSearch.trim()}"`}</span>
-                                            <i className="fas fa-plus text-xs"></i>
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+
 
                             <div className="flex gap-3 justify-end pt-4 border-t border-gray-100">
                                 <button

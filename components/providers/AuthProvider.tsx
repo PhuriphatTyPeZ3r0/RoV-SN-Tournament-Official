@@ -11,6 +11,7 @@ interface AuthUser {
     role: 'guest' | 'student' | 'player' | 'captain' | 'admin' | 'super_admin';
     isProfileComplete: boolean;
     registrationStatus: string;
+    avatarUrl?: string | null;
 }
 
 interface LoginResult {
@@ -37,6 +38,7 @@ function toAuthUser(user: User, profile: any): AuthUser {
         role: profile?.role || 'guest',
         isProfileComplete: !!profile?.is_profile_complete,
         registrationStatus: profile?.registration_status || 'none',
+        avatarUrl: profile?.avatar_url || null,
     };
 }
 
@@ -61,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Fetch profile data
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('username, role, is_profile_complete, registration_status')
+                .select('username, role, is_profile_complete, registration_status, avatar_url')
                 .eq('id', sbUser.id)
                 .maybeSingle();
 
@@ -87,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Fetch profile for the signed-in user
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('username, role, is_profile_complete, registration_status')
+                .select('username, role, is_profile_complete, registration_status, avatar_url')
                 .eq('id', session.user.id)
                 .maybeSingle();
 

@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import Swal from 'sweetalert2';
@@ -338,14 +339,14 @@ export default function AdminPlayersPage() {
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                <i className="fas fa-users mr-3 text-cyan-aura"></i>
+                <Icon name="groups" className="mr-3 text-cyan-aura" />
                 {t.admin.rosterTitle || 'Manage Players'}
             </h1>
 
             {/* Import Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-700">
-                    <i className="fas fa-file-csv text-green-600"></i>
+                    <Icon name="file_present" className="text-green-600" />
                     {t.admin.importCsv || 'Import CSV'}
                 </h3>
                 <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -447,7 +448,7 @@ export default function AdminPlayersPage() {
                     <h3 className="font-bold text-gray-700">Players ({filteredPlayers.length})</h3>
                     <div className="flex gap-4">
                         <div className="relative">
-                            <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search..."
@@ -486,10 +487,10 @@ export default function AdminPlayersPage() {
                                         <td className="p-3 text-center">
                                             <div className="flex justify-center gap-2">
                                                 <button onClick={() => handleEdit(p)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded transition-colors">
-                                                    <i className="fas fa-edit"></i>
+                                                    <Icon name="edit" />
                                                 </button>
                                                 <button onClick={() => handleDelete(p._id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors">
-                                                    <i className="fas fa-trash"></i>
+                                                    <Icon name="delete" />
                                                 </button>
                                             </div>
                                         </td>

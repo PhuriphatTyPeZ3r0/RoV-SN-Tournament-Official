@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -137,7 +138,7 @@ export default function AdminGameStatsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                        <i className="fas fa-chart-line mr-3 text-cyan-aura"></i>
+                        <Icon name="show_chart" className="mr-3 text-cyan-aura" />
                         {t.admin.playerStatsTitle || 'Player Statistics'}
                     </h1>
                     <p className="text-gray-500 mt-1">{t.admin.playerStatsSubtitle.replace('{count}', String(filteredStats.length))}</p>
@@ -146,7 +147,7 @@ export default function AdminGameStatsPage() {
                     onClick={fetchStats}
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500 transition-colors w-full md:w-auto"
                 >
-                    <i className="fas fa-sync-alt"></i>
+                    <Icon name="refresh" />
                     {t.common.retry}
                 </button>
             </div>
@@ -156,7 +157,7 @@ export default function AdminGameStatsPage() {
                 <div className="flex flex-col md:flex-row gap-4">
                     {/* Search */}
                     <div className="relative flex-1">
-                        <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="text"
                             placeholder={t.admin.searchPlayer || 'Search players...'}
@@ -254,7 +255,7 @@ export default function AdminGameStatsPage() {
                                     <td className="px-4 py-3 text-center">
                                         {(player.mvpCount || 0) > 0 ? (
                                             <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-bold text-sm">
-                                                <i className="fas fa-crown text-xs"></i>
+                                                <Icon name="workspace_premium" className="text-xs" />
                                                 {player.mvpCount}
                                             </span>
                                         ) : (
@@ -269,7 +270,7 @@ export default function AdminGameStatsPage() {
                                             onClick={() => handleViewPlayerDetails(player)}
                                             className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mx-auto text-gray-500 hover:bg-cyan-aura hover:text-white transition-all transform hover:scale-110 shadow-sm"
                                         >
-                                            <i className="fas fa-eye"></i>
+                                            <Icon name="visibility" />
                                         </button>
                                     </td>
                                 </tr>
@@ -301,7 +302,7 @@ export default function AdminGameStatsPage() {
                                 onClick={() => handleViewPlayerDetails(player)}
                                 className="w-8 h-8 rounded-lg bg-gray-50 text-gray-500 flex items-center justify-center hover:bg-cyan-aura hover:text-white transition-colors"
                             >
-                                <i className="fas fa-eye"></i>
+                                <Icon name="visibility" />
                             </button>
                         </div>
 
@@ -330,7 +331,7 @@ export default function AdminGameStatsPage() {
                             </div>
                             {(player.mvpCount || 0) > 0 && (
                                 <span className="flex items-center gap-1 text-yellow-600 font-bold text-xs bg-yellow-50 px-2 py-0.5 rounded-full">
-                                    <i className="fas fa-crown"></i> {player.mvpCount} MVP
+                                    <Icon name="workspace_premium" /> {player.mvpCount} MVP
                                 </span>
                             )}
                         </div>
@@ -339,7 +340,7 @@ export default function AdminGameStatsPage() {
 
                 {filteredStats.length === 0 && (
                     <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                        <i className="fas fa-chart-bar text-4xl text-gray-300 mb-3"></i>
+                        <Icon name="bar_chart" className="text-4xl text-gray-300 mb-3" />
                         <p className="text-gray-500">{t.common.noData}</p>
                     </div>
                 )}

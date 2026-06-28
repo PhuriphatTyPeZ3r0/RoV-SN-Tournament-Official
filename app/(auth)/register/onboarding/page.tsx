@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { createClient } from '@/utils/supabase/client';
@@ -22,16 +23,6 @@ export default function OnboardingPage() {
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setPreviewUrl(URL.createObjectURL(file));
-        } else {
-            setPreviewUrl(null);
-        }
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -88,7 +79,7 @@ export default function OnboardingPage() {
             <div className="absolute top-4 right-4 z-10">
                 <button
                     onClick={() => changeLanguage(language === 'th' ? 'en' : 'th')}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all group"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all group cursor-pointer"
                 >
                     <Image
                         src={language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png"}
@@ -117,7 +108,7 @@ export default function OnboardingPage() {
             <div className="p-8">
                 {error && (
                     <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm mb-6 flex items-center gap-3">
-                        <i className="fas fa-exclamation-circle text-lg"></i>
+                        <Icon name="error" className="text-lg" />
                         {error}
                     </div>
                 )}
@@ -250,45 +241,6 @@ export default function OnboardingPage() {
                         </div>
                     </div>
 
-                    {/* Verification Doc Upload */}
-                    <div className="space-y-2 py-2 border-t border-gray-100 mt-4 pt-4">
-                        <label className="block text-gray-700 text-sm font-medium">
-                            {language === 'th' ? 'อัปโหลดหลักฐานยืนยันตัวตน (บัตรนักเรียน)' : 'Upload Verification Document (Student Card)'}
-                        </label>
-                        <div className="border-2 border-dashed border-gray-200 hover:border-cyan-aura rounded-xl p-6 text-center transition-colors relative cursor-pointer group">
-                            <input
-                                type="file"
-                                id="verificationDoc"
-                                name="verificationDoc"
-                                onChange={handleFileChange}
-                                className="hidden"
-                                accept="image/*"
-                                required
-                                disabled={loading}
-                            />
-                            <label htmlFor="verificationDoc" className="cursor-pointer block">
-                                {previewUrl ? (
-                                    <div className="relative aspect-video max-w-sm mx-auto rounded-lg overflow-hidden border border-gray-100">
-                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                                            <i className="fas fa-edit mr-2"></i> {language === 'th' ? 'เปลี่ยนรูปภาพ' : 'Change Image'}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="py-4">
-                                        <i className="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2 group-hover:text-cyan-aura transition-colors"></i>
-                                        <p className="text-sm text-gray-600 font-medium">
-                                            {language === 'th' ? 'คลิกเพื่ออัปโหลดรูปภาพ' : 'Click to upload image'}
-                                        </p>
-                                        <p className="text-[10px] text-gray-400 mt-1">
-                                            {language === 'th' ? 'ไฟล์รูปภาพ (JPG, PNG, WEBP) ขนาดไม่เกิน 5MB' : 'Image file (JPG, PNG, WEBP) up to 5MB'}
-                                        </p>
-                                    </div>
-                                )}
-                            </label>
-                        </div>
-                    </div>
-
                     <div className="flex flex-col gap-2 py-2 border-t border-gray-100 mt-4 pt-4">
                         <div className="flex items-center gap-2">
                             <input 
@@ -310,9 +262,9 @@ export default function OnboardingPage() {
                             className="w-full bg-gradient-to-r from-uefa-dark to-black text-white font-black py-4 rounded-xl shadow-lg hover:shadow-cyan-aura/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 text-lg"
                         >
                             {loading ? (
-                                <><i className="fas fa-spinner fa-spin"></i> {t.register.processing}</>
+                                <><Icon name="progress_activity" spin /> {t.register.processing}</>
                             ) : (
-                                <><i className="fas fa-check-circle"></i> {t.register.submit}</>
+                                <><Icon name="check_circle" /> {t.register.submit}</>
                             )}
                         </button>
                     </div>

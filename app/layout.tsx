@@ -121,13 +121,18 @@ export default async function RootLayout({
   return (
     <html lang="th" data-theme={activeTheme?.id || 'echo'} className={`${prompt.variable}`} suppressHydrationWarning>
       <head>
-        {/* Font Awesome for icons */}
+        {/* Font Awesome — kept ONLY for brand icons (fab fa-discord, fa-facebook-f, etc.) */}
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
           integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
+        />
+        {/* Material Symbols Rounded — primary UI icon set */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
         {themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}
       </head>

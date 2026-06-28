@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { signOutAction } from '@/features/auth/actions';
@@ -43,7 +44,7 @@ export default function RegistrationStatusPage() {
                     {status === 'pending' && (
                         <div className="space-y-6">
                             <div className="w-20 h-20 bg-cyan-50 text-cyan-500 rounded-full flex items-center justify-center mx-auto text-4xl animate-pulse">
-                                <i className="fas fa-clock"></i>
+                                <Icon name="schedule" />
                             </div>
                             <h2 className="text-xl font-bold text-gray-800">{t.regStatus.pendingTitle}</h2>
                             <p className="text-gray-500">
@@ -52,7 +53,7 @@ export default function RegistrationStatusPage() {
                             <div className="pt-4">
                                 <form action={signOutAction}>
                                     <button type="submit" className="text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors">
-                                        <i className="fas fa-sign-out-alt mr-2"></i> {t.regStatus.logout}
+                                        <Icon name="logout" className="mr-2" /> {t.regStatus.logout}
                                     </button>
                                 </form>
                             </div>
@@ -62,7 +63,7 @@ export default function RegistrationStatusPage() {
                     {status === 'rejected' && (
                         <div className="space-y-6">
                             <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto text-4xl">
-                                <i className="fas fa-times-circle"></i>
+                                <Icon name="cancel" />
                             </div>
                             <h2 className="text-xl font-bold text-gray-800">{t.regStatus.rejectedTitle}</h2>
                             <p className="text-gray-500">
@@ -84,7 +85,7 @@ export default function RegistrationStatusPage() {
                     {status === 'verified' && (
                         <div className="space-y-6">
                             <div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto text-4xl">
-                                <i className="fas fa-check-circle"></i>
+                                <Icon name="check_circle" />
                             </div>
                             <h2 className="text-xl font-bold text-gray-800">{t.regStatus.verifiedTitle}</h2>
                             <p className="text-gray-500">

@@ -91,12 +91,12 @@ export default function FormatContent() {
                                     <div className="bg-green-50 rounded-xl p-4 text-center border border-green-200">
                                         <span className="text-3xl">🟢</span>
                                         <p className="text-green-600 font-bold text-lg mt-2">{t.format.win}</p>
-                                        <p className="text-gray-800 text-2xl font-bold">3 {t.format.winPoints}</p>
+                                        <p className="text-gray-800 text-2xl font-bold">{t.format.winPoints}</p>
                                     </div>
                                     <div className="bg-red-50 rounded-xl p-4 text-center border border-red-200">
                                         <span className="text-3xl">🔴</span>
                                         <p className="text-red-600 font-bold text-lg mt-2">{t.format.lose}</p>
-                                        <p className="text-gray-800 text-2xl font-bold">0 {t.format.losePoints}</p>
+                                        <p className="text-gray-800 text-2xl font-bold">{t.format.losePoints}</p>
                                     </div>
                                 </div>
                             </div>

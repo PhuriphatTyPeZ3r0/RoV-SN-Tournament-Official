@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect, useTransition } from 'react';
 import { 
   getReadyTeamsAction, 
@@ -154,7 +155,7 @@ export default function AdminDrawPage() {
                 <div className="lg:col-span-1 space-y-4">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                         <h3 className="font-bold text-uefa-dark mb-4 flex items-center gap-2">
-                            <i className="fas fa-users text-cyan-aura"></i>
+                            <Icon name="groups" className="text-cyan-aura" />
                             {t.admin.drawPage.readyTeamsHeader.replace('{count}', readyTeams.length.toString())}
                         </h3>
                         <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
@@ -175,7 +176,7 @@ export default function AdminDrawPage() {
                             disabled={isPending || readyTeams.length < 2 || matches.length > 0}
                             className="w-full mt-6 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-aura/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
                         >
-                            {isPending ? <i className="fas fa-spinner fa-spin mr-2"></i> : <i className="fas fa-dice mr-2"></i>}
+                            {isPending ? <Icon name="progress_activity" spin className="mr-2" /> : <Icon name="casino" className="mr-2" />}
                             {t.admin.drawPage.randomDrawBtn.replace('{day}', matchDay.toString())}
                         </button>
                     </div>
@@ -186,7 +187,7 @@ export default function AdminDrawPage() {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[400px]">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="font-bold text-uefa-dark flex items-center gap-2">
-                                <i className="fas fa-project-diagram text-cyan-aura"></i>
+                                <Icon name="account_tree" className="text-cyan-aura" />
                                 {t.admin.drawPage.matchResultsHeader.replace('{day}', matchDay.toString())}
                             </h3>
                             {matches.length > 0 && (
@@ -195,7 +196,7 @@ export default function AdminDrawPage() {
                                     disabled={isPending}
                                     className="text-red-500 hover:text-red-600 text-sm font-bold flex items-center gap-1"
                                 >
-                                    <i className="fas fa-trash-alt"></i> {t.admin.drawPage.clearAction}
+                                    <Icon name="delete_outline" /> {t.admin.drawPage.clearAction}
                                 </button>
                             )}
                         </div>
@@ -227,7 +228,7 @@ export default function AdminDrawPage() {
 
                             {matches.length === 0 && (
                                 <div className="flex flex-col items-center justify-center py-20 text-gray-300">
-                                    <i className="fas fa-random text-6xl mb-4 opacity-20"></i>
+                                    <Icon name="swap_horiz" className="text-6xl mb-4 opacity-20" />
                                     <p className="text-gray-400">{t.admin.drawPage.noMatchesScheduled}</p>
                                 </div>
                             )}

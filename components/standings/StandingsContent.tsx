@@ -6,6 +6,7 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import type { ProcessedStanding } from '@/lib/api';
 
 import SeasonSelector from '@/components/common/SeasonSelector';
+import Icon from '@/components/common/Icon';
 
 interface StandingsContentProps {
     standings: ProcessedStanding[];
@@ -31,7 +32,7 @@ export default function StandingsContent({ standings, teamLogos, tournaments, cu
                 </div>
                 <div className="container mx-auto px-4">
                     <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                        <i className="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
+                        <Icon name="emoji_events" className="text-6xl text-gray-300 mb-4" />
                         <p className="text-gray-500 text-lg">{t.common.noData}</p>
                     </div>
                 </div>

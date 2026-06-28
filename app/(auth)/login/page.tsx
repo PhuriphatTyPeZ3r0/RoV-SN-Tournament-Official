@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
@@ -7,9 +8,13 @@ import { loginStudentAction } from '@/features/auth/student-actions';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
 export default function StudentLoginPage() {
-    const { t } = useLanguage();
+    const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const toggleLanguage = () => {
+        changeLanguage(language === 'th' ? 'en' : 'th');
+    };
 
     const handleOAuthLogin = async () => {
         setLoading(true);
@@ -52,8 +57,26 @@ export default function StudentLoginPage() {
 
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-md w-full mx-auto">
-            <div className="bg-uefa-dark p-6 text-center">
-                <h1 className="text-white font-display text-2xl font-bold tracking-wider uppercase">
+            <div className="bg-uefa-dark p-6 text-center relative">
+                {/* Language Switcher */}
+                <div className="absolute top-4 right-4">
+                    <button
+                        onClick={toggleLanguage}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all group cursor-pointer"
+                    >
+                        <img 
+                            alt={language} 
+                            loading="lazy" 
+                            width="20" 
+                            height="15" 
+                            className="w-5 h-auto rounded shadow-sm" 
+                            src={language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png"} 
+                        />
+                        <span className="text-white text-xs font-bold uppercase">{language}</span>
+                    </button>
+                </div>
+
+                <h1 className="text-white font-display text-2xl font-bold tracking-wider uppercase mt-4">
                     {t.loginPage.titleNormal}<span className="text-cyan-aura">{t.loginPage.titleHighlight}</span>
                 </h1>
                 <p className="text-gray-300 mt-2 text-sm">{t.loginPage.subtitle}</p>
@@ -62,7 +85,7 @@ export default function StudentLoginPage() {
             <div className="p-8">
                 {error && (
                     <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm mb-6 border border-red-100 flex items-center gap-2">
-                        <i className="fas fa-exclamation-circle"></i>
+                        <Icon name="error" />
                         {error}
                     </div>
                 )}
@@ -114,7 +137,7 @@ export default function StudentLoginPage() {
                         className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? (
-                            <><i className="fas fa-spinner fa-spin"></i> {t.loginPage.signingIn}</>
+                            <><Icon name="progress_activity" spin /> {t.loginPage.signingIn}</>
                         ) : (
                             t.loginPage.signInBtn
                         )}

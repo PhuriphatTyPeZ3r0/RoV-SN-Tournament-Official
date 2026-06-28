@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -34,7 +35,7 @@ export default function HomeContent({
 
     return (
         <div className="container mx-auto px-4 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12">
 
                 {/* Latest Matches */}
                 <div>
@@ -46,7 +47,7 @@ export default function HomeContent({
                             href="/fixtures"
                             className="text-cyan-aura font-bold hover:text-cyan-600 hover:underline text-sm flex items-center gap-1 transition-colors"
                         >
-                            {t.home.viewAll} <i className="fas fa-arrow-right"></i>
+                            {t.home.viewAll} <Icon name="arrow_forward" />
                         </Link>
                     </div>
                     <LatestMatches
@@ -66,7 +67,7 @@ export default function HomeContent({
                             href="/standings"
                             className="text-cyan-aura font-bold hover:text-cyan-600 hover:underline text-sm flex items-center gap-1 transition-colors"
                         >
-                            {t.home.fullTable} <i className="fas fa-arrow-right"></i>
+                            {t.home.fullTable} <Icon name="arrow_forward" />
                         </Link>
                     </div>
                     <div className="bg-white shadow-lg shadow-gray-100 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300">

@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import { getPendingRegistrations, updateRegistrationStatus } from '@/features/auth/student-actions';
 import Swal from 'sweetalert2';
@@ -79,7 +80,7 @@ export default function AdminRegistrationsPage() {
                 </div>
             ) : filteredRegistrations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 bg-white rounded-2xl border border-gray-100 shadow-sm text-gray-400">
-                    <i className="fas fa-inbox text-4xl mb-3"></i>
+                    <Icon name="inbox" className="text-4xl mb-3" />
                     <p>{t.admin.registrationsPage.noData}</p>
                 </div>
             ) : (
@@ -93,7 +94,7 @@ export default function AdminRegistrationsPage() {
                                         {reg.full_name}
                                         {reg.privacy_flag && (
                                             <span className="bg-yellow-100 text-yellow-700 text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
-                                                <i className="fas fa-lock"></i> Privacy
+                                                <Icon name="lock" /> Privacy
                                             </span>
                                         )}
                                     </h3>
@@ -120,7 +121,7 @@ export default function AdminRegistrationsPage() {
                                             className="object-cover group-hover:scale-105 transition-transform"
                                         />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                                            <i className="fas fa-search-plus text-2xl"></i>
+                                            <Icon name="zoom_in" className="text-2xl" />
                                         </div>
                                     </div>
                                 )}
@@ -139,13 +140,13 @@ export default function AdminRegistrationsPage() {
                                         onClick={() => handleAction(reg.id, 'approved')}
                                         className="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
                                     >
-                                        <i className="fas fa-check mr-2"></i> {t.admin.registrationsPage.approveAction}
+                                        <Icon name="done" className="mr-2" /> {t.admin.registrationsPage.approveAction}
                                     </button>
                                     <button
                                         onClick={() => handleAction(reg.id, 'rejected')}
                                         className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors"
                                     >
-                                        <i className="fas fa-times mr-2"></i> {t.admin.registrationsPage.rejectAction}
+                                        <Icon name="close" className="mr-2" /> {t.admin.registrationsPage.rejectAction}
                                     </button>
                                 </div>
                             )}

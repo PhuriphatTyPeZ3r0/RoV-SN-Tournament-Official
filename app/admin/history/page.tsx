@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
@@ -128,7 +129,7 @@ export default function AdminResultHistoryPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                        <i className="fas fa-history mr-3 text-cyan-aura"></i>
+                        <Icon name="history" className="mr-3 text-cyan-aura" />
                         {t.admin.historyTitle || 'Change History'}
                     </h1>
                     <p className="text-gray-500 mt-1">Found {history.length} records.</p>
@@ -137,7 +138,7 @@ export default function AdminResultHistoryPage() {
                     onClick={fetchHistory}
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-cyan-aura transition-colors shadow-sm w-full md:w-auto"
                 >
-                    <i className="fas fa-sync-alt"></i>
+                    <Icon name="refresh" />
                     <span>Refresh</span>
                 </button>
             </div>
@@ -146,7 +147,7 @@ export default function AdminResultHistoryPage() {
             <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
-                        <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="text"
                             placeholder="Search Match ID..."
@@ -157,7 +158,7 @@ export default function AdminResultHistoryPage() {
                     </div>
                     <div className="w-full md:w-64">
                         <div className="relative">
-                            <i className="fas fa-filter absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <Icon name="filter_list" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                             <select
                                 value={filterAction}
                                 onChange={(e) => setFilterAction(e.target.value)}
@@ -168,7 +169,7 @@ export default function AdminResultHistoryPage() {
                                 <option value="update">Updated</option>
                                 <option value="delete">Deleted</option>
                             </select>
-                            <i className="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                            <Icon name="expand_more" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs" />
                         </div>
                     </div>
                 </div>
@@ -199,7 +200,7 @@ export default function AdminResultHistoryPage() {
                                             <div className="flex flex-col">
                                                 <span className="font-medium text-gray-900">{formatDate(entry.changedAt)}</span>
                                                 <span className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                                    <i className="fas fa-user-circle"></i> {entry.changedBy}
+                                                    <Icon name="account_circle" /> {entry.changedBy}
                                                 </span>
                                             </div>
                                         </td>
@@ -229,7 +230,7 @@ export default function AdminResultHistoryPage() {
                                                 )}
                                                 {entry.action === 'delete' && entry.previousData && (
                                                     <span className="flex items-center gap-2 text-red-600">
-                                                        <i className="fas fa-trash-alt text-xs"></i>
+                                                        <Icon name="delete_outline" className="text-xs" />
                                                         <span className="line-through text-gray-400">
                                                             {entry.previousData.teamBlue || entry.previousData.team_blue_name} vs {entry.previousData.teamRed || entry.previousData.team_red_name}
                                                         </span>
@@ -243,7 +244,7 @@ export default function AdminResultHistoryPage() {
                                                 className="text-gray-400 hover:text-cyan-aura transition-colors"
                                                 title="View JSON"
                                             >
-                                                <i className="fas fa-code text-lg"></i>
+                                                <Icon name="code" className="text-lg" />
                                             </button>
                                         </td>
                                     </tr>

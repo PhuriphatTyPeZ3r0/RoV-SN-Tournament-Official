@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { getAllUsersWithRolesAction, updateUserRoleAction } from '@/features/analytics/dashboard-actions';
@@ -65,7 +66,7 @@ export default function RoleManagementPage() {
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                <i className="fas fa-user-shield mr-3 text-cyan-aura"></i>
+                <Icon name="security" className="mr-3 text-cyan-aura" />
                 Role Management
             </h1>
 
@@ -73,7 +74,7 @@ export default function RoleManagementPage() {
                 <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <p className="text-sm text-gray-500">Manage user roles and permissions. Accessible only by <span className="font-bold text-red-500">Super Admins</span>.</p>
                     <div className="relative w-full md:w-64">
-                        <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         <input
                             type="text"
                             placeholder="Search users..."

@@ -1,5 +1,6 @@
 'use client';
 
+import Icon from '@/components/common/Icon';
 import { useState, useRef, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { verifyOTPAction, sendOTPAction } from '@/features/auth/student-actions';
@@ -10,6 +11,7 @@ function VerifyOTPContent() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
+    const [devOtp, setDevOtp] = useState<string | null>(null);
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     useEffect(() => {
@@ -18,6 +20,34 @@ function VerifyOTPContent() {
             inputRefs.current[0].focus();
         }
     }, []);
+
+    useEffect(() => {
+        // Fetch current profile in development to get OTP code if email failed
+        const checkDevOtp = async () => {
+            if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+                const { createClient } = await import('@/utils/supabase/client');
+                const supabase = createClient();
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('otp_code')
+                        .eq('id', user.id)
+                        .single();
+                    if (profile?.otp_code) {
+                        setDevOtp(profile.otp_code);
+                    }
+                }
+            }
+        };
+        checkDevOtp();
+    }, [message]); // Refetch when message updates (e.g. resend)
+
+    const handleFillDevOtp = () => {
+        if (devOtp && devOtp.length === 6) {
+            setOtp(devOtp.split(''));
+        }
+    };
 
     const handleChange = (index: number, value: string) => {
         if (!/^\d*$/.test(value)) return; // Only allow numbers
@@ -79,7 +109,7 @@ function VerifyOTPContent() {
         if (result.error) {
             setError(result.error);
         } else {
-            setMessage('OTP has been resent to your email');
+            setMessage(result.message || 'OTP has been resent to your email');
         }
         setLoading(false);
     };
@@ -94,16 +124,33 @@ function VerifyOTPContent() {
             </div>
             
             <div className="p-8 text-center">
+                {devOtp && (
+                    <div 
+                        onClick={handleFillDevOtp}
+                        className="bg-amber-50/85 border border-amber-200/60 rounded-2xl p-4 mb-6 text-center backdrop-blur-sm cursor-pointer hover:bg-amber-100/80 transition-all select-none group"
+                    >
+                        <p className="text-amber-800 font-bold text-xs uppercase tracking-wider mb-1 flex items-center justify-center gap-1.5">
+                            🛠️ Sandbox Fallback <span className="text-[10px] text-amber-600 font-normal group-hover:underline">(Click to fill)</span>
+                        </p>
+                        <p className="text-gray-600 text-xs mb-2">
+                            Email delivery is restricted in development. Use code:
+                        </p>
+                        <p className="text-amber-950 text-3xl font-black tracking-widest font-mono group-hover:scale-105 transition-all">
+                            {devOtp}
+                        </p>
+                    </div>
+                )}
+
                 {error && (
                     <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm mb-6 border border-red-100 flex items-center gap-2 justify-center">
-                        <i className="fas fa-exclamation-circle"></i>
+                        <Icon name="error" />
                         {error}
                     </div>
                 )}
 
                 {message && (
                     <div className="bg-green-50 text-green-600 px-4 py-3 rounded-lg text-sm mb-6 border border-green-100 flex items-center gap-2 justify-center">
-                        <i className="fas fa-check-circle"></i>
+                        <Icon name="check_circle" />
                         {message}
                     </div>
                 )}
@@ -134,7 +181,7 @@ function VerifyOTPContent() {
                         className="w-full bg-uefa-dark text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-uefa-dark/90 hover:shadow-cyan-aura/10 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                         {loading ? (
-                            <><i className="fas fa-spinner fa-spin"></i> Verifying...</>
+                            <><Icon name="progress_activity" spin /> Verifying...</>
                         ) : (
                             'Verify & Continue'
                         )}
@@ -146,7 +193,7 @@ function VerifyOTPContent() {
                         Didn't receive the code?{' '}
                         <button 
                             onClick={handleResend}
-                            className="text-cyan-600 font-bold hover:underline disabled:opacity-50"
+                            className="text-cyan-600 font-bold hover:underline disabled:opacity-50 cursor-pointer"
                             disabled={loading}
                         >
                             Resend Code
@@ -160,7 +207,7 @@ function VerifyOTPContent() {
 
 export default function VerifyOTPPage() {
     return (
-        <Suspense fallback={<div className="flex justify-center mt-20"><i className="fas fa-spinner fa-spin text-4xl text-cyan- aura"></i></div>}>
+        <Suspense fallback={<div className="flex justify-center mt-20"><Icon name="progress_activity" spin className="text-4xl text-cyan-aura" /></div>}>
             <VerifyOTPContent />
         </Suspense>
     );
