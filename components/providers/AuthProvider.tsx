@@ -50,6 +50,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabaseRef = useRef(createClient());
     const supabase = supabaseRef.current;
 
+    // Helper to sync JWT claims with DB profile changes dynamically if they mismatch
+    const syncUserClaimsIfNeeded = useCallback(async (sbUser: User, profile: any): Promise<User> => {
+        if (!profile) return sbUser;
+
+        const jwtRole = sbUser.app_metadata?.role;
+        const jwtComplete = !!sbUser.app_metadata?.is_profile_complete;
+        const jwtStatus = sbUser.app_metadata?.registration_status;
+        const jwtOtp = !!sbUser.app_metadata?.otp_enabled;
+
+        const dbRole = profile.role || 'guest';
+        const dbComplete = !!profile.is_profile_complete;
+        const dbStatus = profile.registration_status || 'none';
+        const dbOtp = !!profile.otp_enabled;
+
+        const isMismatch = 
+            jwtRole !== dbRole || 
+            jwtComplete !== dbComplete || 
+            jwtStatus !== dbStatus || 
+            jwtOtp !== dbOtp;
+
+        if (isMismatch) {
+            console.log('[AuthProvider] JWT custom claims out-of-sync with DB profiles. Refreshing session...', {
+                role: { jwt: jwtRole, db: dbRole },
+                complete: { jwt: jwtComplete, db: dbComplete },
+                status: { jwt: jwtStatus, db: dbStatus },
+                otp: { jwt: jwtOtp, db: dbOtp }
+            });
+            try {
+                const { data: { user: refreshedUser }, error } = await supabase.auth.refreshSession();
+                if (error) throw error;
+                if (refreshedUser) {
+                    console.log('[AuthProvider] JWT claims successfully synchronized.');
+                    return refreshedUser;
+                }
+            } catch (err) {
+                console.error('[AuthProvider] Failed to refresh session:', err);
+            }
+        }
+        return sbUser;
+    }, []);
+
     // Check authentication status via Supabase session
     const checkAuth = useCallback(async () => {
         try {
@@ -65,18 +106,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Fetch profile data
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('username, role, is_profile_complete, registration_status, avatar_url')
+                .select('username, role, is_profile_complete, registration_status, avatar_url, otp_enabled')
                 .eq('id', sbUser.id)
                 .maybeSingle();
 
-            setUser(toAuthUser(sbUser, profile));
+            const activeUser = await syncUserClaimsIfNeeded(sbUser, profile);
+            setUser(toAuthUser(activeUser, profile));
         } catch (error) {
             console.error('[AuthProvider] Auth check error:', error);
             setUser(null);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [syncUserClaimsIfNeeded]);
 
     // Run auth check on mount and listen for auth state changes
     useEffect(() => {
@@ -91,15 +133,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Fetch profile for the signed-in user
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('username, role, is_profile_complete, registration_status, avatar_url')
+                .select('username, role, is_profile_complete, registration_status, avatar_url, otp_enabled')
                 .eq('id', session.user.id)
                 .maybeSingle();
 
-            setUser(toAuthUser(session.user, profile));
+            const activeUser = await syncUserClaimsIfNeeded(session.user, profile);
+            setUser(toAuthUser(activeUser, profile));
         });
 
         return () => subscription.unsubscribe();
-    }, [checkAuth]);
+    }, [checkAuth, syncUserClaimsIfNeeded]);
 
     // Login function — uses Supabase Auth (email/password)
     const login = useCallback(async (email: string, password: string): Promise<LoginResult> => {

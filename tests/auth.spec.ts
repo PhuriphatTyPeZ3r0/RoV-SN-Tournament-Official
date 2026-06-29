@@ -32,19 +32,15 @@ test.describe('Authentication', () => {
         });
 
         test('should have submit button', async ({ page }) => {
-            const submitButton = page.getByRole('button', { name: /Login|Sign in|เข้าสู่ระบบ|Submit/i }).or(
-                page.locator('button[type="submit"]')
-            );
+            const submitButton = page.locator('button[type="submit"]').first();
             await expect(submitButton).toBeVisible();
         });
 
         test('should show error on invalid login', async ({ page }) => {
             // Fill in invalid credentials
-            const usernameInput = page.locator('input[type="text"], input[type="email"], input[name*="user"], input[name*="email"]').first();
-            const passwordInput = page.locator('input[type="password"]');
-            const submitButton = page.getByRole('button', { name: /Login|Sign in|เข้าสู่ระบบ|Submit/i }).or(
-                page.locator('button[type="submit"]')
-            );
+            const usernameInput = page.locator('input[type="email"], input[name="email"]').first();
+            const passwordInput = page.locator('input[type="password"]').first();
+            const submitButton = page.locator('button[type="submit"]').first();
 
             await usernameInput.fill('invalid@test.com');
             await passwordInput.fill('wrongpassword');

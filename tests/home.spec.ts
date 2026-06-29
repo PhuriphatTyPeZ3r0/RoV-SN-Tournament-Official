@@ -47,7 +47,7 @@ test.describe('Home Page', () => {
 
     test('should display quick sections', async ({ page }) => {
         // Check for main content area
-        const mainContent = page.locator('main, [class*="content"], body > div').first();
+        const mainContent = page.locator('main').first();
         await expect(mainContent).toBeVisible();
     });
 
