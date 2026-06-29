@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { sendOTPAction } from '@/features/auth/student-actions';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -11,40 +12,39 @@ export async function GET(request: Request) {
     const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && data.user) {
-      // Fetch detailed profile to determine redirection
+      // 1. Force otp_enabled to false to enforce 2FA verification on Google OAuth login
+      await supabase
+        .from('profiles')
+        .update({ otp_enabled: false })
+        .eq('id', data.user.id);
+
+      // 2. Refresh session on server side to write new JWT claims (with otp_enabled = false) back to cookies
+      await supabase.auth.refreshSession();
+
+      // 3. Fetch detailed profile to determine target redirection after OTP verification
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role, is_profile_complete, registration_status, otp_enabled')
+        .select('role, is_profile_complete, registration_status')
         .eq('id', data.user.id)
         .single();
-
-      // OAuth users bypass 2FA — ensure otp_enabled is true in DB and JWT claims
-      if (!profile?.otp_enabled) {
-        await supabase
-          .from('profiles')
-          .update({ otp_enabled: true })
-          .eq('id', data.user.id);
-        
-        // Refresh session on server to update current JWT claims in cookies
-        await supabase.auth.refreshSession();
-      }
 
       const role = profile?.role || 'student';
       const isComplete = !!profile?.is_profile_complete;
       const regStatus = profile?.registration_status || 'none';
 
-      // 1. Forced Onboarding for incomplete profiles (usually OAuth users)
+      // 4. Trigger OTP sending to their registered email
+      await sendOTPAction();
+
+      // 5. Determine the final destination path after successful 2FA
+      let targetPath = next;
       if (!isComplete && regStatus === 'none') {
-        return NextResponse.redirect(`${origin}/register/onboarding`);
+        targetPath = '/register/onboarding';
+      } else if (role === 'admin' || role === 'super_admin') {
+        targetPath = '/admin';
       }
 
-      // 2. Redirect based on role and registration status
-      if (role === 'admin' || role === 'super_admin') {
-        return NextResponse.redirect(`${origin}/admin`);
-      }
-
-      // 3. Normal users (students/players)
-      return NextResponse.redirect(`${origin}${next}`);
+      // 6. Redirect to OTP verification page with target path
+      return NextResponse.redirect(`${origin}/auth/verify-otp?next=${targetPath}`);
     }
   }
 
