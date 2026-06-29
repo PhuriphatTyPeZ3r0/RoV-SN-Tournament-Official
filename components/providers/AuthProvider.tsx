@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
+import { signOutAction } from '@/features/auth/actions';
 
 // Type definitions
 interface AuthUser {
@@ -140,13 +141,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setLoading(true);
             await supabase.auth.signOut();
             setUser(null);
+            // Clear server cookies & session and redirect to /login
+            await signOutAction();
         } catch (error) {
             console.error('Logout error:', error);
             setUser(null);
+            window.location.href = '/login';
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [supabase]);
 
     const value: AuthContextType = {
         user,
