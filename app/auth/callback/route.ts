@@ -13,9 +13,15 @@ export async function GET(request: Request) {
 
     if (!error && data.user) {
       // 1. Force otp_enabled to false to enforce 2FA verification on Google OAuth login
+      // Sync Google OAuth metadata (email, full name, avatar) to public.profiles
       await supabase
         .from('profiles')
-        .update({ otp_enabled: false })
+        .update({ 
+          otp_enabled: false,
+          email: data.user.email,
+          full_name: data.user.user_metadata?.full_name || data.user.user_metadata?.name,
+          avatar_url: data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture
+        })
         .eq('id', data.user.id);
 
       // 2. Refresh session on server side to write new JWT claims (with otp_enabled = false) back to cookies
