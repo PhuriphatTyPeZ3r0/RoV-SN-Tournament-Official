@@ -440,59 +440,59 @@ export async function getStudentRegistrationStatus() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  // profiles.registration_status is the source of truth for overall verification
+  // profiles is the ultimate source of truth for overall verification and profile data
   const { data: profile } = await supabase
     .from('profiles')
-    .select('registration_status, full_name, student_id')
+    .select('registration_status, full_name, student_id, first_name_th, last_name_th, first_name_en, last_name_en, class_grade, open_id, in_game_name')
     .eq('id', user.id)
     .single();
   
-  const { data } = await supabase
+  const { data: registration } = await supabase
     .from('registrations')
     .select('*')
     .eq('user_id', user.id)
     .maybeSingle();
 
-  // If no registration record exists but profile is verified, synthesize a response
-  if (!data && profile?.registration_status === 'verified') {
+  // If profile is verified, synthesize the response using profile data as the source of truth
+  if (profile?.registration_status === 'verified') {
     return {
       status: 'approved',
       full_name: profile.full_name,
+      first_name_th: profile.first_name_th,
+      last_name_th: profile.last_name_th,
+      first_name_en: profile.first_name_en,
+      last_name_en: profile.last_name_en,
       student_id: profile.student_id,
-      in_game_name: null,
-      verification_doc_url: null,
-      screening_notes: null,
+      grade: profile.class_grade,
+      open_id: profile.open_id,
+      in_game_name: profile.in_game_name,
+      verification_doc_url: registration?.verification_doc_url || null,
+      screening_notes: registration?.screening_notes || null,
     };
   }
 
-  if (!data) return null;
+  if (!registration) return null;
 
-  // Override registrations.status with profiles.registration_status when profile is verified
-  // This handles the case where admin approved via profiles but registrations table is out of sync
-  if (profile?.registration_status === 'verified' && data.status !== 'approved') {
-    data.status = 'approved';
-  }
-
-  if (data.verification_doc_url) {
-    if (data.verification_doc_url.startsWith('http')) {
+  if (registration.verification_doc_url) {
+    if (registration.verification_doc_url.startsWith('http')) {
       const publicPrefix = 'verification-docs/';
-      const index = data.verification_doc_url.indexOf(publicPrefix);
+      const index = registration.verification_doc_url.indexOf(publicPrefix);
       if (index !== -1) {
-        const path = data.verification_doc_url.substring(index + publicPrefix.length);
+        const path = registration.verification_doc_url.substring(index + publicPrefix.length);
         const { data: signed } = await supabase.storage
           .from('verification-docs')
           .createSignedUrl(path, 60);
-        data.verification_doc_url = signed?.signedUrl || data.verification_doc_url;
+        registration.verification_doc_url = signed?.signedUrl || registration.verification_doc_url;
       }
     } else {
       const { data: signed } = await supabase.storage
         .from('verification-docs')
-        .createSignedUrl(data.verification_doc_url, 60);
-      data.verification_doc_url = signed?.signedUrl || null;
+        .createSignedUrl(registration.verification_doc_url, 60);
+      registration.verification_doc_url = signed?.signedUrl || null;
     }
   }
   
-  return data;
+  return registration;
 }
 
 export async function getPendingRegistrations() {
