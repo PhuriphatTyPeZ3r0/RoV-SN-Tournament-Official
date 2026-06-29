@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
@@ -266,49 +267,86 @@ export async function sendOTPAction() {
 
   if (dbError) return { error: dbError.message };
 
-  // 3. Check for Resend API key to send email, or fall back to development mock
+  // 3. SMTP Config check
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = parseInt(process.env.SMTP_PORT || '587');
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASSWORD;
+  const smtpFrom = process.env.SMTP_FROM_EMAIL || smtpUser;
+
+  const htmlContent = `
+    <div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+      <h2 style="color: #06b6d4; text-align: center;">RoV-SN Tournament</h2>
+      <p>Your verification code is:</p>
+      <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #333;">
+        ${otpCode}
+      </div>
+      <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
+        This code expires in 5 minutes.
+      </p>
+    </div>
+  `;
+
+  if (smtpHost && smtpUser && smtpPass) {
+    // Send via SMTP using Nodemailer
+    try {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465, // true for 465, false for other ports
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      await transporter.sendMail({
+        from: smtpFrom,
+        to: user.email,
+        subject: `[RoV-SN] OTP: ${otpCode}`,
+        html: htmlContent,
+      });
+
+      return { success: true, message: 'OTP sent to your email (SMTP)' };
+    } catch (smtpError: any) {
+      console.error('[SMTP ERROR DETAILS]', smtpError);
+      return { error: `SMTP Error: ${smtpError.message || 'Unknown SMTP Error'}` };
+    }
+  }
+
+  // 4. Fallback to Resend API
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    if (process.env.NODE_ENV === 'production') {
-      return { error: 'ระบบส่งอีเมลขัดข้อง: ขออภัยในความไม่สะดวก กรุณาติดต่อผู้ดูแลระบบ (Missing Mail API Key)' };
+  if (apiKey) {
+    try {
+      const resendClient = new Resend(apiKey);
+      const { data, error: resendError } = await resendClient.emails.send({
+        from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+        to: user.email,
+        subject: `[RoV-SN] OTP: ${otpCode}`,
+        html: htmlContent,
+      });
+
+      if (resendError) {
+        console.error('[RESEND ERROR DETAILS]', resendError);
+        return { error: `Email Error: ${resendError.message || 'Unknown Resend Error'}` };
+      }
+
+      return { success: true, message: 'OTP sent to your email (Resend)' };
+    } catch (err: any) {
+      console.error('[SEND_OTP_EXCEPTION]', err);
+      return { error: `Exception: ${err.message}` };
     }
-    console.log('\n============================================================');
-    console.log(`[DEVELOPMENT ONLY] OTP Code for ${user.email}: ${otpCode}`);
-    console.log('============================================================\n');
-    return { success: true, message: 'OTP sent to console (development mode)' };
   }
 
-  // 4. Send Email via Resend
-  try {
-    const resendClient = new Resend(apiKey);
-    const { data, error: resendError } = await resendClient.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
-      to: user.email,
-      subject: `[RoV-SN] OTP: ${otpCode}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-          <h2 style="color: #06b6d4; text-align: center;">RoV-SN Tournament</h2>
-          <p>Your verification code is:</p>
-          <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #333;">
-            ${otpCode}
-          </div>
-          <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
-            This code expires in 5 minutes.
-          </p>
-        </div>
-      `,
-    });
-
-    if (resendError) {
-      console.error('[RESEND ERROR DETAILS]', resendError);
-      return { error: `Email Error: ${resendError.message || 'Unknown Resend Error'}` };
-    }
-
-    return { success: true, message: 'OTP sent to your email' };
-  } catch (err: any) {
-    console.error('[SEND_OTP_EXCEPTION]', err);
-    return { error: `Exception: ${err.message}` };
+  // 5. Fallback to development mock
+  if (process.env.NODE_ENV === 'production') {
+    return { error: 'ระบบส่งอีเมลขัดข้อง: ขออภัยในความไม่สะดวก กรุณาติดต่อผู้ดูแลระบบ (Missing SMTP/Mail Config)' };
   }
+
+  console.log('\n============================================================');
+  console.log(`[DEVELOPMENT ONLY] OTP Code for ${user.email}: ${otpCode}`);
+  console.log('============================================================\n');
+  return { success: true, message: 'OTP sent to console (development mode)' };
 }
 
 export async function verifyOTPAction(otp: string) {
