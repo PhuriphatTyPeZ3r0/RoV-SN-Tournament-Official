@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
@@ -46,7 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const supabase = createClient();
+    const supabaseRef = useRef(createClient());
+    const supabase = supabaseRef.current;
 
     // Check authentication status via Supabase session
     const checkAuth = useCallback(async () => {
@@ -117,14 +118,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 return { success: false, error: 'Login failed' };
             }
 
-            // Fetch role
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('role')
+                .select('username, role, is_profile_complete, registration_status, avatar_url')
                 .eq('id', data.user.id)
                 .maybeSingle();
 
-            setUser(toAuthUser(data.user, profile?.role || 'user'));
+            setUser(toAuthUser(data.user, profile));
             return { success: true };
         } catch (error: any) {
             console.error('Login error:', error);
