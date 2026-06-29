@@ -49,6 +49,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const supabaseRef = useRef(createClient());
     const supabase = supabaseRef.current;
+    
+    // Ref to prevent infinite session refreshing loops if JWT claims fail to sync
+    const hasRefreshedRef = useRef(false);
 
     // Helper to sync JWT claims with DB profile changes dynamically if they mismatch
     const syncUserClaimsIfNeeded = useCallback(async (sbUser: User, profile: any): Promise<User> => {
@@ -71,6 +74,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             jwtOtp !== dbOtp;
 
         if (isMismatch) {
+            if (hasRefreshedRef.current) {
+                console.warn('[AuthProvider] JWT custom claims still out-of-sync after refresh attempt. Skipping to prevent infinite loop.');
+                return sbUser;
+            }
+            
+            hasRefreshedRef.current = true;
             console.log('[AuthProvider] JWT custom claims out-of-sync with DB profiles. Refreshing session...', {
                 role: { jwt: jwtRole, db: dbRole },
                 complete: { jwt: jwtComplete, db: dbComplete },
