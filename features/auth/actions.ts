@@ -62,6 +62,16 @@ export async function signUpAction(formData: FormData) {
 
 export async function signOutAction() {
   const supabase = await createClient();
+  
+  // Reset otp_enabled to false on logout for extra security
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    await supabase
+      .from('profiles')
+      .update({ otp_enabled: false })
+      .eq('id', user.id);
+  }
+
   await supabase.auth.signOut();
   revalidatePath('/', 'layout');
   redirect('/login');

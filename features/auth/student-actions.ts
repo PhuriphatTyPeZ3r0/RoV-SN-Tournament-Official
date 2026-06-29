@@ -193,6 +193,15 @@ export async function loginStudentAction(formData: FormData) {
     return { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' };
   }
 
+  // 1. Reset otp_enabled to false to enforce 2FA verification on this login session
+  await supabase
+    .from('profiles')
+    .update({ otp_enabled: false })
+    .eq('id', authData.user.id);
+
+  // 2. Refresh session on server side to write new JWT claims (with otp_enabled = false) back to cookies
+  await supabase.auth.refreshSession();
+
   // Check profile for next steps
   const { data: profile } = await supabase
     .from('profiles')
@@ -323,11 +332,14 @@ export async function verifyOTPAction(otp: string) {
     return { error: 'OTP has expired' };
   }
 
-  // Clear OTP after success
+  // Clear OTP after success and enable OTP claim
   await supabase
     .from('profiles')
     .update({ otp_code: null, otp_expiry: null, otp_enabled: true })
     .eq('id', user.id);
+
+  // Refresh session on server side to write new JWT claims (with otp_enabled = true) back to cookies
+  await supabase.auth.refreshSession();
 
   return { success: true };
 }

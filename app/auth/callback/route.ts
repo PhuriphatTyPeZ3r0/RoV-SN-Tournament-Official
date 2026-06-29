@@ -14,9 +14,20 @@ export async function GET(request: Request) {
       // Fetch detailed profile to determine redirection
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role, is_profile_complete, registration_status')
+        .select('role, is_profile_complete, registration_status, otp_enabled')
         .eq('id', data.user.id)
         .single();
+
+      // OAuth users bypass 2FA — ensure otp_enabled is true in DB and JWT claims
+      if (!profile?.otp_enabled) {
+        await supabase
+          .from('profiles')
+          .update({ otp_enabled: true })
+          .eq('id', data.user.id);
+        
+        // Refresh session on server to update current JWT claims in cookies
+        await supabase.auth.refreshSession();
+      }
 
       const role = profile?.role || 'student';
       const isComplete = !!profile?.is_profile_complete;
