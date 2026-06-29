@@ -1,7 +1,7 @@
 import { serverApi } from '@/lib/api';
 import TeamStatsContent from '@/components/stats/TeamStatsContent';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
     searchParams: Promise<{ season?: string }>;

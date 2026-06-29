@@ -61,7 +61,8 @@ export class MatchService extends BaseService {
 
             return { matches, teamLogos };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch brackets page data: ${error.message}`);
+            console.error(`Failed to fetch brackets page data: ${error.message}`);
+            return { matches: [], teamLogos: {} };
         }
     }
 
@@ -153,7 +154,8 @@ export class MatchService extends BaseService {
             }
             return { schedule, results, teamLogos };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch fixtures page data: ${error.message}`);
+            console.error(`Failed to fetch fixtures page data: ${error.message}`);
+            return { schedule: [], results: [], teamLogos: {} };
         }
     }
 }

@@ -5,6 +5,7 @@ import { Providers } from "@/components/providers/Providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { publicClient } from '@/utils/supabase/public';
+import NextTopLoader from 'nextjs-toploader';
 
 const prompt = Prompt({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -137,6 +138,17 @@ export default async function RootLayout({
         {themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}
       </head>
       <body className="antialiased" suppressHydrationWarning>
+        <NextTopLoader 
+          color="var(--theme-primary)"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px var(--theme-primary),0 0 5px var(--theme-primary)"
+        />
         <Providers>
           {children}
         </Providers>

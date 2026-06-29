@@ -20,7 +20,8 @@ export class TeamService extends BaseService {
             }
             return teamLogos;
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch team logos: ${error.message}`);
+            console.error(`Failed to fetch team logos: ${error.message}`);
+            return {};
         }
     }
 
@@ -127,7 +128,8 @@ export class TeamService extends BaseService {
                 currentSeason: currentTournament.season
             };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch clubs page data: ${error.message}`);
+            console.error(`Failed to fetch clubs page data: ${error.message}`);
+            return { teams: [], teamLogos: {}, tournaments: [], currentSeason: season || 2026 };
         }
     }
 }

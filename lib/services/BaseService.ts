@@ -42,7 +42,8 @@ export abstract class BaseService {
 
             return data?.id || null;
         } catch (error: any) {
-            throw new DatabaseError(`Failed to resolve active tournament ID: ${error.message}`);
+            console.error(`Failed to resolve active tournament ID: ${error.message}`);
+            return null;
         }
     }
 }

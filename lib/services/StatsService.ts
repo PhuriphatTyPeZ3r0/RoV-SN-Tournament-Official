@@ -53,7 +53,8 @@ export class StatsService extends BaseService {
 
             return { standings, teamLogos };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch standings data: ${error.message}`);
+            console.error(`Failed to fetch standings data: ${error.message}`);
+            return { standings: [], teamLogos: {} };
         }
     }
 
@@ -90,7 +91,8 @@ export class StatsService extends BaseService {
 
             return { seasonStats, heroes, teamLogos };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch season stats: ${error.message}`);
+            console.error(`Failed to fetch season stats: ${error.message}`);
+            return { seasonStats: null, heroes: [], teamLogos: {} };
         }
     }
 
@@ -134,7 +136,8 @@ export class StatsService extends BaseService {
 
             return { teamStats, teamLogos };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch team stats page data: ${error.message}`);
+            console.error(`Failed to fetch team stats page data: ${error.message}`);
+            return { teamStats: [], teamLogos: {} };
         }
     }
 
@@ -227,7 +230,8 @@ export class StatsService extends BaseService {
 
             return { playerStats, playerHeroStats, heroes, teamLogos };
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch player stats page data: ${error.message}`);
+            console.error(`Failed to fetch player stats page data: ${error.message}`);
+            return { playerStats: [], playerHeroStats: [], heroes: [], teamLogos: {} };
         }
     }
 }

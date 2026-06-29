@@ -16,7 +16,8 @@ export class TournamentService extends BaseService {
             if (error) throw error;
             return data || [];
         } catch (error: any) {
-            throw new DatabaseError(`Failed to fetch tournaments list: ${error.message}`);
+            console.error(`Failed to fetch tournaments list: ${error.message}`);
+            return [];
         }
     }
 }
