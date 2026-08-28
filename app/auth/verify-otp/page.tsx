@@ -125,9 +125,17 @@ function VerifyOTPContent() {
             
             <div className="p-8 text-center">
                 {devOtp && (
-                    <div 
+                    <div
+                        role="button"
+                        tabIndex={0}
                         onClick={handleFillDevOtp}
-                        className="bg-amber-50/85 border border-amber-200/60 rounded-2xl p-4 mb-6 text-center backdrop-blur-sm cursor-pointer hover:bg-amber-100/80 transition-all select-none group"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleFillDevOtp();
+                            }
+                        }}
+                        className="bg-amber-50/85 border border-amber-200/60 rounded-2xl p-4 mb-6 text-center backdrop-blur-sm cursor-pointer hover:bg-amber-100/80 transition-all select-none group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-aura"
                     >
                         <p className="text-amber-800 font-bold text-xs uppercase tracking-wider mb-1 flex items-center justify-center gap-1.5">
                             🛠️ Sandbox Fallback <span className="text-[10px] text-amber-600 font-normal group-hover:underline">(Click to fill)</span>

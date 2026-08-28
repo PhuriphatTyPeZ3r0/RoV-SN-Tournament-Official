@@ -53,8 +53,11 @@ export default function SeasonSelector({ tournaments, currentSeason }: SeasonSel
 
             {isOpen && (
                 <>
-                    <div 
-                        className="fixed inset-0 z-10" 
+                    <div
+                        // Mouse-only convenience for closing — the trigger
+                        // button above (keyboard-focusable) toggles it too.
+                        aria-hidden="true"
+                        className="fixed inset-0 z-10"
                         onClick={() => setIsOpen(false)}
                     />
                     <div

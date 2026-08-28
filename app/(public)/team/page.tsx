@@ -816,8 +816,11 @@ export default function TeamPage() {
                                                 {/* Dropdown Options List */}
                                                 {openDropdownMemberId === member.id && (
                                                     <>
-                                                        <div 
-                                                            className="fixed inset-0 z-40 cursor-default" 
+                                                        <div
+                                                            // Mouse-only convenience for closing — the dropdown
+                                                            // trigger button (keyboard-focusable) toggles it too.
+                                                            aria-hidden="true"
+                                                            className="fixed inset-0 z-40 cursor-default"
                                                             onClick={() => setOpenDropdownMemberId(null)}
                                                         />
                                                         <div className={`absolute left-0 right-0 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-850 rounded-lg shadow-lg z-50 overflow-hidden divide-y divide-gray-100 dark:divide-zinc-800 max-h-48 overflow-y-auto animate-fadeIn min-w-[180px] ${

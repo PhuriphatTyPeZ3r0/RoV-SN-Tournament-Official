@@ -20,7 +20,7 @@
   --mode-bg-card-hover: rgba(255,255,255,0.04);
   --mode-text-primary: #f0f8ff;
   --mode-text-muted: #94a3b8;
-  --mode-text-subtle: #64748b;
+  --mode-text-subtle: #7a889b; /* was #64748b — 3.81:1 on bg-page failed WCAG AA (4.5:1); lightened, same hue */
   --mode-border: rgba(255,255,255,0.08);
   --mode-border-strong: rgba(255,255,255,0.15);
   --mode-input-bg: rgba(255,255,255,0.04);
@@ -35,7 +35,7 @@
   --mode-bg-card-hover: #f8fafc;
   --mode-text-primary: #0f172a;
   --mode-text-muted: #475569;
-  --mode-text-subtle: #94a3b8;
+  --mode-text-subtle: #687281; /* was #94a3b8 — 2.41:1 on bg-page failed WCAG AA (4.5:1); darkened, same hue */
   --mode-border: #e2e8f0;
   --mode-border-strong: #cbd5e1;
   --mode-input-bg: #ffffff;
@@ -63,7 +63,7 @@
   --mode-bg-card-hover: rgba(255,255,255,0.04);
   --mode-text-primary: #fff0f0;
   --mode-text-muted: #f87171;
-  --mode-text-subtle: #9f1239;
+  --mode-text-subtle: #c0627c; /* was #9f1239 — 2.47:1 on bg-page failed WCAG AA (4.5:1); lightened, same hue */
   --mode-border: rgba(255,255,255,0.08);
   --mode-border-strong: rgba(255,46,46,0.3);
   --mode-input-bg: rgba(255,255,255,0.04);
@@ -106,7 +106,7 @@
   --mode-bg-card-hover: rgba(255,255,255,0.04);
   --mode-text-primary: #fff0f8;
   --mode-text-muted: #f472b6;
-  --mode-text-subtle: #9d174d;
+  --mode-text-subtle: #c16c8f; /* was #9d174d — 2.42:1 on bg-page failed WCAG AA (4.5:1); lightened, same hue */
   --mode-border: rgba(255,255,255,0.08);
   --mode-border-strong: rgba(255,0,127,0.3);
   --mode-input-bg: rgba(255,255,255,0.04);
@@ -121,7 +121,7 @@
   --mode-bg-card-hover: #fdf2f8;
   --mode-text-primary: #0f0010;
   --mode-text-muted: #7c3aed;
-  --mode-text-subtle: #db2777;
+  --mode-text-subtle: #d02571; /* was #db2777 — 4.17:1 on bg-page failed WCAG AA (4.5:1); darkened slightly, same hue */
   --mode-border: #fce7f3;
   --mode-border-strong: #f9a8d4;
   --mode-input-bg: #ffffff;
@@ -149,7 +149,7 @@
   --mode-bg-card-hover: rgba(255,255,255,0.04);
   --mode-text-primary: #f5f0ff;
   --mode-text-muted: #c084fc;
-  --mode-text-subtle: #7e22ce;
+  --mode-text-subtle: #a05bdb; /* was #7e22ce — 2.90:1 on bg-page failed WCAG AA (4.5:1); lightened, same hue */
   --mode-border: rgba(255,255,255,0.08);
   --mode-border-strong: rgba(168,85,247,0.3);
   --mode-input-bg: rgba(255,255,255,0.04);

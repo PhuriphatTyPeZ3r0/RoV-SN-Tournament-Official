@@ -349,14 +349,23 @@ export default function AdminThemesPage() {
                         </h3>
 
                         {/* Theme Grid Option Selection */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div role="radiogroup" aria-label={t.admin.themesPage.activeThemeFor} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                             {themes.map(theme => {
                                 const isSelected = activeTheme === theme.id;
                                 return (
                                     <div
                                         key={theme.id}
+                                        role="radio"
+                                        aria-checked={isSelected}
+                                        tabIndex={0}
                                         onClick={() => setActiveTheme(theme.id)}
-                                        className={`cursor-pointer rounded-2xl border-2 p-5 transition-all duration-300 hover:shadow-lg flex flex-col justify-between gap-4 relative overflow-hidden group ${
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                setActiveTheme(theme.id);
+                                            }
+                                        }}
+                                        className={`cursor-pointer rounded-2xl border-2 p-5 transition-all duration-300 hover:shadow-lg flex flex-col justify-between gap-4 relative overflow-hidden group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-aura ${
                                             isSelected 
                                                 ? 'border-cyan-aura bg-cyan-50/5 shadow-md' 
                                                 : 'border-gray-100 hover:border-gray-300'
@@ -373,17 +382,23 @@ export default function AdminThemesPage() {
                                                             PRESET
                                                         </span>
                                                     )}
-                                                    <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                                                        <button 
-                                                            onClick={() => openEditModal(theme)}
+                                                    <div className="flex gap-1">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                openEditModal(theme);
+                                                            }}
                                                             className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 hover:bg-cyan-100 hover:text-cyan-600 flex items-center justify-center transition-colors text-xs"
                                                             title={t.admin.themesPage.editTheme}
                                                         >
                                                             <Icon name="edit" />
                                                         </button>
                                                         {!theme.is_preset && (
-                                                            <button 
-                                                                onClick={() => handleDeleteTheme(theme.id, theme.name)}
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleDeleteTheme(theme.id, theme.name);
+                                                                }}
                                                                 className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition-colors text-xs"
                                                                 title={t.admin.themesPage.deleteTheme}
                                                             >

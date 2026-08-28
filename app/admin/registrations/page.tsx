@@ -113,7 +113,12 @@ export default function AdminRegistrationsPage() {
                                 </div>
 
                                 {reg.verification_doc_url && (
-                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-200 group cursor-pointer" onClick={() => window.open(reg.verification_doc_url, '_blank')}>
+                                    <a
+                                        href={reg.verification_doc_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="relative aspect-video rounded-lg overflow-hidden border border-gray-200 group cursor-pointer block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-aura"
+                                    >
                                         <Image
                                             src={reg.verification_doc_url}
                                             alt="Verification Doc"
@@ -123,7 +128,7 @@ export default function AdminRegistrationsPage() {
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                                             <Icon name="zoom_in" className="text-2xl" />
                                         </div>
-                                    </div>
+                                    </a>
                                 )}
 
                                 {reg.screening_notes && (

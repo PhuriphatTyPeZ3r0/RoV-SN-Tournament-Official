@@ -863,8 +863,9 @@ export default function StudentInfoPage() {
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
-                                                    <label className="block text-xs font-bold text-gray-700">OpenID</label>
+                                                    <label htmlFor="edit-openid" className="block text-xs font-bold text-gray-700">OpenID</label>
                                                     <input
+                                                        id="edit-openid"
                                                         type="text"
                                                         value={editOpenId}
                                                         onChange={(e) => setEditOpenId(e.target.value)}

@@ -293,10 +293,18 @@ export default function PlayerStatsContent({ playerStats, playerHeroStats, heroe
                     const winRate = p.winRate || 0;
 
                     return (
-                        <div 
-                            key={`${p.teamName}-${p.realName || p.playerName}`} 
+                        <div
+                            key={`${p.teamName}-${p.realName || p.playerName}`}
+                            role="button"
+                            tabIndex={0}
                             onClick={() => setSelectedPlayer(p)}
-                            className={`bg-white rounded-xl p-4 border cursor-pointer active:bg-cyan-aura/5 transition-colors ${isTop3 ? 'border-yellow-200 shadow-md' : 'border-gray-200'}`}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    setSelectedPlayer(p);
+                                }
+                            }}
+                            className={`bg-white rounded-xl p-4 border cursor-pointer active:bg-cyan-aura/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-aura ${isTop3 ? 'border-yellow-200 shadow-md' : 'border-gray-200'}`}
                         >
                             {/* Header: Rank + Player + KDA */}
                             <div className="flex items-center gap-3 mb-3">
