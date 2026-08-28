@@ -12,7 +12,7 @@ project** (no database-per-service), and validates the Supabase JWT itself.
 
 | Order | Service | Ported from | Status |
 |---|---|---|---|
-| 1 | `analytics-svc` | `features/analytics/actions.ts` (read-only RPC getters) | not started |
+| 1 | `analytics-svc` | `features/analytics/actions.ts` (read-only RPC getters) | deployed to minikube, verified: self-heal + rolling update |
 | 2 | `roster-svc` | `features/players/actions.ts` (teams/players/heroes CRUD) | not started |
 | 3 | `tournament-svc` | `features/tournament/actions.ts` (matches/schedules/results) | not started |
 | 4 | `auth-svc` | `features/auth/actions.ts` (login/register/session) | not started |
