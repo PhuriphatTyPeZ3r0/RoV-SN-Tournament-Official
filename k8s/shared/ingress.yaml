@@ -17,3 +17,10 @@ spec:
                 name: analytics-svc
                 port:
                   number: 80
+          - path: /api/roster(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: roster-svc
+                port:
+                  number: 80
