@@ -3,102 +3,31 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { authFetch } from '@/lib/microservices/authServiceClient';
 
 /**
  * Auth Server Actions
- * Replaces: authController.ts + lib/auth.ts
- * Uses Supabase Auth (SSO) instead of local bcrypt/JWT
+ *
+ * experiment/microservices-k8s: only signOutAction is rewired — see
+ * services/README.md for why login/signup/OTP stay direct (httpOnly
+ * cookie session, incompatible with a stateless service).
+ *
+ * Dropped: signInAction, signUpAction, getSessionAction, isAdminAction —
+ * confirmed dead (0 callers anywhere in app/components/features/lib/utils)
+ * as of this rewrite. Real login goes through
+ * features/auth/student-actions.ts's loginStudentAction instead.
  */
-
-export async function signInAction(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  if (!email || !password) {
-    return { error: 'Email and password are required' };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath('/', 'layout');
-  redirect('/admin');
-}
-
-export async function signUpAction(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const username = formData.get('username') as string;
-
-  if (!email || !password) {
-    return { error: 'Email and password are required' };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        username: username || email.split('@')[0],
-      },
-    },
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath('/', 'layout');
-  redirect('/login?message=Check your email to confirm your account');
-}
 
 export async function signOutAction() {
   const supabase = await createClient();
-  
-  // Reset otp_enabled to false on logout for extra security
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    await supabase
-      .from('profiles')
-      .update({ otp_enabled: false })
-      .eq('id', user.id);
-  }
 
+  // Data-mutation half now goes through auth-svc (resets otp_enabled).
+  await authFetch('/session/logout-cleanup', { method: 'POST' });
+
+  // Cookie-clearing half stays local — only the Next.js SSR client's own
+  // signOut() can write the Set-Cookie headers that actually end the
+  // browser session; a stateless service can't.
   await supabase.auth.signOut();
   revalidatePath('/', 'layout');
   redirect('/login');
-}
-
-export async function getSessionAction() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error || !user) return null;
-
-  // ดึง role จาก profiles table
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('username, role')
-    .eq('id', user.id)
-    .single();
-
-  return {
-    id: user.id,
-    email: user.email,
-    username: profile?.username || user.email?.split('@')[0],
-    role: profile?.role || 'viewer',
-  };
-}
-
-export async function isAdminAction(): Promise<boolean> {
-  const session = await getSessionAction();
-  return session?.role === 'admin';
 }

@@ -31,3 +31,10 @@ spec:
                 name: tournament-svc
                 port:
                   number: 80
+          - path: /api/auth(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-svc
+                port:
+                  number: 80

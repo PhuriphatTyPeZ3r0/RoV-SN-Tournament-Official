@@ -15,7 +15,7 @@ project** (no database-per-service), and validates the Supabase JWT itself.
 | 1 | `analytics-svc` | `features/analytics/actions.ts` (read-only RPC getters) | deployed to minikube, verified: self-heal + rolling update |
 | 2 | `roster-svc` | `features/teams/actions.ts` (captain-permission team self-service — `features/players/actions.ts` turned out to be dead code, see note below) | deployed to minikube, wired to real Next.js callers |
 | 3 | `tournament-svc` | `features/tournament/{actions,matchmaking-actions,result-actions}.ts` (live subset only — see note below) | deployed to minikube, wired to real Next.js callers |
-| 4 | `auth-svc` | `features/auth/actions.ts` (login/register/session) | not started |
+| 4 | `auth-svc` | `features/auth/{actions,student-actions}.ts` — deliberately narrow slice only, see note below | deployed to minikube, wired to real Next.js callers |
 
 `analytics-svc` has no real frontend traffic initially — the Next.js RSC pages keep
 reading Supabase directly for public data. Only mutations get rerouted through a
@@ -46,6 +46,35 @@ was dead). Confirmed 0 callers for `getMatchByKeyAction`, `getScheduleAction`,
 which returns `{ error }` objects — `tournament-svc` and
 `tournamentServiceClient.ts` mirror that (non-2xx + throw) instead of
 Phase 2's `{ error }`-object pattern.
+
+## Scope note (found during Phase 4)
+
+`features/auth/*` has 23 exported functions, 17 live — most of them in
+`student-actions.ts` (login, signup, OTP verification, onboarding,
+password change). All of that was deliberately left calling Supabase
+directly, on purpose, not due to running out of time: `signInWithPassword`/
+`signUp`/`verifyOtp`/`setSession` all write httpOnly Supabase session
+cookies through the Next.js SSR client's `setAll` callback, which only
+Next.js's own response can do. A stateless service can validate
+credentials and hand back a JSON token, but something in Next.js still has
+to call `supabase.auth.setSession()` to turn that into a real cookie —
+that's a real architecture decision (a session-issuing boundary), not
+"paste the same wrapper pattern," and this exercise didn't need to take
+that risk against code that had a JWT-refresh-loop bug fixed shortly
+before this session (see recent git log on `main`).
+
+What *did* move to `auth-svc`, because neither touches the cookie session:
+- `getPendingRegistrations` / `updateRegistrationStatus` (student-actions.ts)
+  — plain RLS-gated data ops, same shape as roster-svc/tournament-svc.
+- The data half of `signOutAction` (actions.ts) — resets
+  `profiles.otp_enabled`. The actual `supabase.auth.signOut()` call (which
+  clears cookies) stays in the Next.js wrapper; auth-svc only does the
+  side-effect that's safe for a stateless service to own.
+
+Also deleted (confirmed dead, 0 callers anywhere): `signInAction`,
+`signUpAction`, `getSessionAction`, `isAdminAction` from `actions.ts`.
+`admin-actions.ts`'s `loginAdminAction` (also dead) was left alone since
+that file wasn't otherwise being touched.
 
 ## Local dev: reaching services from Next.js
 

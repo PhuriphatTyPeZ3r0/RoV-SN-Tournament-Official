@@ -8,6 +8,7 @@ import nodemailer from 'nodemailer';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { loginSchema, registerSchema } from './schemas';
+import { authFetch } from '@/lib/microservices/authServiceClient';
 
 const onboardingSchema = z.object({
   firstNameTh: z.string().min(1, 'กรุณากรอกชื่อภาษาไทย'),
@@ -495,46 +496,21 @@ export async function getStudentRegistrationStatus() {
   return registration;
 }
 
+// experiment/microservices-k8s: rewired through auth-svc (see
+// services/README.md) — pure data ops, no cookie session involved, so
+// these two were safe to move unlike the login/OTP functions in this file.
+
 export async function getPendingRegistrations() {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from('registrations')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (!data) return [];
-
-  const mapped = await Promise.all(data.map(async (reg) => {
-    if (reg.verification_doc_url) {
-      if (reg.verification_doc_url.startsWith('http')) {
-        const publicPrefix = 'verification-docs/';
-        const index = reg.verification_doc_url.indexOf(publicPrefix);
-        if (index !== -1) {
-          const path = reg.verification_doc_url.substring(index + publicPrefix.length);
-          const { data: signed } = await supabase.storage
-            .from('verification-docs')
-            .createSignedUrl(path, 60);
-          return { ...reg, verification_doc_url: signed?.signedUrl || reg.verification_doc_url };
-        }
-      } else {
-        const { data: signed } = await supabase.storage
-          .from('verification-docs')
-          .createSignedUrl(reg.verification_doc_url, 60);
-        return { ...reg, verification_doc_url: signed?.signedUrl || null };
-      }
-    }
-    return reg;
-  }));
-
-  return mapped;
+  return authFetch<any[]>('/registrations/pending');
 }
 
 export async function updateRegistrationStatus(id: string, status: 'approved' | 'rejected', notes: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.from('registrations').update({ status, screening_notes: notes }).eq('id', id);
-  if (error) return { success: false, error: error.message };
-  revalidatePath('/admin/registrations');
-  return { success: true };
+  const result = await authFetch<{ success: boolean; error?: string }>(`/registrations/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, notes }),
+  });
+  if (result.success) revalidatePath('/admin/registrations');
+  return result;
 }
 
 export async function getPlayerGamingProfile() {
