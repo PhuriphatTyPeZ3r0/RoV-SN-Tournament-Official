@@ -24,3 +24,10 @@ spec:
                 name: roster-svc
                 port:
                   number: 80
+          - path: /api/tournament(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: tournament-svc
+                port:
+                  number: 80

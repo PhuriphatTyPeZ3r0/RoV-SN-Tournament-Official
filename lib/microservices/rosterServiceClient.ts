@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server';
+import { getAccessToken } from './getAccessToken';
 
 /**
  * experiment/microservices-k8s only. Points at the roster-svc Deployment
@@ -8,14 +8,6 @@ import { createClient } from '@/utils/supabase/server';
  * in-cluster service DNS name (e.g. http://roster-svc) instead.
  */
 const ROSTER_SVC_URL = process.env.ROSTER_SVC_URL || 'http://localhost:4002';
-
-async function getAccessToken(): Promise<string | undefined> {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session?.access_token;
-}
 
 /**
  * Calls roster-svc and returns its JSON body as-is. roster-svc mirrors the

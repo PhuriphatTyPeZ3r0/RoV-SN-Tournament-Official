@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tournament-svc
+  labels:
+    app: tournament-svc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tournament-svc
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: tournament-svc
+    spec:
+      containers:
+        - name: tournament-svc
+          image: tournament-svc:dev
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4003
+          env:
+            - name: PORT
+              value: "4003"
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: tournament-svc-secrets
+                  key: SUPABASE_URL
+            - name: SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tournament-svc-secrets
+                  key: SUPABASE_ANON_KEY
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 4003
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4003
+            initialDelaySeconds: 5
+            periodSeconds: 10

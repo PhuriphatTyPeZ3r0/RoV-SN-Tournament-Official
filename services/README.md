@@ -14,7 +14,7 @@ project** (no database-per-service), and validates the Supabase JWT itself.
 |---|---|---|---|
 | 1 | `analytics-svc` | `features/analytics/actions.ts` (read-only RPC getters) | deployed to minikube, verified: self-heal + rolling update |
 | 2 | `roster-svc` | `features/teams/actions.ts` (captain-permission team self-service — `features/players/actions.ts` turned out to be dead code, see note below) | deployed to minikube, wired to real Next.js callers |
-| 3 | `tournament-svc` | `features/tournament/actions.ts` (matches/schedules/results) | not started |
+| 3 | `tournament-svc` | `features/tournament/{actions,matchmaking-actions,result-actions}.ts` (live subset only — see note below) | deployed to minikube, wired to real Next.js callers |
 | 4 | `auth-svc` | `features/auth/actions.ts` (login/register/session) | not started |
 
 `analytics-svc` has no real frontend traffic initially — the Next.js RSC pages keep
@@ -32,6 +32,20 @@ join/leave/kick, lineup roles, contact info, ready status, invite codes), used b
 `/team`, `/student-info`, and `/admin/teams`. `roster-svc` ported that file
 instead — see `Session_Memory_2026-08-29_Microservices_K8s_Phase2_Roster_Svc.md`
 in the Obsidian vault for the full reasoning.
+
+## Scope note (found during Phase 3)
+
+`features/tournament/actions.ts` mixes live and dead exports in the same
+file (unlike Phase 2's players/teams split, where the whole target file
+was dead). Confirmed 0 callers for `getMatchByKeyAction`, `getScheduleAction`,
+`saveMatchResultAction`, `deleteMatchResultAction`, `resetDayResultsAction`,
+`saveScheduleAction` — deleted rather than ported. The live
+`saveGameStatsAction`/`getMatchStatsAction` that shadow those names in
+`result-actions.ts` were kept. Also: these three files throw on failure
+(caught via try/catch in the admin pages), unlike `features/teams/actions.ts`
+which returns `{ error }` objects — `tournament-svc` and
+`tournamentServiceClient.ts` mirror that (non-2xx + throw) instead of
+Phase 2's `{ error }`-object pattern.
 
 ## Local dev: reaching services from Next.js
 
