@@ -1,0 +1,40 @@
+# Single Ingress, one path rule added per phase as each service comes online.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rov-sn-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /api/analytics(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: analytics-svc
+                port:
+                  number: 80
+          - path: /api/roster(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: roster-svc
+                port:
+                  number: 80
+          - path: /api/tournament(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: tournament-svc
+                port:
+                  number: 80
+          - path: /api/auth(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-svc
+                port:
+                  number: 80

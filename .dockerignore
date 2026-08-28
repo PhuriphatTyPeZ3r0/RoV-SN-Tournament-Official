@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+.next
+.git
+services
+scratch
+migration-data
+tests
+playwright-report
+test-results
+*.md
+.env
+.env.local
+.env*.local

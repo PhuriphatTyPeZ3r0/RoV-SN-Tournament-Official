@@ -9,6 +9,7 @@ node_modules/
 # Build output
 .next/
 out/
+services/*/dist/
 
 # OS Files
 .DS_Store
