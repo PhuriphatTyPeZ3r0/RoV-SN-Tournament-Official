@@ -39,7 +39,11 @@ export default function SeasonSelector({ tournaments, currentSeason }: SeasonSel
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="inline-flex justify-between items-center w-32 rounded-xl border border-white/15 bg-white/10 backdrop-blur-md px-3.5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-white/15 hover:border-cyan-aura/40 focus:outline-none focus:ring-2 focus:ring-cyan-aura focus:ring-offset-2 focus:ring-offset-uefa-dark transition-all duration-300 cursor-pointer"
+                    // px-3/py-1.5/rounded-lg match ShareButton and the
+                    // "Qualifies" badge that sit next to this in the page
+                    // header toolbar — was px-3.5/py-2.5/rounded-xl, a
+                    // visibly taller button than its siblings.
+                    className="inline-flex justify-between items-center w-32 rounded-lg border border-white/15 bg-white/10 backdrop-blur-md px-3 py-1.5 text-sm font-semibold text-white shadow-md hover:bg-white/15 hover:border-cyan-aura/40 focus:outline-none focus:ring-2 focus:ring-cyan-aura focus:ring-offset-2 focus:ring-offset-uefa-dark transition-all duration-300 cursor-pointer"
                     aria-expanded="true"
                     aria-haspopup="true"
                 >
