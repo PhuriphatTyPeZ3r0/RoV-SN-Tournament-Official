@@ -25,7 +25,12 @@ import { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes, useI
 import { cn } from '@/lib/utils';
 
 const fieldBaseClasses =
-  'w-full rounded-lg border px-3 py-2.5 text-sm transition-colors ' +
+  // text-base (16px) on mobile, not text-sm (14px): iOS Safari auto-zooms
+  // the viewport when focusing any input under 16px, which is jarring.
+  // globals.css already guards .admin-input the same way — this is the
+  // same fix, just expressed as a responsive Tailwind class instead of a
+  // fixed !important override.
+  'w-full rounded-lg border px-3 py-2.5 text-base sm:text-sm transition-colors ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-primary)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--mode-bg-page)] ' +
   'disabled:opacity-50 disabled:cursor-not-allowed';
 
