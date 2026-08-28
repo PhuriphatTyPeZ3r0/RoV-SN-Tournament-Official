@@ -69,11 +69,16 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  /* Run your local dev server before starting the tests — skipped when
+     BASE_URL points elsewhere (e.g. the K8s Ingress in
+     experiment/microservices-k8s), so it doesn't also spin up a
+     redundant local dev server. */
+  webServer: process.env.BASE_URL
+    ? undefined
+    : {
+        command: 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120000,
+      },
 });

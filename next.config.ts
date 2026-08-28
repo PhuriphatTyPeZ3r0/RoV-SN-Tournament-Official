@@ -55,6 +55,12 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
 
+  // Minimal, self-contained server bundle for the K8s frontend Deployment
+  // (experiment/microservices-k8s, Phase 5) — an additional build artifact
+  // alongside the normal .next/ output; `next start`/Vercel/Render are
+  // unaffected.
+  output: 'standalone',
+
   images: {
     remotePatterns: [
       {

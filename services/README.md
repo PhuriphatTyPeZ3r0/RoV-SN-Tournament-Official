@@ -76,11 +76,36 @@ Also deleted (confirmed dead, 0 callers anywhere): `signInAction`,
 `admin-actions.ts`'s `loginAdminAction` (also dead) was left alone since
 that file wasn't otherwise being touched.
 
-## Local dev: reaching services from Next.js
+## Frontend (Phase 5)
 
-While the frontend still runs outside the cluster (through Phase 4), point it at
-a service with a direct port-forward (bypasses the Ingress, which is for
-external/browser traffic):
+The Next.js app is now also containerized (`../Dockerfile` at repo root,
+`output: 'standalone'` in `next.config.ts`) and deployed as its own
+`k8s/frontend` Deployment+Service+Ingress. It reaches the 3 wired services via
+in-cluster Service DNS names, set as env vars on the frontend Deployment
+(`ROSTER_SVC_URL=http://roster-svc`, etc.) — no port-forward needed now that
+everything is inside the same cluster.
+
+`k8s/frontend/ingress.yaml` is a **separate** Ingress resource from
+`k8s/shared/ingress.yaml`, not another rule in it — the shared one carries
+`rewrite-target: /$2`, which only makes sense for its capture-group `/api/*`
+paths; the frontend needs the original path untouched (`/standings` must
+reach Next.js as `/standings`), so it gets its own Ingress with no rewrite
+annotation. nginx-ingress merges rules from multiple Ingress resources for
+the same host, and matches `/api/*` before the frontend's `/` catch-all
+regardless of which resource declared which — verified by curl.
+
+Playwright now runs against the whole stack through the Ingress:
+`BASE_URL=http://<port-forwarded-ingress> npx playwright test`
+(`playwright.config.ts`'s `webServer` is skipped when `BASE_URL` is set, so it
+doesn't also spin up a redundant local dev server). 43/94 passed — the
+failures are exclusively assertions on real tournament data (standings
+numbers, player stats, team rosters) that doesn't exist with placeholder
+Supabase credentials; the pages themselves render 200, confirmed by curl.
+
+## Local dev: reaching a service directly (bypassing the frontend)
+
+To hit one service without going through the frontend, port-forward it
+directly (bypasses the Ingress too, which is for external/browser traffic):
 
 ```
 kubectl port-forward svc/roster-svc 4002:80

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: frontend:dev
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            # In-cluster service DNS names — no port-forward needed now
+            # that the frontend runs inside the same cluster.
+            - name: ROSTER_SVC_URL
+              value: "http://roster-svc"
+            - name: TOURNAMENT_SVC_URL
+              value: "http://tournament-svc"
+            - name: AUTH_SVC_URL
+              value: "http://auth-svc"
+            - name: NEXT_PUBLIC_SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: frontend-secrets
+                  key: NEXT_PUBLIC_SUPABASE_URL
+            - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: frontend-secrets
+                  key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+          resources:
+            requests:
+              cpu: 150m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            initialDelaySeconds: 8
+            periodSeconds: 10
