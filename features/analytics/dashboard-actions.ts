@@ -165,7 +165,7 @@ export async function getRecentActivityAction(limit = 10) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('audit_logs')
+    .from('tbl_aud_audit_logs')
     .select(`
       *,
       actor:profiles!actor_id(username)
