@@ -77,7 +77,7 @@ export async function getAdminDashboardKPIsAction() {
 
   // 2. Registration Stats
   const { count: pendingRegistrations } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'pending');
 
@@ -132,7 +132,7 @@ export async function getDashboardToDosAction() {
   
   // 1. Pending Registrations
   const { data: pendingRegs } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('id, full_name, in_game_name, created_at')
     .eq('status', 'pending')
     .order('created_at', { ascending: true })

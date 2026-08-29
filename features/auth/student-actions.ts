@@ -141,7 +141,7 @@ export async function completeOnboardingAction(formData: FormData) {
 
   // 3. Insert into registrations table (Upsert based on user_id)
   const { error: regError } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .upsert({
       user_id: user.id,
       full_name: `${data.firstNameTh} ${data.lastNameTh}`,
@@ -423,7 +423,7 @@ export async function resubmitRegistrationAction() {
 
   // 2. Delete the registration request
   const { error: regError } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .delete()
     .eq('user_id', user.id);
 
@@ -448,7 +448,7 @@ export async function getStudentRegistrationStatus() {
     .single();
   
   const { data: registration } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('*')
     .eq('user_id', user.id)
     .maybeSingle();
@@ -498,7 +498,7 @@ export async function getStudentRegistrationStatus() {
 export async function getPendingRegistrations() {
   const supabase = await createClient();
   const { data } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -531,7 +531,7 @@ export async function getPendingRegistrations() {
 
 export async function updateRegistrationStatus(id: string, status: 'approved' | 'rejected', notes: string) {
   const supabase = await createClient();
-  const { error } = await supabase.from('registrations').update({ status, screening_notes: notes }).eq('id', id);
+  const { error } = await supabase.from('tbl_reg_registrations').update({ status, screening_notes: notes }).eq('id', id);
   if (error) return { success: false, error: error.message };
   revalidatePath('/admin/registrations');
   return { success: true };
@@ -665,7 +665,7 @@ export async function updateStudentRegistrationAction(formData: FormData) {
 
   // 3. Update registrations table
   const { error: regError } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .update({
       full_name: `${data.firstNameTh} ${data.lastNameTh}`,
       first_name_th: data.firstNameTh,
