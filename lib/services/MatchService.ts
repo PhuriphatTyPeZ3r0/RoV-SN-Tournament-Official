@@ -127,7 +127,7 @@ export class MatchService extends BaseService {
                 } else {
                     // Fallback to legacy schedules table
                     const { data: schedData, error: schedError } = await supabase
-                        .from('schedules')
+                        .from('tbl_trn_schedules')
                         .select('*')
                         .eq('tournament_id', tournamentId)
                         .order('created_at', { ascending: false })

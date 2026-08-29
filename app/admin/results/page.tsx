@@ -74,7 +74,7 @@ export default function AdminResultsPage() {
             
             // Get active tournament
             const { data: tourney } = await supabase
-                .from('tournaments')
+                .from('tbl_trn_tournaments')
                 .select('id')
                 .eq('status', 'active')
                 .order('created_at', { ascending: false })

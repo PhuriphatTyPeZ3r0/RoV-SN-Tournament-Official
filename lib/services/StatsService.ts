@@ -75,7 +75,7 @@ export class StatsService extends BaseService {
             let seasonStats: SeasonStats | null = null;
 
             if (tournamentId) {
-                const { data, error } = await supabase.rpc('get_season_overview', {
+                const { data, error } = await supabase.rpc('fn_trn_season_overview', {
                     p_tournament_id: tournamentId,
                 });
                 if (error) throw error;

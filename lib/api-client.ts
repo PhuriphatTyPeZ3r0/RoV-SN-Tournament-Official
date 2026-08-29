@@ -29,7 +29,7 @@ import type {
 async function getActiveTournamentId(): Promise<string | null> {
     const supabase = createClient();
     const { data } = await supabase
-        .from('tournaments')
+        .from('tbl_trn_tournaments')
         .select('id')
         .eq('status', 'active')
         .order('created_at', { ascending: false })
@@ -206,7 +206,7 @@ export const apiService = {
 
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('schedules')
+            .from('tbl_trn_schedules')
             .select('*')
             .eq('tournament_id', tournamentId)
             .order('created_at', { ascending: false })
@@ -275,7 +275,7 @@ export const apiService = {
         if (!tournamentId) return {} as SeasonStats;
 
         const supabase = createClient();
-        const { data, error } = await supabase.rpc('get_season_overview', {
+        const { data, error } = await supabase.rpc('fn_trn_season_overview', {
             p_tournament_id: tournamentId,
         });
 
@@ -381,12 +381,12 @@ export const apiService = {
 
         // Delete existing schedule for this tournament, then insert new one
         await supabase
-            .from('schedules')
+            .from('tbl_trn_schedules')
             .delete()
             .eq('tournament_id', tournamentId);
 
         const { data: result, error } = await supabase
-            .from('schedules')
+            .from('tbl_trn_schedules')
             .insert({
                 tournament_id: tournamentId,
                 schedule_data: data.schedule,

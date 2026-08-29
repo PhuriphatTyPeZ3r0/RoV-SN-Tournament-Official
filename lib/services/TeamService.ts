@@ -35,14 +35,14 @@ export class TeamService extends BaseService {
             // Resolve tournament ID & Fetch all tournaments in parallel
             const [tournamentId, { data: tournaments }] = await Promise.all([
                 this.getActiveTournamentId(season),
-                supabase.from('tournaments').select('*').order('season', { ascending: false })
+                supabase.from('tbl_trn_tournaments').select('*').order('season', { ascending: false })
             ]);
 
             // Fetch current tournament info
             let currentTournament = null;
             if (tournamentId) {
                 const { data } = await supabase
-                    .from('tournaments')
+                    .from('tbl_trn_tournaments')
                     .select('*')
                     .eq('id', tournamentId)
                     .single();
@@ -58,7 +58,7 @@ export class TeamService extends BaseService {
 
             // 1. Get teams from schedules
             const { data: scheduleData } = await supabase
-                .from('schedules')
+                .from('tbl_trn_schedules')
                 .select('teams')
                 .eq('tournament_id', currentTournament.id);
 

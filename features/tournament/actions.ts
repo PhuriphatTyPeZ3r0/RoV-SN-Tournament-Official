@@ -42,7 +42,7 @@ export async function getMatchByKeyAction(matchKey: string) {
 export async function getScheduleAction(tournamentId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('schedules')
+    .from('tbl_trn_schedules')
     .select('*')
     .eq('tournament_id', tournamentId)
     .order('created_at', { ascending: false })
@@ -274,7 +274,7 @@ export async function saveScheduleAction(scheduleData: {
   const { supabase } = await requireAdmin();
 
   const { data, error } = await supabase
-    .from('schedules')
+    .from('tbl_trn_schedules')
     .insert({
       tournament_id: scheduleData.tournamentId,
       teams: scheduleData.teams,
@@ -342,7 +342,7 @@ export async function saveGameStatsAction(
 export async function getTournamentsAction() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('tournaments')
+    .from('tbl_trn_tournaments')
     .select('*')
     .order('season', { ascending: false });
 
@@ -357,7 +357,7 @@ export async function updateTournamentThemeAction(
   const { supabase } = await requireAdmin();
 
   const { data, error } = await supabase
-    .from('tournaments')
+    .from('tbl_trn_tournaments')
     .update({ theme_style: themeStyle })
     .eq('id', tournamentId)
     .select()
@@ -392,7 +392,7 @@ const themeValidationSchema = z.object({
 export async function getThemesAction() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('themes')
+    .from('tbl_trn_themes')
     .select('*')
     .order('created_at', { ascending: true });
 
@@ -409,7 +409,7 @@ export async function createThemeAction(themeData: z.infer<typeof themeValidatio
   }
 
   const { data, error } = await supabase
-    .from('themes')
+    .from('tbl_trn_themes')
     .insert({
       ...validated.data,
       is_preset: false,
@@ -440,7 +440,7 @@ export async function updateThemeAction(
 
   // Check if it is a preset theme
   const { data: existing, error: fetchError } = await supabase
-    .from('themes')
+    .from('tbl_trn_themes')
     .select('is_preset')
     .eq('id', themeId)
     .maybeSingle();
@@ -449,7 +449,7 @@ export async function updateThemeAction(
   if (!existing) throw new Error('ไม่พบข้อมูลธีมนี้');
 
   const { data, error } = await supabase
-    .from('themes')
+    .from('tbl_trn_themes')
     .update(validated.data)
     .eq('id', themeId)
     .select()
@@ -468,7 +468,7 @@ export async function deleteThemeAction(themeId: string) {
 
   // Check if it is a preset theme
   const { data: existing, error: fetchError } = await supabase
-    .from('themes')
+    .from('tbl_trn_themes')
     .select('is_preset')
     .eq('id', themeId)
     .maybeSingle();
@@ -480,7 +480,7 @@ export async function deleteThemeAction(themeId: string) {
   }
 
   const { error } = await supabase
-    .from('themes')
+    .from('tbl_trn_themes')
     .delete()
     .eq('id', themeId);
 
