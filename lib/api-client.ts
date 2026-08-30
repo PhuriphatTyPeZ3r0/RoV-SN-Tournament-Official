@@ -63,7 +63,7 @@ export const apiService = {
         if (!tournamentId) return [];
 
         const supabase = createClient();
-        const { data, error } = await supabase.rpc('get_team_stats', {
+        const { data, error } = await supabase.rpc('fn_mch_team_stats', {
             p_tournament_id: tournamentId,
         });
 
@@ -90,7 +90,7 @@ export const apiService = {
         const supabase = createClient();
         const { data, error } = await supabase
             .from('tbl_ros_players')
-            .select('id, name, teams!team_id(name), in_game_name, previous_igns, created_at')
+            .select('id, name, teams:tbl_ros_teams!team_id(name), in_game_name, previous_igns, created_at')
             .order('name', { ascending: true });
 
         if (error) throw new Error(error.message);
@@ -109,7 +109,7 @@ export const apiService = {
         if (!tournamentId) return [];
 
         const supabase = createClient();
-        const { data, error } = await supabase.rpc('get_player_leaderboard', {
+        const { data, error } = await supabase.rpc('fn_mch_player_leaderboard', {
             p_tournament_id: tournamentId,
         });
 
@@ -139,7 +139,7 @@ export const apiService = {
 
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('game_stats')
+            .from('tbl_mch_game_stats')
             .select('player_name, hero_name, win');
 
         if (error) throw new Error(error.message);
@@ -177,7 +177,7 @@ export const apiService = {
 
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('matches')
+            .from('tbl_mch_matches')
             .select('*')
             .eq('tournament_id', tournamentId)
             .order('match_day', { ascending: true });
@@ -248,7 +248,7 @@ export const apiService = {
         if (!tournamentId) return [];
 
         const supabase = createClient();
-        const { data, error } = await supabase.rpc('calculate_tournament_standings', {
+        const { data, error } = await supabase.rpc('fn_mch_tournament_standings', {
             p_tournament_id: tournamentId,
         });
 
@@ -332,7 +332,7 @@ export const apiService = {
 
         // Upsert by match_key + tournament_id
         const { data: existing } = await supabase
-            .from('matches')
+            .from('tbl_mch_matches')
             .select('id')
             .eq('tournament_id', tournamentId)
             .eq('match_key', matchKey)
@@ -341,7 +341,7 @@ export const apiService = {
         let result;
         if (existing) {
             const { data, error } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .update(upsertData)
                 .eq('id', existing.id)
                 .select()
@@ -350,7 +350,7 @@ export const apiService = {
             result = data;
         } else {
             const { data, error } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .insert(upsertData)
                 .select()
                 .single();
@@ -439,7 +439,7 @@ export const apiService = {
         if (!tournamentId) throw new Error('No active tournament');
 
         const { error } = await supabase
-            .from('matches')
+            .from('tbl_mch_matches')
             .delete()
             .eq('tournament_id', tournamentId)
             .eq('match_key', matchId);
@@ -454,7 +454,7 @@ export const apiService = {
         if (!tournamentId) throw new Error('No active tournament');
 
         const { error } = await supabase
-            .from('matches')
+            .from('tbl_mch_matches')
             .delete()
             .eq('tournament_id', tournamentId)
             .eq('match_day', Number(day));
@@ -498,7 +498,7 @@ export const apiService = {
         }[]) {
             // Get match ID from DB
             const { data: match } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .select('id')
                 .eq('tournament_id', tournamentId)
                 .eq('match_key', gameStat.matchId)
@@ -555,7 +555,7 @@ export const apiService = {
         }
 
         if (rows.length > 0) {
-            const { error } = await supabase.from('game_stats').insert(rows);
+            const { error } = await supabase.from('tbl_mch_game_stats').insert(rows);
             if (error) throw new Error(error.message);
         }
 
@@ -565,7 +565,7 @@ export const apiService = {
     getMatchStats: async (matchId: string): Promise<unknown> => {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('game_stats')
+            .from('tbl_mch_game_stats')
             .select('*')
             .eq('match_id', matchId)
             .order('game_number', { ascending: true });

@@ -26,7 +26,7 @@ export async function updateMatchResultAction(matchId: string, resultData: {
 
   // Determine loser
   const { data: match } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('team_blue_name, team_red_name')
     .eq('id', matchId)
     .single()
@@ -41,7 +41,7 @@ export async function updateMatchResultAction(matchId: string, resultData: {
   }
 
   const { error } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .update({
       score_blue: resultData.scoreBlue,
       score_red: resultData.scoreRed,
@@ -84,7 +84,7 @@ export async function saveGameStatsAction(matchId: string, stats: {
 
   // 1. Clear existing stats for this game of this match
   await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .delete()
     .eq('match_id', matchId)
     .eq('game_number', stats.gameNumber)
@@ -138,13 +138,13 @@ export async function saveGameStatsAction(matchId: string, stats: {
   }
 
   if (rows.length > 0) {
-    const { error } = await supabase.from('game_stats').insert(rows)
+    const { error } = await supabase.from('tbl_mch_game_stats').insert(rows)
     if (error) throw new Error(error.message)
   }
 
   // 3. Update match_games table for duration/winner
   await supabase
-    .from('match_games')
+    .from('tbl_mch_match_games')
     .upsert({
       match_id: matchId,
       game_number: stats.gameNumber,
@@ -164,7 +164,7 @@ export async function getMatchStatsAction(matchId: string) {
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .select('*')
     .eq('match_id', matchId)
     .order('game_number', { ascending: true })

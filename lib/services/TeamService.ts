@@ -72,7 +72,7 @@ export class TeamService extends BaseService {
 
             // 2. Get teams from matches
             const { data: matchesData } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .select('team_blue_name, team_red_name')
                 .eq('tournament_id', currentTournament.id);
 

@@ -115,7 +115,7 @@ export default function AdminPlayersPage() {
         try {
             const { data, error: fetchError } = await supabase
                 .from('tbl_ros_players')
-                .select('*, teams!team_id(name)')
+                .select('*, teams:tbl_ros_teams!team_id(name)')
                 .order('name', { ascending: true });
 
             if (fetchError) throw fetchError;

@@ -92,13 +92,13 @@ export async function getAdminDashboardKPIsAction() {
 
   if (tournamentId) {
     const { count: played } = await supabase
-      .from('matches')
+      .from('tbl_mch_matches')
       .select('*', { count: 'exact', head: true })
       .eq('tournament_id', tournamentId)
       .not('winner_name', 'is', null);
     
     const { count: total } = await supabase
-      .from('matches')
+      .from('tbl_mch_matches')
       .select('*', { count: 'exact', head: true })
       .eq('tournament_id', tournamentId);
     
@@ -148,7 +148,7 @@ export async function getDashboardToDosAction() {
 
   // 3. Recent matches without results
   const { data: pendingMatches } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('match_key, team_blue_name, team_red_name, match_day')
     .is('winner_name', null)
     .order('match_day', { ascending: true })
@@ -168,7 +168,7 @@ export async function getRecentActivityAction(limit = 10) {
     .from('tbl_aud_audit_logs')
     .select(`
       *,
-      actor:profiles!actor_id(username)
+      actor:tbl_usr_profiles!actor_id(username)
     `)
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -187,13 +187,13 @@ export async function getDashboardTopPerformersAction() {
   if (!tournamentId) return null;
 
   // Get Top 3 Players by KDA using existing RPC logic or simplified query
-  const { data: players } = await supabase.rpc('get_player_leaderboard', {
+  const { data: players } = await supabase.rpc('fn_mch_player_leaderboard', {
     p_tournament_id: tournamentId
   });
 
   // Get Top 3 Heroes by Pick Rate
   const { data: heroStats } = await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .select('hero_name, match_id!inner(tournament_id)')
     .eq('match_id.tournament_id', tournamentId);
 

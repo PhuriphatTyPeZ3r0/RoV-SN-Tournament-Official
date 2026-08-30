@@ -52,7 +52,7 @@ async function getPlayerProfile(supabase: any) {
 
   const { data: player, error } = await supabase
     .from('tbl_ros_players')
-    .select('*, profiles(registration_status)')
+    .select('*, profiles:tbl_usr_profiles(registration_status)')
     .eq('profile_id', user.id)
     .single()
 
@@ -199,7 +199,7 @@ export async function getMyTeamData() {
     .from('tbl_ros_teams')
     .select(`
       *,
-      members:players!team_id(*, profile:profiles(avatar_url))
+      members:tbl_ros_players!team_id(*, profile:tbl_usr_profiles(avatar_url))
     `)
     .eq('id', player.team_id)
     .single()
@@ -252,7 +252,7 @@ export async function getAllTeamsAction() {
     .from('tbl_ros_teams')
     .select(`
       *,
-      members:players!team_id(*)
+      members:tbl_ros_players!team_id(*)
     `)
     .order('name', { ascending: true })
 
@@ -634,7 +634,7 @@ export async function getAllTeamsWithSeasonsAction() {
     .from('tbl_ros_teams')
     .select(`
       *,
-      members:players!team_id(*)
+      members:tbl_ros_players!team_id(*)
     `)
     .order('name', { ascending: true })
 
@@ -656,7 +656,7 @@ export async function getAllTeamsWithSeasonsAction() {
 
   // 3. Fetch all matches to see which teams have played in which tournament
   const { data: matches, error: matchesError } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('tournament_id, team_blue_id, team_red_id')
 
   if (matchesError) {

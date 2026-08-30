@@ -92,7 +92,7 @@ export async function generateDrawAction(tournamentId: string, matchDay: number)
 
   // 4. Insert matches
   const { error: insertError } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .insert(matches)
 
   if (insertError) throw new Error(`Failed to generate matches: ${insertError.message}`)
@@ -106,7 +106,7 @@ export async function clearDrawAction(tournamentId: string, matchDay: number) {
   const { supabase } = await requireAdmin()
 
   const { error } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .delete()
     .eq('tournament_id', tournamentId)
     .eq('match_day', matchDay)
@@ -122,7 +122,7 @@ export async function getMatchesByDayAction(tournamentId: string, matchDay: numb
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('*')
     .eq('tournament_id', tournamentId)
     .eq('match_day', matchDay)

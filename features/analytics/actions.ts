@@ -11,7 +11,7 @@ import { createClient } from '@/utils/supabase/server';
 // ดึงตารางคะแนน — calls RPC: calculate_tournament_standings
 export async function getStandingsAction(tournamentId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('calculate_tournament_standings', {
+  const { data, error } = await supabase.rpc('fn_mch_tournament_standings', {
     p_tournament_id: tournamentId,
   });
 
@@ -22,7 +22,7 @@ export async function getStandingsAction(tournamentId: string) {
 // ดึง Leaderboard ผู้เล่น — calls RPC: get_player_leaderboard
 export async function getPlayerLeaderboardAction(tournamentId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('get_player_leaderboard', {
+  const { data, error } = await supabase.rpc('fn_mch_player_leaderboard', {
     p_tournament_id: tournamentId,
   });
 
@@ -44,7 +44,7 @@ export async function getSeasonOverviewAction(tournamentId: string) {
 // ดึงสถิติทีม — calls RPC: get_team_stats
 export async function getTeamStatsAction(tournamentId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('get_team_stats', {
+  const { data, error } = await supabase.rpc('fn_mch_team_stats', {
     p_tournament_id: tournamentId,
   });
 
@@ -57,7 +57,7 @@ export async function getHeroPickStatsAction(tournamentId: string) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .select('hero_name, win, match_id!inner(tournament_id)')
     .eq('match_id.tournament_id', tournamentId);
 
