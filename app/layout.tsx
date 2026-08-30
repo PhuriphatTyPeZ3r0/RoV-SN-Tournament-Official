@@ -18,7 +18,7 @@ async function getActiveSeason() {
   try {
     const supabase = publicClient;
     const { data } = await supabase
-      .from('tournaments')
+      .from('tbl_trn_tournaments')
       .select('season')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
@@ -72,7 +72,7 @@ async function getActiveTheme() {
   try {
     const supabase = publicClient;
     const { data: tour } = await supabase
-      .from('tournaments')
+      .from('tbl_trn_tournaments')
       .select('theme_style')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
@@ -82,7 +82,7 @@ async function getActiveTheme() {
     const themeId = tour?.theme_style || 'echo';
 
     const { data: theme } = await supabase
-      .from('themes')
+      .from('tbl_trn_themes')
       .select('*')
       .eq('id', themeId)
       .maybeSingle();

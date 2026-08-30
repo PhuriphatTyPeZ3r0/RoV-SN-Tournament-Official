@@ -645,7 +645,7 @@ export async function getAllTeamsWithSeasonsAction() {
 
   // 2. Fetch all tournaments
   const { data: tournaments, error: tournamentsError } = await supabase
-    .from('tournaments')
+    .from('tbl_trn_tournaments')
     .select('*')
     .order('created_at', { ascending: true })
 

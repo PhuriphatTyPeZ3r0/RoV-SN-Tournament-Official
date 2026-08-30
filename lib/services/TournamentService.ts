@@ -9,7 +9,7 @@ export class TournamentService extends BaseService {
         try {
             const supabase = this.getPublicClient();
             const { data, error } = await supabase
-                .from('tournaments')
+                .from('tbl_trn_tournaments')
                 .select('*')
                 .order('season', { ascending: false });
 

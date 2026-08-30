@@ -30,10 +30,10 @@ export async function getPlayerLeaderboardAction(tournamentId: string) {
   return data;
 }
 
-// ดึงภาพรวมสถิติซีซั่น — calls RPC: get_season_overview
+// ดึงภาพรวมสถิติซีซั่น — calls RPC: fn_trn_season_overview
 export async function getSeasonOverviewAction(tournamentId: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc('get_season_overview', {
+  const { data, error } = await supabase.rpc('fn_trn_season_overview', {
     p_tournament_id: tournamentId,
   });
 

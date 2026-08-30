@@ -46,7 +46,7 @@ export async function updateUserRoleAction(userId: string, newRole: string) {
 
 async function getActiveTournamentId(supabase: any): Promise<string | null> {
   const { data } = await supabase
-    .from('tournaments')
+    .from('tbl_trn_tournaments')
     .select('id')
     .eq('status', 'active')
     .order('created_at', { ascending: false })

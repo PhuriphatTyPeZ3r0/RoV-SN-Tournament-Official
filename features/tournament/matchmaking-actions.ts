@@ -140,7 +140,7 @@ export async function getActiveTournamentsAction() {
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('tournaments')
+    .from('tbl_trn_tournaments')
     .select('id, name, season')
     .eq('status', 'active')
 
