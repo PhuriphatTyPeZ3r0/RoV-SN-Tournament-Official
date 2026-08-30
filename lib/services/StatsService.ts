@@ -66,7 +66,7 @@ export class StatsService extends BaseService {
             const supabase = this.getPublicClient();
             const [tournamentId, { data: heroesData, error: heroesError }, teamLogos] = await Promise.all([
                 this.getActiveTournamentId(season),
-                supabase.from('heroes').select('*').order('name', { ascending: true }),
+                supabase.from('tbl_ros_heroes').select('*').order('name', { ascending: true }),
                 TeamService.getTeamLogos()
             ]);
 
@@ -149,7 +149,7 @@ export class StatsService extends BaseService {
             const supabase = this.getPublicClient();
             const [tournamentId, { data: heroesData, error: heroesError }, teamLogos] = await Promise.all([
                 this.getActiveTournamentId(season),
-                supabase.from('heroes').select('*').order('name', { ascending: true }),
+                supabase.from('tbl_ros_heroes').select('*').order('name', { ascending: true }),
                 TeamService.getTeamLogos()
             ]);
 

@@ -19,7 +19,7 @@ export async function getReadyTeamsAction() {
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('id, name, logo_url, status')
     .eq('status', 'ready') // ดึงเฉพาะทีมที่พร้อม
 
@@ -36,7 +36,7 @@ export async function generateDrawAction(tournamentId: string, matchDay: number)
 
   // 1. ดึงทีมที่พร้อมแข่งขัน
   const { data: teams, error: teamsError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('id, name')
     .eq('status', 'ready')
 

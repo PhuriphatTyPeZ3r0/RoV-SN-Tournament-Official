@@ -51,7 +51,7 @@ async function getPlayerProfile(supabase: any) {
   if (!user) return null
 
   const { data: player, error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .select('*, profiles(registration_status)')
     .eq('profile_id', user.id)
     .single()
@@ -74,7 +74,7 @@ export async function createTeamAction(name: string, logoUrl?: string) {
 
   // 1. สร้างทีมใหม่
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .insert({
       name,
       logo_url: logoUrl,
@@ -91,7 +91,7 @@ export async function createTeamAction(name: string, logoUrl?: string) {
 
   // 2. อัปเดตตัวผู้เล่นให้เข้าทีมใหม่
   const { error: playerUpdateError } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({ team_id: team.id })
     .eq('id', player.id)
 
@@ -118,7 +118,7 @@ export async function joinTeamAction(inviteCode: string) {
 
   // 1. ค้นหาทีมจาก Invite Code
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('id, name, status')
     .eq('invite_code', inviteCode.toUpperCase())
     .single()
@@ -134,7 +134,7 @@ export async function joinTeamAction(inviteCode: string) {
 
   // 2. ตรวจสอบจำนวนสมาชิก (จำกัด 6 คน: 5 ตัวจริง + 1 สำรอง)
   const { count, error: countError } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .select('*', { count: 'exact', head: true })
     .eq('team_id', team.id)
 
@@ -145,7 +145,7 @@ export async function joinTeamAction(inviteCode: string) {
 
   // 3. อัปเดตตัวผู้เล่นให้เข้าทีม
   const { error: updateError } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({ team_id: team.id, lineup_role: null }) // Reset role on joining
     .eq('id', player.id)
 
@@ -165,7 +165,7 @@ export async function leaveTeamAction() {
 
   // ตรวจสอบความเป็นกัปตันและสถานะทีม
   const { data: team } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -179,7 +179,7 @@ export async function leaveTeamAction() {
   }
 
   const { error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({ team_id: null, lineup_role: null }) // Reset role on leaving
     .eq('id', player.id)
 
@@ -196,7 +196,7 @@ export async function getMyTeamData() {
   if (!player || !player.team_id) return null
 
   const { data: team, error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select(`
       *,
       members:players!team_id(*, profile:profiles(avatar_url))
@@ -216,7 +216,7 @@ export async function kickPlayerAction(playerId: string) {
 
   // ตรวจสอบความเป็นกัปตันและสถานะทีม
   const { data: team } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -234,7 +234,7 @@ export async function kickPlayerAction(playerId: string) {
   }
 
   const { error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({ team_id: null, lineup_role: null }) // Reset role on kicking
     .eq('id', playerId)
     .eq('team_id', player.team_id) // ตรวจสอบว่ายังอยู่ในทีมเดียวกัน
@@ -249,7 +249,7 @@ export async function getAllTeamsAction() {
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select(`
       *,
       members:players!team_id(*)
@@ -268,7 +268,7 @@ export async function updateTeamStatusAction(teamId: string, status: 'incomplete
   const supabase = await createClient()
   
   const { error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .update({ status })
     .eq('id', teamId)
 
@@ -294,7 +294,7 @@ export async function updateTeamInfoAction(payload: { name: string; description:
 
   // Check if current user is captain
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -309,7 +309,7 @@ export async function updateTeamInfoAction(payload: { name: string; description:
   }
 
   const { error: updateError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .update({ name, description, logo_url: logoUrl })
     .eq('id', player.team_id)
 
@@ -338,7 +338,7 @@ export async function updatePlayerLineupRoleAction(payload: { playerId: string; 
 
   // Check if current user is captain
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -353,7 +353,7 @@ export async function updatePlayerLineupRoleAction(payload: { playerId: string; 
   }
 
   const { error: updateError } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({ lineup_role: lineupRole })
     .eq('id', playerId)
     .eq('team_id', player.team_id) // Ensure updating a player in own team
@@ -375,7 +375,7 @@ export async function toggleRecruitmentAction() {
   }
 
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status, invite_code')
     .eq('id', player.team_id)
     .single()
@@ -396,7 +396,7 @@ export async function toggleRecruitmentAction() {
   }
 
   const { error: updateError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .update({ invite_code: nextInviteCode })
     .eq('id', player.team_id)
 
@@ -417,7 +417,7 @@ export async function regenerateInviteCodeAction() {
   }
 
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -434,7 +434,7 @@ export async function regenerateInviteCodeAction() {
   const newInviteCode = Math.random().toString(36).substring(2, 8).toUpperCase()
 
   const { error: updateError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .update({ invite_code: newInviteCode })
     .eq('id', player.team_id)
 
@@ -455,7 +455,7 @@ export async function toggleTeamReadyAction(targetStatus: 'ready' | 'incomplete'
   }
 
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -467,7 +467,7 @@ export async function toggleTeamReadyAction(targetStatus: 'ready' | 'incomplete'
   if (targetStatus === 'ready') {
     // 1. ตรวจสอบจำนวนสมาชิก (ต้องมีอย่างน้อย 5 คน)
     const { count, error: countError } = await supabase
-      .from('players')
+      .from('tbl_ros_players')
       .select('*', { count: 'exact', head: true })
       .eq('team_id', player.team_id)
 
@@ -477,7 +477,7 @@ export async function toggleTeamReadyAction(targetStatus: 'ready' | 'incomplete'
     }
 
     const { error: updateError } = await supabase
-      .from('teams')
+      .from('tbl_ros_teams')
       .update({ status: 'ready' })
       .eq('id', player.team_id)
 
@@ -490,7 +490,7 @@ export async function toggleTeamReadyAction(targetStatus: 'ready' | 'incomplete'
     }
 
     const { error: updateError } = await supabase
-      .from('teams')
+      .from('tbl_ros_teams')
       .update({ status: 'incomplete' })
       .eq('id', player.team_id)
 
@@ -517,7 +517,7 @@ export async function updateTeamContactInfoAction(payload: { contactPhone: strin
 
   // Check if current user is captain
   const { data: team, error: teamError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('captain_id, status')
     .eq('id', player.team_id)
     .single()
@@ -532,7 +532,7 @@ export async function updateTeamContactInfoAction(payload: { contactPhone: strin
   }
 
   const { error: updateError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .update({ 
       contact_phone: contactPhone, 
       contact_line: contactLine, 
@@ -563,7 +563,7 @@ export async function updatePlayerPersonalDetailsAction(payload: { nickname: str
   }
 
   const { error: updateError } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({ 
       nickname, 
       phone, 
@@ -613,7 +613,7 @@ export async function updateGamingProfileAction(payload: {
   if (phone !== undefined) updateData.phone = phone;
 
   const { error: updateError } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update(updateData)
     .eq('id', player.id)
 
@@ -631,7 +631,7 @@ export async function getAllTeamsWithSeasonsAction() {
 
   // 1. Fetch all teams and their members
   const { data: teams, error: teamsError } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select(`
       *,
       members:players!team_id(*)

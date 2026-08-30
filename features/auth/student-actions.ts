@@ -543,7 +543,7 @@ export async function getPlayerGamingProfile() {
   if (!user) return null;
 
   let { data: player } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .select('id, in_game_name, open_id, current_rank, lineup_role, secondary_role, top_heroes, experience_bio, favorite_heroes, nickname, phone')
     .eq('profile_id', user.id)
     .maybeSingle();
@@ -558,7 +558,7 @@ export async function getPlayerGamingProfile() {
 
     if (profile && (profile.registration_status === 'verified' || profile.registration_status === 'approved')) {
       const { data: newPlayer, error: createError } = await supabase
-        .from('players')
+        .from('tbl_ros_players')
         .insert({
           profile_id: user.id,
           name: profile.full_name || 'Anonymous Player',

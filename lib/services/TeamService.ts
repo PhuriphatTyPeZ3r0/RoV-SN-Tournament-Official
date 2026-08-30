@@ -9,7 +9,7 @@ export class TeamService extends BaseService {
         try {
             const supabase = this.getPublicClient();
             const { data: teamsData, error } = await supabase
-                .from('teams')
+                .from('tbl_ros_teams')
                 .select('name, logo_url');
 
             if (error) throw error;
@@ -90,7 +90,7 @@ export class TeamService extends BaseService {
             const isLatest = !tournaments || tournaments.length === 0 || tournaments[0].id === currentTournament.id;
             if (isLatest) {
                 const { data: newTeams } = await supabase
-                    .from('teams')
+                    .from('tbl_ros_teams')
                     .select('name')
                     .gte('created_at', currentTournament.created_at);
 
@@ -108,7 +108,7 @@ export class TeamService extends BaseService {
 
             if (teamNames.length > 0) {
                 const { data: teamsData, error } = await supabase
-                    .from('teams')
+                    .from('tbl_ros_teams')
                     .select('name, logo_url')
                     .in('name', teamNames)
                     .order('name', { ascending: true });
