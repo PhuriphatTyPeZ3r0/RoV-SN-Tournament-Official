@@ -26,7 +26,7 @@ export default function AdminHeroesPage() {
         const supabase = createClient();
         try {
             const { data, error } = await supabase
-                .from('heroes')
+                .from('tbl_ros_heroes')
                 .select('*')
                 .order('name', { ascending: true });
 
@@ -77,7 +77,7 @@ export default function AdminHeroesPage() {
 
                 // Insert into heroes table
                 const { error: insertError } = await supabase
-                    .from('heroes')
+                    .from('tbl_ros_heroes')
                     .insert({ name: heroName, image_url: urlData.publicUrl });
 
                 if (insertError) {
@@ -124,7 +124,7 @@ export default function AdminHeroesPage() {
         if (result.isConfirmed) {
             const supabase = createClient();
             try {
-                const { error } = await supabase.from('heroes').delete().eq('id', hero._id);
+                const { error } = await supabase.from('tbl_ros_heroes').delete().eq('id', hero._id);
                 if (error) throw error;
                 Swal.fire('Deleted!', 'Hero has been deleted.', 'success');
                 fetchHeroes();
@@ -152,7 +152,7 @@ export default function AdminHeroesPage() {
             const supabase = createClient();
             try {
                 const { error } = await supabase
-                    .from('heroes')
+                    .from('tbl_ros_heroes')
                     .update({ name: newName })
                     .eq('id', hero._id);
                 if (error) throw error;
@@ -177,7 +177,7 @@ export default function AdminHeroesPage() {
         if (result.isConfirmed) {
             const supabase = createClient();
             try {
-                const { error } = await supabase.from('heroes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                const { error } = await supabase.from('tbl_ros_heroes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
                 if (error) throw error;
                 Swal.fire('Cleared!', 'All heroes have been removed.', 'success');
                 fetchHeroes();

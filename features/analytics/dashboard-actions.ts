@@ -62,16 +62,16 @@ export async function getAdminDashboardKPIsAction() {
 
   // 1. Team Stats
   const { count: totalTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*', { count: 'exact', head: true });
 
   const { count: readyTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'ready');
 
   const { count: approvedTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'approved');
 
@@ -83,7 +83,7 @@ export async function getAdminDashboardKPIsAction() {
 
   // 3. Player Stats
   const { count: totalPlayers } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .select('*', { count: 'exact', head: true });
 
   // 4. Tournament Progress (Matches)
@@ -140,7 +140,7 @@ export async function getDashboardToDosAction() {
 
   // 2. Ready Teams needing Approval
   const { data: readyTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('id, name, created_at')
     .eq('status', 'ready')
     .order('created_at', { ascending: true })

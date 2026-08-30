@@ -45,7 +45,7 @@ export const apiService = {
     getTeams: async (): Promise<Team[]> => {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('teams')
+            .from('tbl_ros_teams')
             .select('id, name, logo_url')
             .order('name', { ascending: true });
 
@@ -89,7 +89,7 @@ export const apiService = {
     getPlayers: async (): Promise<Player[]> => {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('players')
+            .from('tbl_ros_players')
             .select('id, name, teams!team_id(name), in_game_name, previous_igns, created_at')
             .order('name', { ascending: true });
 
@@ -286,7 +286,7 @@ export const apiService = {
     getHeroes: async (): Promise<Hero[]> => {
         const supabase = createClient();
         const { data, error } = await supabase
-            .from('heroes')
+            .from('tbl_ros_heroes')
             .select('*')
             .order('name', { ascending: true });
 
@@ -412,20 +412,20 @@ export const apiService = {
 
         // Upsert team logo
         const { data: existing } = await supabase
-            .from('teams')
+            .from('tbl_ros_teams')
             .select('id')
             .eq('name', data.teamName)
             .maybeSingle();
 
         if (existing) {
             const { error } = await supabase
-                .from('teams')
+                .from('tbl_ros_teams')
                 .update({ logo_url: data.logoUrl })
                 .eq('id', existing.id);
             if (error) throw new Error(error.message);
         } else {
             const { error } = await supabase
-                .from('teams')
+                .from('tbl_ros_teams')
                 .insert({ name: data.teamName, logo_url: data.logoUrl });
             if (error) throw new Error(error.message);
         }
@@ -467,7 +467,7 @@ export const apiService = {
         const supabase = createClient();
 
         const { error } = await supabase
-            .from('teams')
+            .from('tbl_ros_teams')
             .update({ logo_url: null })
             .eq('name', teamName);
 
