@@ -67,7 +67,7 @@ export async function signOutAction() {
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
     await supabase
-      .from('profiles')
+      .from('tbl_usr_profiles')
       .update({ otp_enabled: false })
       .eq('id', user.id);
   }
@@ -85,7 +85,7 @@ export async function getSessionAction() {
 
   // ดึง role จาก profiles table
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('username, role')
     .eq('id', user.id)
     .single();

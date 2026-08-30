@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       // 1. Force otp_enabled to false to enforce 2FA verification on Google OAuth login
       // Sync Google OAuth metadata (email, full name, avatar) to public.profiles
       await supabase
-        .from('profiles')
+        .from('tbl_usr_profiles')
         .update({ 
           otp_enabled: false,
           email: data.user.email,
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
       // 3. Fetch detailed profile to determine target redirection after OTP verification
       const { data: profile } = await supabase
-        .from('profiles')
+        .from('tbl_usr_profiles')
         .select('role, is_profile_complete, registration_status')
         .eq('id', data.user.id)
         .single();

@@ -17,7 +17,7 @@ export function AdminRealtimeListener() {
             .channel('new-registrations')
             .on(
                 'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'registrations' },
+                { event: 'INSERT', schema: 'public', table: 'tbl_reg_registrations' },
                 (payload: any) => {
                     toast.info(t.admin.listener.newRegistration.replace('{name}', payload.new.full_name), {
                         description: t.admin.listener.ign.replace('{ign}', payload.new.in_game_name),
@@ -39,7 +39,7 @@ export function AdminRealtimeListener() {
                 { 
                     event: 'UPDATE', 
                     schema: 'public', 
-                    table: 'teams',
+                    table: 'tbl_ros_teams',
                     filter: 'status=eq.ready'
                 },
                 (payload: any) => {
@@ -64,7 +64,7 @@ export function AdminRealtimeListener() {
             .channel('audit-logs')
             .on(
                 'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'match_history' },
+                { event: 'INSERT', schema: 'public', table: 'tbl_mch_match_history' },
                 (payload: any) => {
                     if (payload.new.action === 'update') {
                         toast(t.admin.listener.updateResult.replace('{key}', payload.new.match_key), {

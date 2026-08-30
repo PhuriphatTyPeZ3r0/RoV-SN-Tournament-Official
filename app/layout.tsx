@@ -24,7 +24,7 @@ const TOURNAMENT_META_TIMEOUT_MS = 5000;
 const getActiveTournamentMeta = cache(async () => {
   return withTimeout(
     publicClient
-      .from('tournaments')
+      .from('tbl_trn_tournaments')
       .select('season, theme_style')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
@@ -95,7 +95,7 @@ async function getActiveTheme() {
     const themeId = tour?.theme_style || 'echo';
 
     const theme = await withTimeout(
-      publicClient.from('themes').select('*').eq('id', themeId).maybeSingle().then((r) => r.data),
+      publicClient.from('tbl_trn_themes').select('*').eq('id', themeId).maybeSingle().then((r) => r.data),
       TOURNAMENT_META_TIMEOUT_MS,
       null,
     );

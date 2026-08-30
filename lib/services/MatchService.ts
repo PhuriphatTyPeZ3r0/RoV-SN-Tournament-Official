@@ -48,7 +48,7 @@ export class MatchService extends BaseService {
             let matches: any[] = [];
             if (tournamentId) {
                 const { data, error } = await supabase
-                    .from('matches')
+                    .from('tbl_mch_matches')
                     .select('*')
                     .eq('tournament_id', tournamentId)
                     .gte('match_day', 10)
@@ -83,7 +83,7 @@ export class MatchService extends BaseService {
             if (tournamentId) {
                 // 1. Fetch all matches for the tournament
                 const { data: matchData, error: matchError } = await supabase
-                    .from('matches')
+                    .from('tbl_mch_matches')
                     .select('*')
                     .eq('tournament_id', tournamentId)
                     .order('match_day', { ascending: true })
@@ -127,7 +127,7 @@ export class MatchService extends BaseService {
                 } else {
                     // Fallback to legacy schedules table
                     const { data: schedData, error: schedError } = await supabase
-                        .from('schedules')
+                        .from('tbl_trn_schedules')
                         .select('*')
                         .eq('tournament_id', tournamentId)
                         .order('created_at', { ascending: false })

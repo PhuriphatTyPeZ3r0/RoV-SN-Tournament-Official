@@ -105,7 +105,7 @@ export default function AdminPlayersPage() {
 
     const fetchTeams = async () => {
         const supabase = createClient();
-        const { data } = await supabase.from('teams').select('id, name');
+        const { data } = await supabase.from('tbl_ros_teams').select('id, name');
         if (data) setTeams(data);
     };
 
@@ -114,8 +114,8 @@ export default function AdminPlayersPage() {
         const supabase = createClient();
         try {
             const { data, error: fetchError } = await supabase
-                .from('players')
-                .select('*, teams!team_id(name)')
+                .from('tbl_ros_players')
+                .select('*, teams:tbl_ros_teams!team_id(name)')
                 .order('name', { ascending: true });
 
             if (fetchError) throw fetchError;
@@ -202,7 +202,7 @@ export default function AdminPlayersPage() {
                 };
             });
 
-            const { error } = await supabase.from('players').insert(rows);
+            const { error } = await supabase.from('tbl_ros_players').insert(rows);
             if (error) throw error;
 
             Swal.fire({
@@ -232,7 +232,7 @@ export default function AdminPlayersPage() {
         try {
             if (editingId) {
                 const { error } = await supabase
-                    .from('players')
+                    .from('tbl_ros_players')
                     .update({
                         name: formData.name,
                         grade: formData.grade || null,
@@ -246,7 +246,7 @@ export default function AdminPlayersPage() {
                 setEditingId(null);
             } else {
                 const { error } = await supabase
-                    .from('players')
+                    .from('tbl_ros_players')
                     .insert({
                         name: formData.name,
                         grade: formData.grade || null,
@@ -294,7 +294,7 @@ export default function AdminPlayersPage() {
         if (result.isConfirmed) {
             const supabase = createClient();
             try {
-                const { error } = await supabase.from('players').delete().eq('id', id);
+                const { error } = await supabase.from('tbl_ros_players').delete().eq('id', id);
                 if (error) throw error;
                 Swal.fire('Deleted!', 'Player has been deleted.', 'success');
                 fetchPlayers();
@@ -318,7 +318,7 @@ export default function AdminPlayersPage() {
             const supabase = createClient();
             try {
                 // Delete all players — use neq to bypass "cannot delete all" limitation
-                const { error } = await supabase.from('players').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                const { error } = await supabase.from('tbl_ros_players').delete().neq('id', '00000000-0000-0000-0000-000000000000');
                 if (error) throw error;
                 Swal.fire('Cleared!', 'All players have been removed.', 'success');
                 fetchPlayers();

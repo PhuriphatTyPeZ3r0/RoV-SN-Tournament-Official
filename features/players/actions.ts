@@ -15,7 +15,7 @@ import { revalidatePath } from 'next/cache';
 export async function getTeamsAction() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*')
     .order('name', { ascending: true });
 
@@ -26,7 +26,7 @@ export async function getTeamsAction() {
 export async function getTeamLogosAction(): Promise<Record<string, string>> {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('name, logo_url')
     .not('logo_url', 'is', null);
 
@@ -44,7 +44,7 @@ export async function getTeamLogosAction(): Promise<Record<string, string>> {
 export async function createTeamAction(name: string, logoUrl?: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .insert({ name, logo_url: logoUrl })
     .select()
     .single();
@@ -58,7 +58,7 @@ export async function createTeamAction(name: string, logoUrl?: string) {
 export async function deleteTeamAction(teamName: string) {
   const supabase = await createClient();
   const { error } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .delete()
     .eq('name', teamName);
 
@@ -75,8 +75,8 @@ export async function deleteTeamAction(teamName: string) {
 export async function getPlayersAction() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('players')
-    .select('*, teams!team_id(name, logo_url)')
+    .from('tbl_ros_players')
+    .select('*, teams:tbl_ros_teams!team_id(name, logo_url)')
     .order('name', { ascending: true });
 
   if (error) throw new Error(`Failed to fetch players: ${error.message}`);
@@ -93,7 +93,7 @@ export async function createPlayerAction(playerData: {
 }) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .insert({
       name: playerData.name,
       grade: playerData.grade,
@@ -127,7 +127,7 @@ export async function updatePlayerAction(
   // ถ้าเปลี่ยน IGN ให้เก็บ IGN เก่าไว้ใน previousIgns อัตโนมัติ
   if (updateData.inGameName) {
     const { data: current } = await supabase
-      .from('players')
+      .from('tbl_ros_players')
       .select('in_game_name, previous_igns')
       .eq('id', playerId)
       .single();
@@ -142,7 +142,7 @@ export async function updatePlayerAction(
   }
 
   const { data, error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .update({
       ...(updateData.name && { name: updateData.name }),
       ...(updateData.grade !== undefined && { grade: updateData.grade }),
@@ -164,7 +164,7 @@ export async function updatePlayerAction(
 export async function deletePlayerAction(playerId: string) {
   const supabase = await createClient();
   const { error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .delete()
     .eq('id', playerId);
 
@@ -188,7 +188,7 @@ export async function importPlayersAction(
   }));
 
   const { data, error } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .insert(rows)
     .select();
 
@@ -205,7 +205,7 @@ export async function importPlayersAction(
 export async function getHeroesAction() {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('heroes')
+    .from('tbl_ros_heroes')
     .select('*')
     .order('name', { ascending: true });
 
@@ -216,7 +216,7 @@ export async function getHeroesAction() {
 export async function upsertHeroAction(name: string, imageUrl?: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('heroes')
+    .from('tbl_ros_heroes')
     .upsert({ name, image_url: imageUrl }, { onConflict: 'name' })
     .select()
     .single();

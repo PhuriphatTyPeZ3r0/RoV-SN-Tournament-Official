@@ -65,8 +65,8 @@ export const serverApi = {
 
         // 1. Resolve tournament
         const { data: activeTourData } = season
-            ? await supabase.from('tournaments').select('id').eq('season', season).limit(1).maybeSingle()
-            : await supabase.from('tournaments').select('id').eq('status', 'active').order('created_at', { ascending: false }).limit(1).maybeSingle();
+            ? await supabase.from('tbl_trn_tournaments').select('id').eq('season', season).limit(1).maybeSingle()
+            : await supabase.from('tbl_trn_tournaments').select('id').eq('status', 'active').order('created_at', { ascending: false }).limit(1).maybeSingle();
         
         const tournamentId = activeTourData?.id || null;
 
@@ -82,14 +82,14 @@ export const serverApi = {
         if (tournamentId) {
             // Fetch active tournament metadata
             const { data: tourMeta } = await supabase
-                .from('tournaments')
+                .from('tbl_trn_tournaments')
                 .select('*')
                 .eq('id', tournamentId)
                 .maybeSingle();
             activeTournament = tourMeta;
 
             // Fetch standings
-            const { data: standData } = await supabase.rpc('calculate_tournament_standings', {
+            const { data: standData } = await supabase.rpc('fn_mch_tournament_standings', {
                 p_tournament_id: tournamentId,
             });
 
@@ -104,7 +104,7 @@ export const serverApi = {
 
             // Fetch schedule
             const { data: schedData } = await supabase
-                .from('schedules')
+                .from('tbl_trn_schedules')
                 .select('*')
                 .eq('tournament_id', tournamentId)
                 .order('created_at', { ascending: false })
@@ -128,7 +128,7 @@ export const serverApi = {
 
             // Fetch match results
             const { data: matchData } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .select('*')
                 .eq('tournament_id', tournamentId)
                 .order('match_day', { ascending: true });

@@ -25,7 +25,7 @@ export async function loginAdminAction(formData: FormData) {
 
   // 2. Query public.profiles to check if the user has role IN ('admin', 'super_admin')
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('role')
     .eq('id', authData.user.id)
     .single();

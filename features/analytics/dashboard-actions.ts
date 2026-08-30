@@ -12,7 +12,7 @@ export async function promoteUserToAdminAction(userId: string) {
   await checkRole(['super_admin']);
   const supabase = await createClient();
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ role: 'admin' })
     .eq('id', userId);
   
@@ -24,7 +24,7 @@ export async function getAllUsersWithRolesAction() {
   await checkRole(['super_admin']);
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('id, username, role, student_id, created_at')
     .order('created_at', { ascending: false });
   
@@ -36,7 +36,7 @@ export async function updateUserRoleAction(userId: string, newRole: string) {
   await checkRole(['super_admin']);
   const supabase = await createClient();
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ role: newRole })
     .eq('id', userId);
   
@@ -46,7 +46,7 @@ export async function updateUserRoleAction(userId: string, newRole: string) {
 
 async function getActiveTournamentId(supabase: any): Promise<string | null> {
   const { data } = await supabase
-    .from('tournaments')
+    .from('tbl_trn_tournaments')
     .select('id')
     .eq('status', 'active')
     .order('created_at', { ascending: false })
@@ -62,28 +62,28 @@ export async function getAdminDashboardKPIsAction() {
 
   // 1. Team Stats
   const { count: totalTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*', { count: 'exact', head: true });
 
   const { count: readyTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'ready');
 
   const { count: approvedTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'approved');
 
   // 2. Registration Stats
   const { count: pendingRegistrations } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'pending');
 
   // 3. Player Stats
   const { count: totalPlayers } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .select('*', { count: 'exact', head: true });
 
   // 4. Tournament Progress (Matches)
@@ -92,13 +92,13 @@ export async function getAdminDashboardKPIsAction() {
 
   if (tournamentId) {
     const { count: played } = await supabase
-      .from('matches')
+      .from('tbl_mch_matches')
       .select('*', { count: 'exact', head: true })
       .eq('tournament_id', tournamentId)
       .not('winner_name', 'is', null);
     
     const { count: total } = await supabase
-      .from('matches')
+      .from('tbl_mch_matches')
       .select('*', { count: 'exact', head: true })
       .eq('tournament_id', tournamentId);
     
@@ -132,7 +132,7 @@ export async function getDashboardToDosAction() {
   
   // 1. Pending Registrations
   const { data: pendingRegs } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('id, full_name, in_game_name, created_at')
     .eq('status', 'pending')
     .order('created_at', { ascending: true })
@@ -140,7 +140,7 @@ export async function getDashboardToDosAction() {
 
   // 2. Ready Teams needing Approval
   const { data: readyTeams } = await supabase
-    .from('teams')
+    .from('tbl_ros_teams')
     .select('id, name, created_at')
     .eq('status', 'ready')
     .order('created_at', { ascending: true })
@@ -148,7 +148,7 @@ export async function getDashboardToDosAction() {
 
   // 3. Recent matches without results
   const { data: pendingMatches } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('match_key, team_blue_name, team_red_name, match_day')
     .is('winner_name', null)
     .order('match_day', { ascending: true })
@@ -165,10 +165,10 @@ export async function getRecentActivityAction(limit = 10) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('audit_logs')
+    .from('tbl_aud_audit_logs')
     .select(`
       *,
-      actor:profiles!actor_id(username)
+      actor:tbl_usr_profiles!actor_id(username)
     `)
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -187,13 +187,13 @@ export async function getDashboardTopPerformersAction() {
   if (!tournamentId) return null;
 
   // Get Top 3 Players by KDA using existing RPC logic or simplified query
-  const { data: players } = await supabase.rpc('get_player_leaderboard', {
+  const { data: players } = await supabase.rpc('fn_mch_player_leaderboard', {
     p_tournament_id: tournamentId
   });
 
   // Get Top 3 Heroes by Pick Rate
   const { data: heroStats } = await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .select('hero_name, match_id!inner(tournament_id)')
     .eq('match_id.tournament_id', tournamentId);
 

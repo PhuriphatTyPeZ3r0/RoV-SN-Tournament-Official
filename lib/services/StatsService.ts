@@ -34,7 +34,7 @@ export class StatsService extends BaseService {
             let standings: ProcessedStanding[] = [];
 
             if (tournamentId) {
-                const { data, error } = await supabase.rpc('calculate_tournament_standings', {
+                const { data, error } = await supabase.rpc('fn_mch_tournament_standings', {
                     p_tournament_id: tournamentId,
                 });
 
@@ -66,7 +66,7 @@ export class StatsService extends BaseService {
             const supabase = this.getPublicClient();
             const [tournamentId, { data: heroesData, error: heroesError }, teamLogos] = await Promise.all([
                 this.getActiveTournamentId(season),
-                supabase.from('heroes').select('*').order('name', { ascending: true }),
+                supabase.from('tbl_ros_heroes').select('*').order('name', { ascending: true }),
                 TeamService.getTeamLogos()
             ]);
 
@@ -75,7 +75,7 @@ export class StatsService extends BaseService {
             let seasonStats: SeasonStats | null = null;
 
             if (tournamentId) {
-                const { data, error } = await supabase.rpc('get_season_overview', {
+                const { data, error } = await supabase.rpc('fn_trn_season_overview', {
                     p_tournament_id: tournamentId,
                 });
                 if (error) throw error;
@@ -110,7 +110,7 @@ export class StatsService extends BaseService {
             let teamStats: TeamStat[] = [];
 
             if (tournamentId) {
-                const { data, error } = await supabase.rpc('get_team_stats', {
+                const { data, error } = await supabase.rpc('fn_mch_team_stats', {
                     p_tournament_id: tournamentId,
                 });
 
@@ -149,7 +149,7 @@ export class StatsService extends BaseService {
             const supabase = this.getPublicClient();
             const [tournamentId, { data: heroesData, error: heroesError }, teamLogos] = await Promise.all([
                 this.getActiveTournamentId(season),
-                supabase.from('heroes').select('*').order('name', { ascending: true }),
+                supabase.from('tbl_ros_heroes').select('*').order('name', { ascending: true }),
                 TeamService.getTeamLogos()
             ]);
 
@@ -161,8 +161,8 @@ export class StatsService extends BaseService {
             if (tournamentId) {
                 // Fetch player leaderboard and hero stats in parallel
                 const [leaderboardRes, heroStatsRes] = await Promise.all([
-                    supabase.rpc('get_player_leaderboard', { p_tournament_id: tournamentId }),
-                    supabase.from('game_stats')
+                    supabase.rpc('fn_mch_player_leaderboard', { p_tournament_id: tournamentId }),
+                    supabase.from('tbl_mch_game_stats')
                         .select('player_name, hero_name, win, match_id!inner(tournament_id)')
                         .eq('match_id.tournament_id', tournamentId)
                 ]);

@@ -25,7 +25,7 @@ export abstract class BaseService {
             const supabase = this.getPublicClient();
             if (season) {
                 const { data } = await supabase
-                    .from('tournaments')
+                    .from('tbl_trn_tournaments')
                     .select('id')
                     .eq('season', season)
                     .limit(1)
@@ -33,7 +33,7 @@ export abstract class BaseService {
                 if (data) return data.id;
             }
             const { data } = await supabase
-                .from('tournaments')
+                .from('tbl_trn_tournaments')
                 .select('id')
                 .eq('status', 'active')
                 .order('created_at', { ascending: false })

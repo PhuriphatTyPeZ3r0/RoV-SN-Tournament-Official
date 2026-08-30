@@ -9,7 +9,7 @@ export class TeamService extends BaseService {
         try {
             const supabase = this.getPublicClient();
             const { data: teamsData, error } = await supabase
-                .from('teams')
+                .from('tbl_ros_teams')
                 .select('name, logo_url');
 
             if (error) throw error;
@@ -35,14 +35,14 @@ export class TeamService extends BaseService {
             // Resolve tournament ID & Fetch all tournaments in parallel
             const [tournamentId, { data: tournaments }] = await Promise.all([
                 this.getActiveTournamentId(season),
-                supabase.from('tournaments').select('*').order('season', { ascending: false })
+                supabase.from('tbl_trn_tournaments').select('*').order('season', { ascending: false })
             ]);
 
             // Fetch current tournament info
             let currentTournament = null;
             if (tournamentId) {
                 const { data } = await supabase
-                    .from('tournaments')
+                    .from('tbl_trn_tournaments')
                     .select('*')
                     .eq('id', tournamentId)
                     .single();
@@ -58,7 +58,7 @@ export class TeamService extends BaseService {
 
             // 1. Get teams from schedules
             const { data: scheduleData } = await supabase
-                .from('schedules')
+                .from('tbl_trn_schedules')
                 .select('teams')
                 .eq('tournament_id', currentTournament.id);
 
@@ -72,7 +72,7 @@ export class TeamService extends BaseService {
 
             // 2. Get teams from matches
             const { data: matchesData } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .select('team_blue_name, team_red_name')
                 .eq('tournament_id', currentTournament.id);
 
@@ -90,7 +90,7 @@ export class TeamService extends BaseService {
             const isLatest = !tournaments || tournaments.length === 0 || tournaments[0].id === currentTournament.id;
             if (isLatest) {
                 const { data: newTeams } = await supabase
-                    .from('teams')
+                    .from('tbl_ros_teams')
                     .select('name')
                     .gte('created_at', currentTournament.created_at);
 
@@ -108,7 +108,7 @@ export class TeamService extends BaseService {
 
             if (teamNames.length > 0) {
                 const { data: teamsData, error } = await supabase
-                    .from('teams')
+                    .from('tbl_ros_teams')
                     .select('name, logo_url')
                     .in('name', teamNames)
                     .order('name', { ascending: true });

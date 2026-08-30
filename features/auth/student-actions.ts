@@ -87,7 +87,7 @@ export async function completeOnboardingAction(formData: FormData) {
   while (!isUnique && lastNameIndex <= cleanLast.length) {
     username = `${cleanFirst}.${cleanLast.substring(0, lastNameIndex)}`;
     const { count } = await supabase
-      .from('profiles')
+      .from('tbl_usr_profiles')
       .select('username', { count: 'exact', head: true })
       .eq('username', username)
       .neq('id', user.id);
@@ -100,7 +100,7 @@ export async function completeOnboardingAction(formData: FormData) {
     while (!isUnique) {
       username = `${cleanFirst}.${cleanLast}${seq}`;
       const { count } = await supabase
-        .from('profiles')
+        .from('tbl_usr_profiles')
         .select('username', { count: 'exact', head: true })
         .eq('username', username)
         .neq('id', user.id);
@@ -116,7 +116,7 @@ export async function completeOnboardingAction(formData: FormData) {
 
   // 2. Update/Create public.profiles (Upsert)
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .upsert({
       id: user.id,
       username,
@@ -141,7 +141,7 @@ export async function completeOnboardingAction(formData: FormData) {
 
   // 3. Insert into registrations table (Upsert based on user_id)
   const { error: regError } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .upsert({
       user_id: user.id,
       full_name: `${data.firstNameTh} ${data.lastNameTh}`,
@@ -196,7 +196,7 @@ export async function loginStudentAction(formData: FormData) {
 
   // 1. Reset otp_enabled to false to enforce 2FA verification on this login session
   await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ otp_enabled: false })
     .eq('id', authData.user.id);
 
@@ -205,7 +205,7 @@ export async function loginStudentAction(formData: FormData) {
 
   // Check profile for next steps
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('is_first_login, is_profile_complete')
     .eq('id', authData.user.id)
     .single();
@@ -258,7 +258,7 @@ export async function sendOTPAction() {
 
   // 2. Save OTP to profile for verification
   const { error: dbError } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ 
       otp_code: otpCode,
       otp_expiry: expiry.toISOString()
@@ -355,7 +355,7 @@ export async function verifyOTPAction(otp: string) {
   if (!user) return { error: 'Unauthorized' };
 
   const { data: profile, error: fetchError } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('otp_code, otp_expiry')
     .eq('id', user.id)
     .single();
@@ -372,7 +372,7 @@ export async function verifyOTPAction(otp: string) {
 
   // Clear OTP after success and enable OTP claim
   await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ otp_code: null, otp_expiry: null, otp_enabled: true })
     .eq('id', user.id);
 
@@ -392,7 +392,7 @@ export async function changePasswordAction(password: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
     await supabase
-      .from('profiles')
+      .from('tbl_usr_profiles')
       .update({ is_first_login: false })
       .eq('id', user.id);
   }
@@ -410,7 +410,7 @@ export async function resubmitRegistrationAction() {
 
   // 1. Reset profile fields for onboarding
   const { error: profileError } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({
       is_profile_complete: false,
       registration_status: 'none'
@@ -423,7 +423,7 @@ export async function resubmitRegistrationAction() {
 
   // 2. Delete the registration request
   const { error: regError } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .delete()
     .eq('user_id', user.id);
 
@@ -442,13 +442,13 @@ export async function getStudentRegistrationStatus() {
 
   // profiles is the ultimate source of truth for overall verification and profile data
   const { data: profile } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('registration_status, full_name, student_id, first_name_th, last_name_th, first_name_en, last_name_en, class_grade, open_id, in_game_name')
     .eq('id', user.id)
     .single();
   
   const { data: registration } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('*')
     .eq('user_id', user.id)
     .maybeSingle();
@@ -498,7 +498,7 @@ export async function getStudentRegistrationStatus() {
 export async function getPendingRegistrations() {
   const supabase = await createClient();
   const { data } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -531,7 +531,7 @@ export async function getPendingRegistrations() {
 
 export async function updateRegistrationStatus(id: string, status: 'approved' | 'rejected', notes: string) {
   const supabase = await createClient();
-  const { error } = await supabase.from('registrations').update({ status, screening_notes: notes }).eq('id', id);
+  const { error } = await supabase.from('tbl_reg_registrations').update({ status, screening_notes: notes }).eq('id', id);
   if (error) return { success: false, error: error.message };
   revalidatePath('/admin/registrations');
   return { success: true };
@@ -543,7 +543,7 @@ export async function getPlayerGamingProfile() {
   if (!user) return null;
 
   let { data: player } = await supabase
-    .from('players')
+    .from('tbl_ros_players')
     .select('id, in_game_name, open_id, current_rank, lineup_role, secondary_role, top_heroes, experience_bio, favorite_heroes, nickname, phone')
     .eq('profile_id', user.id)
     .maybeSingle();
@@ -551,14 +551,14 @@ export async function getPlayerGamingProfile() {
   // Self-healing: if profile is verified but player row is missing, auto-create it
   if (!player) {
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('tbl_usr_profiles')
       .select('registration_status, full_name, class_grade, in_game_name')
       .eq('id', user.id)
       .maybeSingle();
 
     if (profile && (profile.registration_status === 'verified' || profile.registration_status === 'approved')) {
       const { data: newPlayer, error: createError } = await supabase
-        .from('players')
+        .from('tbl_ros_players')
         .insert({
           profile_id: user.id,
           name: profile.full_name || 'Anonymous Player',
@@ -619,7 +619,7 @@ export async function updateStudentRegistrationAction(formData: FormData) {
   while (!isUnique && lastNameIndex <= cleanLast.length) {
     username = `${cleanFirst}.${cleanLast.substring(0, lastNameIndex)}`;
     const { count } = await supabase
-      .from('profiles')
+      .from('tbl_usr_profiles')
       .select('username', { count: 'exact', head: true })
       .eq('username', username)
       .neq('id', user.id);
@@ -632,7 +632,7 @@ export async function updateStudentRegistrationAction(formData: FormData) {
     while (!isUnique) {
       username = `${cleanFirst}.${cleanLast}${seq}`;
       const { count } = await supabase
-        .from('profiles')
+        .from('tbl_usr_profiles')
         .select('username', { count: 'exact', head: true })
         .eq('username', username)
         .neq('id', user.id);
@@ -643,7 +643,7 @@ export async function updateStudentRegistrationAction(formData: FormData) {
 
   // 2. Update public.profiles
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({
       username,
       full_name: `${data.firstNameTh} ${data.lastNameTh}`,
@@ -665,7 +665,7 @@ export async function updateStudentRegistrationAction(formData: FormData) {
 
   // 3. Update registrations table
   const { error: regError } = await supabase
-    .from('registrations')
+    .from('tbl_reg_registrations')
     .update({
       full_name: `${data.firstNameTh} ${data.lastNameTh}`,
       first_name_th: data.firstNameTh,
@@ -698,7 +698,7 @@ export async function updateAvatarAction(avatarUrl: string) {
   }
 
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ avatar_url: avatarUrl })
     .eq('id', user.id);
 
@@ -720,7 +720,7 @@ export async function updateCustomStatusAction(status: string | null) {
   }
 
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ custom_status: status })
     .eq('id', user.id);
 
