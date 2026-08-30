@@ -14,7 +14,7 @@ export async function checkRole(allowedRoles: string[]) {
 
   // Fetch role from profile (using the secure function or direct query)
   const { data: profile, error: profileError } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('role')
     .eq('id', user.id)
     .single();

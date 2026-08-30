@@ -17,7 +17,7 @@ export default function RegistrationStatusPage() {
             const supabase = createClient();
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                const { data } = await supabase.from('profiles').select('registration_status').eq('id', user.id).single();
+                const { data } = await supabase.from('tbl_usr_profiles').select('registration_status').eq('id', user.id).single();
                 setStatus(data?.registration_status || 'none');
             }
             setLoading(false);

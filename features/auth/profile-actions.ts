@@ -14,7 +14,7 @@ export async function updateProfileAction(formData: FormData) {
   const avatarUrl = formData.get('avatarUrl') as string;
 
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({
       full_name: fullName,
       nickname: nickname,
@@ -46,7 +46,7 @@ export async function updateAccountSettingsAction(formData: FormData) {
 
   // Update Privacy in Profile
   const { error: profileError } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ privacy_flag: privacyFlag })
     .eq('id', user.id);
 

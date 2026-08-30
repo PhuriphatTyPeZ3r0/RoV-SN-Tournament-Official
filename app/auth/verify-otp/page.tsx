@@ -30,7 +30,7 @@ function VerifyOTPContent() {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
                     const { data: profile } = await supabase
-                        .from('profiles')
+                        .from('tbl_usr_profiles')
                         .select('otp_code')
                         .eq('id', user.id)
                         .single();
