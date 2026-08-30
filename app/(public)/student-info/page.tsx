@@ -126,7 +126,7 @@ export default function StudentInfoPage() {
             const { data: { user: sbUser } } = await supabaseClient.auth.getUser();
             if (sbUser) {
                 const { data: prof } = await supabaseClient
-                    .from('profiles')
+                    .from('tbl_usr_profiles')
                     .select('*')
                     .eq('id', sbUser.id)
                     .maybeSingle();

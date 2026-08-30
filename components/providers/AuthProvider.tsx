@@ -114,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             // Fetch profile data
             const { data: profile } = await supabase
-                .from('profiles')
+                .from('tbl_usr_profiles')
                 .select('username, role, is_profile_complete, registration_status, avatar_url, otp_enabled')
                 .eq('id', sbUser.id)
                 .maybeSingle();
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             // Fetch profile for the signed-in user
             const { data: profile } = await supabase
-                .from('profiles')
+                .from('tbl_usr_profiles')
                 .select('username, role, is_profile_complete, registration_status, avatar_url, otp_enabled')
                 .eq('id', session.user.id)
                 .maybeSingle();
@@ -172,7 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
 
             const { data: profile } = await supabase
-                .from('profiles')
+                .from('tbl_usr_profiles')
                 .select('username, role, is_profile_complete, registration_status, avatar_url')
                 .eq('id', data.user.id)
                 .maybeSingle();

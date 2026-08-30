@@ -12,7 +12,7 @@ export async function promoteUserToAdminAction(userId: string) {
   await checkRole(['super_admin']);
   const supabase = await createClient();
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ role: 'admin' })
     .eq('id', userId);
   
@@ -24,7 +24,7 @@ export async function getAllUsersWithRolesAction() {
   await checkRole(['super_admin']);
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .select('id, username, role, student_id, created_at')
     .order('created_at', { ascending: false });
   
@@ -36,7 +36,7 @@ export async function updateUserRoleAction(userId: string, newRole: string) {
   await checkRole(['super_admin']);
   const supabase = await createClient();
   const { error } = await supabase
-    .from('profiles')
+    .from('tbl_usr_profiles')
     .update({ role: newRole })
     .eq('id', userId);
   

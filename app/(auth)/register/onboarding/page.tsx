@@ -35,7 +35,7 @@ export default function OnboardingPage() {
                 if (user) {
                     setUser(user);
                     const { data, error: profileError } = await supabase
-                        .from('profiles')
+                        .from('tbl_usr_profiles')
                         .select('*')
                         .eq('id', user.id)
                         .maybeSingle();

@@ -20,7 +20,7 @@ export default function UserSettingsPage() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 setUser(user);
-                const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+                const { data } = await supabase.from('tbl_usr_profiles').select('*').eq('id', user.id).single();
                 setProfile(data);
             }
             setLoading(false);
