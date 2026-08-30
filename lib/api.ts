@@ -89,7 +89,7 @@ export const serverApi = {
             activeTournament = tourMeta;
 
             // Fetch standings
-            const { data: standData } = await supabase.rpc('calculate_tournament_standings', {
+            const { data: standData } = await supabase.rpc('fn_mch_tournament_standings', {
                 p_tournament_id: tournamentId,
             });
 
@@ -128,7 +128,7 @@ export const serverApi = {
 
             // Fetch match results
             const { data: matchData } = await supabase
-                .from('matches')
+                .from('tbl_mch_matches')
                 .select('*')
                 .eq('tournament_id', tournamentId)
                 .order('match_day', { ascending: true });

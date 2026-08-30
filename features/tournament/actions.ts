@@ -18,7 +18,7 @@ import { z } from 'zod';
 export async function getMatchesAction(tournamentId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('*')
     .eq('tournament_id', tournamentId)
     .order('match_day', { ascending: true });
@@ -30,8 +30,8 @@ export async function getMatchesAction(tournamentId: string) {
 export async function getMatchByKeyAction(matchKey: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('matches')
-    .select('*, match_games(*)')
+    .from('tbl_mch_matches')
+    .select('*, match_games:tbl_mch_match_games(*)')
     .eq('match_key', matchKey)
     .single();
 
@@ -59,7 +59,7 @@ export async function getScheduleAction(tournamentId: string) {
 export async function getMatchStatsAction(matchId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .select('*')
     .eq('match_id', matchId)
     .order('game_number', { ascending: true })
@@ -76,9 +76,9 @@ export async function getResultHistoryAction(matchKey?: string) {
     .from('tbl_aud_audit_logs')
     .select(`
       *,
-      actor:profiles!actor_id(username)
+      actor:tbl_usr_profiles!actor_id(username)
     `)
-    .eq('table_name', 'matches')
+    .eq('table_name', 'tbl_mch_matches')
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -134,7 +134,7 @@ export async function saveMatchResultAction(resultData: {
 
   // Check existing for audit trail
   const { data: existing } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('*')
     .eq('match_key', matchKey)
     .maybeSingle();
@@ -154,7 +154,7 @@ export async function saveMatchResultAction(resultData: {
 
   // Upsert match
   const { data: match, error: matchError } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .upsert(matchPayload, { onConflict: 'match_key' })
     .select()
     .single();
@@ -164,7 +164,7 @@ export async function saveMatchResultAction(resultData: {
   // Save game details (normalized)
   if (resultData.gameDetails?.length && match) {
     // Clear old game details first
-    await supabase.from('match_games').delete().eq('match_id', match.id);
+    await supabase.from('tbl_mch_match_games').delete().eq('match_id', match.id);
 
     const games = resultData.gameDetails.map((g) => ({
       match_id: match.id,
@@ -173,11 +173,11 @@ export async function saveMatchResultAction(resultData: {
       duration: g.duration || 0,
     }));
 
-    await supabase.from('match_games').insert(games);
+    await supabase.from('tbl_mch_match_games').insert(games);
   }
 
   // Audit trail
-  await supabase.from('match_history').insert({
+  await supabase.from('tbl_mch_match_history').insert({
     match_key: matchKey,
     action: existing ? 'update' : 'create',
     previous_data: existing || null,
@@ -197,14 +197,14 @@ export async function deleteMatchResultAction(matchKey: string, reason?: string)
   const { supabase, user } = await requireAdmin();
 
   const { data: existing } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('*')
     .eq('match_key', matchKey)
     .maybeSingle();
 
   if (existing) {
     // Audit trail before delete
-    await supabase.from('match_history').insert({
+    await supabase.from('tbl_mch_match_history').insert({
       match_key: matchKey,
       action: 'delete',
       previous_data: existing,
@@ -214,7 +214,7 @@ export async function deleteMatchResultAction(matchKey: string, reason?: string)
     });
 
     // CASCADE จะลบ match_games และ game_stats ด้วย
-    await supabase.from('matches').delete().eq('match_key', matchKey);
+    await supabase.from('tbl_mch_matches').delete().eq('match_key', matchKey);
   }
 
   revalidatePath('/standings');
@@ -232,7 +232,7 @@ export async function resetDayResultsAction(
   const { supabase, user } = await requireAdmin();
 
   const { data: dayResults } = await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .select('*')
     .eq('tournament_id', tournamentId)
     .eq('match_day', day);
@@ -248,11 +248,11 @@ export async function resetDayResultsAction(
       reason: reason || `Day ${day} reset`,
     }));
 
-    await supabase.from('match_history').insert(historyEntries);
+    await supabase.from('tbl_mch_match_history').insert(historyEntries);
   }
 
   await supabase
-    .from('matches')
+    .from('tbl_mch_matches')
     .delete()
     .eq('tournament_id', tournamentId)
     .eq('match_day', day);
@@ -311,7 +311,7 @@ export async function saveGameStatsAction(
   const { supabase } = await requireAdmin();
 
   // Clear existing stats for this match
-  await supabase.from('game_stats').delete().eq('match_id', matchId);
+  await supabase.from('tbl_mch_game_stats').delete().eq('match_id', matchId);
 
   const rows = stats.map((s) => ({
     match_id: matchId,
@@ -328,7 +328,7 @@ export async function saveGameStatsAction(
   }));
 
   const { data, error } = await supabase
-    .from('game_stats')
+    .from('tbl_mch_game_stats')
     .insert(rows)
     .select();
 

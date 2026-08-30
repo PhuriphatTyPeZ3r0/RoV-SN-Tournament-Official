@@ -76,7 +76,7 @@ export async function getPlayersAction() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('tbl_ros_players')
-    .select('*, teams!team_id(name, logo_url)')
+    .select('*, teams:tbl_ros_teams!team_id(name, logo_url)')
     .order('name', { ascending: true });
 
   if (error) throw new Error(`Failed to fetch players: ${error.message}`);
