@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Icon from '@/components/common/Icon';
 
 interface Hero {
     _id: string;
@@ -196,7 +197,7 @@ export default function AdminHeroesPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-display font-bold text-uefa-dark">
-                        <i className="fas fa-mask mr-3 text-cyan-aura"></i>
+                        <Icon name="theater_comedy" className="mr-3 text-cyan-aura" />
                         {t.admin.heroesPage?.title || 'Manage Heroes'}
                     </h1>
                     <p className="text-gray-500 text-sm">Upload and manage hero images for scraping.</p>
@@ -204,7 +205,7 @@ export default function AdminHeroesPage() {
 
                 <div className="flex gap-3">
                     <label className="cursor-pointer px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg font-bold hover:shadow-lg transition flex items-center gap-2 transform active:scale-95">
-                        <i className={`fas ${uploading ? 'fa-spinner fa-spin' : 'fa-upload'}`}></i>
+                        <Icon name={uploading ? 'progress_activity' : 'upload'} spin={uploading} />
                         {uploading ? 'Uploading...' : (t.admin.heroesPage?.upload || 'Upload Heroes')}
                         <input
                             type="file"
@@ -221,7 +222,7 @@ export default function AdminHeroesPage() {
                             onClick={handleClearAll}
                             className="px-4 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition shadow-sm"
                         >
-                            <i className="fas fa-trash mr-2"></i>
+                            <Icon name="delete" className="mr-2" />
                             Clear All
                         </button>
                     )}
@@ -231,7 +232,7 @@ export default function AdminHeroesPage() {
             {/* Upload Tips */}
             <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-blue-800 text-sm">
                 <h3 className="font-bold mb-2 flex items-center gap-2">
-                    <i className="fas fa-info-circle"></i> Instructions
+                    <Icon name="info" /> Instructions
                 </h3>
                 <ul className="list-disc list-inside space-y-1 opacity-80">
                     <li>File names should match the hero name exactly (e.g. "Murad.png", "Violet.jpg").</li>
@@ -243,7 +244,7 @@ export default function AdminHeroesPage() {
             {/* Search */}
             <div className="bg-white rounded-xl shadow-sm p-4">
                 <div className="relative">
-                    <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
                         type="text"
                         placeholder="Search heroes..."
@@ -256,9 +257,9 @@ export default function AdminHeroesPage() {
 
             {/* Stats */}
             <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span><i className="fas fa-image mr-1"></i> Total: <strong className="text-gray-800">{heroes.length}</strong></span>
+                <span><Icon name="image" className="mr-1" /> Total: <strong className="text-gray-800">{heroes.length}</strong></span>
                 {searchTerm && (
-                    <span><i className="fas fa-filter mr-1"></i> Matches: <strong className="text-gray-800">{filteredHeroes.length}</strong></span>
+                    <span><Icon name="filter_list" className="mr-1" /> Matches: <strong className="text-gray-800">{filteredHeroes.length}</strong></span>
                 )}
             </div>
 
@@ -267,7 +268,7 @@ export default function AdminHeroesPage() {
                 <div className="text-center py-12 text-gray-400">Loading...</div>
             ) : filteredHeroes.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-200">
-                    <i className="fas fa-ghost text-5xl text-gray-300 mb-4"></i>
+                    <Icon name="ghost" className="text-5xl text-gray-300 mb-4" />
                     <p className="text-gray-500 font-bold">No heroes found</p>
                     <p className="text-sm text-gray-400">Upload some images to get started.</p>
                 </div>
@@ -297,14 +298,14 @@ export default function AdminHeroesPage() {
                                     className="w-8 h-8 bg-white/90 text-blue-600 rounded-full hover:bg-white hover:scale-110 transition shadow-lg flex items-center justify-center"
                                     title="Edit Name"
                                 >
-                                    <i className="fas fa-pencil-alt text-xs"></i>
+                                    <Icon name="edit" className="text-xs" />
                                 </button>
                                 <button
                                     onClick={() => handleDelete(hero)}
                                     className="w-8 h-8 bg-white/90 text-red-600 rounded-full hover:bg-white hover:scale-110 transition shadow-lg flex items-center justify-center"
                                     title="Delete"
                                 >
-                                    <i className="fas fa-trash-alt text-xs"></i>
+                                    <Icon name="delete" className="text-xs" />
                                 </button>
                             </div>
                         </div>

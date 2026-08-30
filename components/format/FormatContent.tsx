@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ShareButton from '@/components/common/ShareButton';
+import Icon from '@/components/common/Icon';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 
 export default function FormatContent() {
@@ -378,7 +379,7 @@ export default function FormatContent() {
 
                 {/* Footer Note */}
                 <div className="text-center text-gray-500 text-sm mt-8">
-                    <i className="fas fa-info-circle mr-1.5"></i>
+                    <Icon name="info" className="mr-1.5" />
                     {t.format.discretionNote}
                 </div>
             </div>

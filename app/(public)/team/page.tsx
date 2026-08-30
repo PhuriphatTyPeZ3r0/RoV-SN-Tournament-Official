@@ -366,7 +366,7 @@ export default function TeamPage() {
                 {/* Create Team */}
                 <div className="bg-white rounded-none shadow-xl p-8 border border-gray-100">
                     <div className="w-16 h-16 bg-cyan-aura/10 rounded-full flex items-center justify-center mb-6">
-                        <i className="fas fa-users-plus text-2xl text-cyan-aura"></i>
+                        <Icon name="group_add" className="text-2xl text-cyan-aura" />
                     </div>
                     <h2 className="text-2xl font-display font-bold text-uefa-dark uppercase mb-2">{t.team.createTeamTitle}</h2>
                     <p className="text-gray-500 text-sm mb-6">{t.team.createTeamDesc}</p>
@@ -396,7 +396,7 @@ export default function TeamPage() {
                 {/* Join Team */}
                 <div className="bg-white rounded-none shadow-xl p-8 border border-gray-100">
                     <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-6">
-                        <i className="fas fa-sign-in-alt text-2xl text-blue-500"></i>
+                        <Icon name="login" className="text-2xl text-blue-500" />
                     </div>
                     <h2 className="text-2xl font-display font-bold text-uefa-dark uppercase mb-2">{t.team.joinTeamTitle}</h2>
                     <p className="text-gray-500 text-sm mb-6">{t.team.joinTeamDesc}</p>
@@ -461,7 +461,7 @@ export default function TeamPage() {
             {/* Status Warning / Info Banner */}
             {isLocked && (
                 <div className="bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-xl p-4 flex items-center gap-3 text-sm animate-fadeIn">
-                    <i className="fas fa-lock text-lg"></i>
+                    <Icon name="lock" className="text-lg" />
                     <span>{t.team.teamLockedAlert}</span>
                 </div>
             )}
@@ -475,7 +475,7 @@ export default function TeamPage() {
                         {teamData.logo_url ? (
                             <img src={teamData.logo_url} alt={teamData.name} className="w-full h-full object-contain p-2" />
                         ) : (
-                            <i className="fas fa-shield-alt text-5xl text-cyan-aura"></i>
+                            <Icon name="shield" className="text-5xl text-cyan-aura" />
                         )}
                     </div>
                     <div className="text-center md:text-left flex-1 space-y-2">
@@ -517,7 +517,7 @@ export default function TeamPage() {
                                     }}
                                     className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/40 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                                 >
-                                    <i className="fas fa-edit"></i>
+                                    <Icon name="edit" />
                                     {t.team.editTeamInfo}
                                 </button>
                             )}
@@ -534,7 +534,7 @@ export default function TeamPage() {
                                     }`}
                                     title={teamData.members.length < 5 ? t.team.minPlayersRequired : ''}
                                 >
-                                    <i className="fas fa-paper-plane"></i>
+                                    <Icon name="send" />
                                     {t.team.markReadyBtn}
                                 </button>
                             ) : teamData.status === 'ready' ? (
@@ -543,7 +543,7 @@ export default function TeamPage() {
                                     disabled={actionLoading}
                                     className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
                                 >
-                                    <i className="fas fa-lock-open"></i>
+                                    <Icon name="lock_open" />
                                     {t.team.markIncompleteBtn}
                                 </button>
                             ) : null}
@@ -559,7 +559,7 @@ export default function TeamPage() {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center border-b border-gray-50 pb-3">
                             <h3 className="text-md font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <i className="fas fa-address-book text-cyan-aura"></i>
+                                <Icon name="contacts" className="text-cyan-aura" />
                                 {t.team.contactHeader}
                             </h3>
                             {isCaptain && (
@@ -573,7 +573,7 @@ export default function TeamPage() {
                                     disabled={teamData.status === 'approved'}
                                     className="text-xs text-cyan-aura hover:underline flex items-center gap-1 font-bold disabled:opacity-30 disabled:hover:no-underline cursor-pointer"
                                 >
-                                    <i className="fas fa-edit"></i>
+                                    <Icon name="edit" />
                                     {t.team.editContactInfo}
                                 </button>
                             )}
@@ -582,7 +582,7 @@ export default function TeamPage() {
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 text-sm">
                                 <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
-                                    <i className="fas fa-phone"></i>
+                                    <Icon name="phone" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{t.team.contactPhoneLabel}</p>
@@ -624,7 +624,7 @@ export default function TeamPage() {
                     <div className="space-y-4">
                         <div className="flex justify-between items-center border-b border-gray-50 pb-3">
                             <h3 className="text-md font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <i className="fas fa-id-card text-cyan-aura"></i>
+                                <Icon name="id_card" className="text-cyan-aura" />
                                 {t.team.personalDetailsHeader}
                             </h3>
                             <button
@@ -639,7 +639,7 @@ export default function TeamPage() {
                                 }}
                                 className="text-xs text-cyan-aura hover:underline flex items-center gap-1 font-bold cursor-pointer"
                             >
-                                <i className="fas fa-user-edit"></i>
+                                <Icon name="person_edit" />
                                 {t.team.editPersonalDetails}
                             </button>
                         </div>
@@ -672,7 +672,7 @@ export default function TeamPage() {
                 <div className="bg-white rounded-none shadow-xl p-6 border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fadeIn">
                     <div className="space-y-1">
                         <h4 className="text-sm font-bold text-uefa-dark uppercase tracking-wide flex items-center gap-2">
-                            <i className="fas fa-key text-cyan-aura"></i>
+                            <Icon name="key" className="text-cyan-aura" />
                             {language === 'th' ? 'การรับสมัครสมาชิกใหม่' : 'Roster Recruitment'}
                         </h4>
                         <p className="text-xs text-gray-500">
@@ -694,12 +694,12 @@ export default function TeamPage() {
                                     disabled={isLocked}
                                     className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors text-gray-400 hover:text-uefa-dark disabled:opacity-30 cursor-pointer"
                                 >
-                                    <i className="fas fa-copy"></i>
+                                    <Icon name="content_copy" />
                                 </button>
                             </div>
                         ) : (
                             <div className="bg-red-50 border border-red-200/50 px-4 py-2 rounded-xl text-red-500 font-bold text-sm tracking-wide w-full sm:w-auto text-center">
-                                <i className="fas fa-ban mr-2"></i> {t.team.recruitmentClosed}
+                                <Icon name="block" className="mr-2" /> {t.team.recruitmentClosed}
                             </div>
                         )}
 
@@ -713,7 +713,7 @@ export default function TeamPage() {
                                         : 'bg-cyan-aura/10 hover:bg-cyan-aura/20 text-cyan-aura border-cyan-aura/30'
                                 } disabled:opacity-40 disabled:hover:bg-transparent`}
                             >
-                                <i className={teamData.invite_code ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                                <Icon name={teamData.invite_code ? "visibility_off" : "visibility"} />
                                 {teamData.invite_code ? t.team.closeRecruitmentBtn : t.team.openRecruitmentBtn}
                             </button>
 
@@ -723,7 +723,7 @@ export default function TeamPage() {
                                     disabled={isLocked || actionLoading}
                                     className="flex-1 sm:flex-none px-4 py-2 bg-white hover:bg-gray-50 text-uefa-dark border border-gray-300 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-40 disabled:hover:bg-white"
                                 >
-                                    <i className="fas fa-sync-alt"></i>
+                                    <Icon name="sync" />
                                     {t.team.regenerateInviteCodeBtn}
                                 </button>
                             )}
@@ -736,7 +736,7 @@ export default function TeamPage() {
             <div className="bg-white rounded-none shadow-xl border border-gray-100 animate-fadeIn">
                 <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                     <h3 className="text-lg font-bold text-uefa-dark uppercase flex items-center gap-2">
-                        <i className="fas fa-user-friends text-cyan-aura"></i>
+                        <Icon name="groups" className="text-cyan-aura" />
                         {t.team.squadMembers.replace('{count}', teamData.members.length.toString())} ({teamData.members.length}/6)
                     </h3>
                 </div>
@@ -772,7 +772,7 @@ export default function TeamPage() {
                                                     className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
                                                     title={t.team.kickTooltip}
                                                 >
-                                                    <i className="fas fa-user-minus text-sm"></i>
+                                                    <Icon name="person_remove" className="text-sm" />
                                                 </button>
                                             ) : null}
                                         </div>
@@ -889,7 +889,7 @@ export default function TeamPage() {
                                                 className="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
                                                 title={t.team.kickTooltip}
                                             >
-                                                <i className="fas fa-user-minus text-sm"></i>
+                                                <Icon name="person_remove" className="text-sm" />
                                             </button>
                                         ) : null}
                                     </div>
@@ -907,7 +907,7 @@ export default function TeamPage() {
                             disabled={isLocked || actionLoading}
                             className="px-6 py-2 bg-red-500/10 text-red-600 rounded-lg font-bold hover:bg-red-500/20 transition-all text-sm disabled:opacity-40 disabled:hover:bg-red-500/10 cursor-pointer"
                         >
-                            <i className="fas fa-sign-out-alt mr-2"></i> {t.team.leaveBtn}
+                            <Icon name="logout" className="mr-2" /> {t.team.leaveBtn}
                         </button>
                     )}
                 </div>
@@ -919,14 +919,14 @@ export default function TeamPage() {
                     <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <i className="fas fa-edit text-cyan-aura"></i>
+                                <Icon name="edit" className="text-cyan-aura" />
                                 {t.team.editTeamInfo}
                             </h3>
                             <button 
                                 onClick={() => setIsEditModalOpen(false)}
                                 className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                             >
-                                <i className="fas fa-times text-lg"></i>
+                                <Icon name="close" className="text-lg" />
                             </button>
                         </div>
                         
@@ -962,7 +962,7 @@ export default function TeamPage() {
                                         {editLogoUrl ? (
                                             <img src={editLogoUrl} alt="Preview" className="w-full h-full object-contain p-1" />
                                         ) : (
-                                            <i className="fas fa-image text-2xl text-gray-300"></i>
+                                            <Icon name="image" className="text-2xl text-gray-300" />
                                         )}
                                     </div>
                                     <div className="flex-1 space-y-2">
@@ -977,7 +977,7 @@ export default function TeamPage() {
                                             htmlFor="logo-upload"
                                             className="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-uefa-dark font-bold text-sm rounded-lg cursor-pointer transition-colors"
                                         >
-                                            <i className="fas fa-upload mr-2"></i> {language === 'th' ? 'เลือกรูปภาพ' : 'Choose Image'}
+                                            <Icon name="upload" className="mr-2" /> {language === 'th' ? 'เลือกรูปภาพ' : 'Choose Image'}
                                         </label>
                                         {editLogoUrl && (
                                             <button
@@ -1006,7 +1006,7 @@ export default function TeamPage() {
                                     disabled={actionLoading}
                                     className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 transition-colors text-sm shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
                                 >
-                                    {actionLoading && <i className="fas fa-spinner animate-spin"></i>}
+                                    {actionLoading && <Icon name="progress_activity" spin />}
                                     {t.team.saveBtn}
                                 </button>
                             </div>
@@ -1021,14 +1021,14 @@ export default function TeamPage() {
                     <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <i className="fas fa-address-book text-cyan-aura"></i>
+                                <Icon name="contacts" className="text-cyan-aura" />
                                 {t.team.editContactInfo}
                             </h3>
                             <button 
                                 onClick={() => setIsContactModalOpen(false)}
                                 className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                             >
-                                <i className="fas fa-times text-lg"></i>
+                                <Icon name="close" className="text-lg" />
                             </button>
                         </div>
                         
@@ -1079,7 +1079,7 @@ export default function TeamPage() {
                                     disabled={actionLoading}
                                     className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 transition-colors text-sm shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
                                 >
-                                    {actionLoading && <i className="fas fa-spinner animate-spin"></i>}
+                                    {actionLoading && <Icon name="progress_activity" spin />}
                                     {t.team.saveBtn}
                                 </button>
                             </div>
@@ -1094,14 +1094,14 @@ export default function TeamPage() {
                     <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <i className="fas fa-user-edit text-cyan-aura"></i>
+                                <Icon name="person_edit" className="text-cyan-aura" />
                                 {t.team.editPersonalDetails}
                             </h3>
                             <button 
                                 onClick={() => setIsPersonalModalOpen(false)}
                                 className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                             >
-                                <i className="fas fa-times text-lg"></i>
+                                <Icon name="close" className="text-lg" />
                             </button>
                         </div>
                         
@@ -1143,7 +1143,7 @@ export default function TeamPage() {
                                     disabled={actionLoading}
                                     className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 transition-colors text-sm shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
                                 >
-                                    {actionLoading && <i className="fas fa-spinner animate-spin"></i>}
+                                    {actionLoading && <Icon name="progress_activity" spin />}
                                     {t.team.saveBtn}
                                 </button>
                             </div>
