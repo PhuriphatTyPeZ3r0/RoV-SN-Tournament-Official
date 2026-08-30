@@ -73,6 +73,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Mobile Overlay */}
             {sidebarOpen && (
                 <div
+                    // Mouse-only convenience for closing — the hamburger
+                    // menu button (keyboard-focusable) toggles it too.
+                    aria-hidden="true"
                     className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />

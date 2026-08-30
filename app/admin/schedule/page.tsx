@@ -246,8 +246,16 @@ export default function AdminSchedulePage() {
                                         return (
                                             <div
                                                 key={index}
+                                                role="button"
+                                                tabIndex={0}
                                                 onClick={() => handleViewMatchDetails(match, matchId)}
-                                                className={`p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md ${status === 'completed' ? 'bg-green-50 border-green-200' :
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        handleViewMatchDetails(match, matchId);
+                                                    }
+                                                }}
+                                                className={`p-4 rounded-xl border cursor-pointer transition-all hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-aura ${status === 'completed' ? 'bg-green-50 border-green-200' :
                                                     status === 'bye' ? 'bg-yellow-50 border-yellow-200' :
                                                         'bg-gray-50 border-gray-200 hover:border-cyan-aura'
                                                     }`}

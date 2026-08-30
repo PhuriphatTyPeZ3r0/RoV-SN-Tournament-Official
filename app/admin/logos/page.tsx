@@ -198,8 +198,9 @@ export default function AdminLogosPage() {
                                 </div>
                             ) : (
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
+                                    <label htmlFor="logo-image-url" className="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
                                     <input
+                                        id="logo-image-url"
                                         type="url"
                                         value={logoUrl}
                                         onChange={(e) => {

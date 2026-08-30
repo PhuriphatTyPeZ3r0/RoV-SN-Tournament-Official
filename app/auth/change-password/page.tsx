@@ -56,8 +56,9 @@ export default function ChangePasswordPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-gray-700 text-sm mb-2 font-medium">New Password</label>
+                        <label htmlFor="new-password" className="block text-gray-700 text-sm mb-2 font-medium">New Password</label>
                         <input
+                            id="new-password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -69,8 +70,9 @@ export default function ChangePasswordPage() {
                     </div>
 
                     <div>
-                        <label className="block text-gray-700 text-sm mb-2 font-medium">Confirm New Password</label>
+                        <label htmlFor="confirm-new-password" className="block text-gray-700 text-sm mb-2 font-medium">Confirm New Password</label>
                         <input
+                            id="confirm-new-password"
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}

@@ -330,8 +330,9 @@ export default function AdminResultsPage() {
                                 {/* Score Input */}
                                 <div className="flex justify-center items-center gap-6 bg-gray-50 p-8 rounded-3xl border border-gray-100">
                                     <div className="text-center">
-                                        <label className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Score Blue</label>
+                                        <label htmlFor="score-blue" className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Score Blue</label>
                                         <input
+                                            id="score-blue"
                                             type="number"
                                             min="0"
                                             value={formData.scoreBlue}
@@ -341,8 +342,9 @@ export default function AdminResultsPage() {
                                     </div>
                                     <div className="text-3xl font-black text-gray-300 mt-6">-</div>
                                     <div className="text-center">
-                                        <label className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-3">Score Red</label>
+                                        <label htmlFor="score-red" className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-3">Score Red</label>
                                         <input
+                                            id="score-red"
                                             type="number"
                                             min="0"
                                             value={formData.scoreRed}

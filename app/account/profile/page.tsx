@@ -67,23 +67,24 @@ export default function UserProfilePage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Full Name</label>
-                                <input name="fullName" type="text" defaultValue={profile?.full_name || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <label htmlFor="fullName" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Full Name</label>
+                                <input id="fullName" name="fullName" type="text" defaultValue={profile?.full_name || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
                             </div>
                             <div>
-                                <label className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Nickname</label>
-                                <input name="nickname" type="text" defaultValue={profile?.nickname || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <label htmlFor="nickname" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Nickname</label>
+                                <input id="nickname" name="nickname" type="text" defaultValue={profile?.nickname || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Phone Number</label>
-                                <input name="phone" type="tel" defaultValue={profile?.phone || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <label htmlFor="phone" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Phone Number</label>
+                                <input id="phone" name="phone" type="tel" defaultValue={profile?.phone || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
                             </div>
                             <div>
-                                <label className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Role (Locked)</label>
-                                <div className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-400 font-bold uppercase text-xs cursor-not-allowed">
+                                {/* Not a <label> — this isn't a form control, just a read-only value */}
+                                <span id="role-label" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Role (Locked)</span>
+                                <div aria-labelledby="role-label" className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-400 font-bold uppercase text-xs cursor-not-allowed">
                                     {profile?.role}
                                 </div>
                             </div>

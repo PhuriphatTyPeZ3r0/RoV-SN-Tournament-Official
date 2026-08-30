@@ -560,8 +560,28 @@ export default function GameStatsModal({
 
             {/* Hero Picker Modal */}
             {heroPickerOpen.open && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50" onClick={() => setHeroPickerOpen({ open: false, team: null, index: null })}>
-                    <div className="bg-white rounded-xl w-full max-w-2xl p-6 shadow-2xl m-4 max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                <div
+                    // Backdrop is a mouse-only convenience for closing — the
+                    // close button below (keyboard-focusable) is the
+                    // accessible equivalent, so this is intentionally not
+                    // itself a keyboard-operable control. Only closes when
+                    // the click lands directly on the backdrop (not bubbled
+                    // from the dialog content), so the dialog doesn't need
+                    // its own click handler just to stop propagation.
+                    aria-hidden="true"
+                    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setHeroPickerOpen({ open: false, team: null, index: null });
+                        }
+                    }}
+                >
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={t.admin.gameStatsModal.selectHero}
+                        className="bg-white rounded-xl w-full max-w-2xl p-6 shadow-2xl m-4 max-h-[80vh] flex flex-col"
+                    >
                         <div className="flex justify-between items-center mb-4">
                             <h4 className="text-xl font-bold text-gray-800">
                                 <Icon name="sports_martial_arts" className="mr-2 text-cyan-aura" />

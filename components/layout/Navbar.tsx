@@ -217,6 +217,9 @@ export default function Navbar() {
 
             {/* Mobile/Tablet Menu Overlay */}
             <div
+                // Mouse-only convenience for closing — the "Toggle menu"
+                // button above (keyboard-focusable) closes it too.
+                aria-hidden="true"
                 className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 xl:hidden ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsMenuOpen(false)}
             />

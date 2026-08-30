@@ -58,8 +58,8 @@ export default function UserSettingsPage() {
                         <div className="space-y-4">
                             <h3 className="text-uefa-dark font-bold text-sm uppercase tracking-wider">Email & Security</h3>
                             <div>
-                                <label className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Email Address</label>
-                                <input name="email" type="email" defaultValue={user?.email || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <label htmlFor="email" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Email Address</label>
+                                <input id="email" name="email" type="email" defaultValue={user?.email || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
                                 <p className="text-[10px] text-gray-400 mt-2 italic">* Changing email requires verification</p>
                             </div>
                         </div>
@@ -68,12 +68,15 @@ export default function UserSettingsPage() {
                             <h3 className="text-uefa-dark font-bold text-sm uppercase tracking-wider">Privacy Preferences</h3>
                             <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
                                 <div>
-                                    <h4 className="text-sm font-bold text-gray-700">Private Profile</h4>
+                                    <h4 id="privacy-flag-label" className="text-sm font-bold text-gray-700">Private Profile</h4>
                                     <p className="text-xs text-gray-500">Encrypt and hide your PII data from other players</p>
                                 </div>
                                 <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full">
-                                    <input type="checkbox" name="privacyFlag" defaultChecked={profile?.privacy_flag} className="absolute w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:bg-cyan-500" />
-                                    <label className="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                    <input id="privacyFlag" type="checkbox" name="privacyFlag" aria-labelledby="privacy-flag-label" defaultChecked={profile?.privacy_flag} className="absolute w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:right-0 checked:bg-cyan-500" />
+                                    {/* Decorative toggle track — htmlFor keeps click-to-toggle working; sr-only text gives it its own accessible name too (in addition to the checkbox's aria-labelledby) */}
+                                    <label htmlFor="privacyFlag" className="block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer">
+                                        <span className="sr-only">Private Profile</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>

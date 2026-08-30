@@ -1,11 +1,40 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { Prompt } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { publicClient } from '@/utils/supabase/public';
+import { withTimeout } from '@/lib/utils';
 import NextTopLoader from 'nextjs-toploader';
+
+// Root layout wraps every page, so this gates every page render — must
+// never hang indefinitely on a slow/unreachable Supabase. 5s is generous
+// for a single-row query but still bounded.
+const TOURNAMENT_META_TIMEOUT_MS = 5000;
+
+/**
+ * Both generateMetadata() (for the season in <title>) and RootLayout()
+ * (for the active theme) need the same "which tournament is active" row.
+ * They used to each run their own `.from('tournaments')` query — this
+ * dedupes that into one query via React's per-request cache(), and bounds
+ * it with a timeout so an unreachable Supabase can't block every page.
+ */
+const getActiveTournamentMeta = cache(async () => {
+  return withTimeout(
+    publicClient
+      .from('tbl_trn_tournaments')
+      .select('season, theme_style')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then((r) => r.data),
+    TOURNAMENT_META_TIMEOUT_MS,
+    null,
+  );
+});
 
 const prompt = Prompt({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
@@ -16,15 +45,7 @@ const prompt = Prompt({
 
 async function getActiveSeason() {
   try {
-    const supabase = publicClient;
-    const { data } = await supabase
-      .from('tbl_trn_tournaments')
-      .select('season')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-      
+    const data = await getActiveTournamentMeta();
     return data?.season || 2026;
   } catch (error: any) {
     if (error?.message?.includes('Dynamic server usage') || error?.digest === 'DYNAMIC_SERVER_USAGE') {
@@ -70,22 +91,14 @@ function hexToRgb(hex: string): string {
 
 async function getActiveTheme() {
   try {
-    const supabase = publicClient;
-    const { data: tour } = await supabase
-      .from('tbl_trn_tournaments')
-      .select('theme_style')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-      
+    const tour = await getActiveTournamentMeta();
     const themeId = tour?.theme_style || 'echo';
 
-    const { data: theme } = await supabase
-      .from('tbl_trn_themes')
-      .select('*')
-      .eq('id', themeId)
-      .maybeSingle();
+    const theme = await withTimeout(
+      publicClient.from('tbl_trn_themes').select('*').eq('id', themeId).maybeSingle().then((r) => r.data),
+      TOURNAMENT_META_TIMEOUT_MS,
+      null,
+    );
 
     return theme || null;
   } catch (error: any) {
@@ -130,10 +143,17 @@ export default async function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
-        {/* Material Symbols Rounded — primary UI icon set */}
+        {/* Material Symbols Rounded — primary UI icon set. Axis ranges
+            narrowed to what components/common/Icon.tsx and globals.css
+            actually request (wght is only ever 400/600, GRAD is always 0)
+            instead of the full variable-font range — the unnarrowed
+            request downloaded a 5.36MB woff2 (measured via Lighthouse),
+            the single largest resource on any page in the app by a wide
+            margin. GRAD is dropped entirely rather than pinned to 0..0,
+            since omitting an axis just uses the font's own default. */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL@20..48,400..600,0..1"
         />
         {themeCss && <style dangerouslySetInnerHTML={{ __html: themeCss }} />}
       </head>

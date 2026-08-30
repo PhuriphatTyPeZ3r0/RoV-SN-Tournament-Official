@@ -106,18 +106,25 @@ export default function HeroCarousel({ activeSeason }: HeroCarouselProps) {
             </button>
 
             {/* Indicator Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-30">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center z-30">
                 {orderedSeasons.map((_, idx) => (
+                    // Button itself is padded to a >=24x24px tap target (WCAG
+                    // 2.5.8) — the visible pill is a smaller inner span so
+                    // the design doesn't change, only the hit area.
                     <button
                         key={idx}
                         onClick={() => setCurrentSlide(idx)}
-                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                            currentSlide === idx 
-                                ? 'w-6 bg-cyan-aura shadow-[0_0_8px_rgba(34,211,238,0.6)]' 
-                                : 'w-1.5 bg-white/40 hover:bg-white/70'
-                        }`}
+                        className="p-2.5 flex items-center justify-center cursor-pointer"
                         aria-label={`Go to slide ${idx + 1}`}
-                    />
+                    >
+                        <span
+                            className={`block h-1.5 rounded-full transition-all duration-300 ${
+                                currentSlide === idx
+                                    ? 'w-6 bg-cyan-aura shadow-[0_0_8px_rgba(34,211,238,0.6)]'
+                                    : 'w-1.5 bg-white/40 hover:bg-white/70'
+                            }`}
+                        />
+                    </button>
                 ))}
             </div>
         </div>

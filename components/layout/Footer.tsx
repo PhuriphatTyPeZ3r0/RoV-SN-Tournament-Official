@@ -29,24 +29,29 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div>
                         <h4 className="text-white font-display text-lg font-bold mb-4">Quick Links</h4>
-                        <ul className="space-y-2 text-sm">
+                        {/* -my-1.5 on the list cancels the py-1.5 each Link
+                            adds for its own tap target, so the visual
+                            spacing between items is unchanged — only the
+                            actual clickable height grows (21px -> 33px,
+                            WCAG 2.5.8's 24px minimum). */}
+                        <ul className="-my-1.5 text-sm">
                             <li>
-                                <Link href="/" className="hover:text-cyan-aura transition-colors">
+                                <Link href="/" className="block py-1.5 hover:text-cyan-aura transition-colors">
                                     {t.nav.home}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/fixtures" className="hover:text-cyan-aura transition-colors">
+                                <Link href="/fixtures" className="block py-1.5 hover:text-cyan-aura transition-colors">
                                     {t.nav.fixtures}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/standings" className="hover:text-cyan-aura transition-colors">
+                                <Link href="/standings" className="block py-1.5 hover:text-cyan-aura transition-colors">
                                     {t.nav.standings}
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/stats" className="hover:text-cyan-aura transition-colors">
+                                <Link href="/stats" className="block py-1.5 hover:text-cyan-aura transition-colors">
                                     {t.nav.stats}
                                 </Link>
                             </li>
