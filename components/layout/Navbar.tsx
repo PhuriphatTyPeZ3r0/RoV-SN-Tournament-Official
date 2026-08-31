@@ -8,6 +8,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useThemeMode } from '@/components/providers/ThemeModeProvider';
 import Image from 'next/image';
 import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
 
 export default function Navbar() {
     const { t, language, changeLanguage } = useLanguage();
@@ -113,21 +114,19 @@ export default function Navbar() {
                     {/* Desktop Right Actions: Language + Dark Mode Toggle + Login */}
                     <div className="hidden xl:flex items-center gap-1.5 xl:gap-2.5 2xl:gap-4">
                         {/* Dark / Light Mode Toggle */}
-                        <button
+                        <Button
+                            variant="ghost"
+                            iconOnly
+                            icon={mode === 'dark' ? 'light_mode' : 'dark_mode'}
                             onClick={toggleMode}
-                            aria-label="Toggle dark/light mode"
-                            className="w-8 h-8 2xl:w-9 2xl:h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 backdrop-blur-sm transition-all hover:scale-110 group"
+                            className={`w-8 h-8 2xl:w-9 2xl:h-9 p-0 rounded-full border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 hover:bg-uefa-dark/50 backdrop-blur-sm hover:scale-110 ${mode === 'dark' ? 'text-yellow-400' : 'text-slate-400'}`}
                         >
-                            <Icon
-                                name={mode === 'dark' ? 'light_mode' : 'dark_mode'}
-                                className={`transition-transform duration-300 group-hover:rotate-12 ${
-                                    mode === 'dark' ? 'text-yellow-400' : 'text-slate-400'
-                                }`}
-                            />
-                        </button>
-                        <button
+                            Toggle dark/light mode
+                        </Button>
+                        <Button
+                            variant="ghost"
                             onClick={toggleLanguage}
-                            className="flex items-center gap-1.5 px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all group bg-uefa-dark/50 backdrop-blur-sm"
+                            className="flex items-center gap-1.5 px-2 py-1 xl:px-2.5 xl:py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 hover:bg-uefa-dark/50 backdrop-blur-sm group text-gray-300 hover:text-gray-300"
                         >
                             <Image
                                 src={flagUrl}
@@ -138,8 +137,8 @@ export default function Navbar() {
                                 style={{ width: 'auto', height: 'auto' }}
                                 unoptimized
                             />
-                            <span className="text-gray-300 text-xs xl:text-sm font-bold group-hover:text-cyan-aura">{language.toUpperCase()}</span>
-                        </button>
+                            <span className="text-xs xl:text-sm font-bold group-hover:text-cyan-aura">{language.toUpperCase()}</span>
+                        </Button>
 
                         {isAuthenticated && (user?.role === 'admin' || user?.role === 'super_admin') && (
                             <Link 
@@ -176,20 +175,20 @@ export default function Navbar() {
                     {/* Tablet/Mobile Right Area: Dark Mode + Language + Hamburger Toggle */}
                     <div className="xl:hidden flex items-center gap-2">
                         {/* Dark / Light Mode Toggle — always visible */}
-                        <button
+                        <Button
+                            variant="ghost"
+                            iconOnly
+                            icon={mode === 'dark' ? 'light_mode' : 'dark_mode'}
                             onClick={toggleMode}
-                            aria-label="Toggle dark/light mode"
-                            className="w-9 h-9 flex items-center justify-center rounded-full border border-white/10 hover:border-cyan-aura/50 bg-white/5 transition-all"
+                            className={`w-9 h-9 p-0 rounded-full border border-white/10 hover:border-cyan-aura/50 bg-white/5 hover:bg-white/5 ${mode === 'dark' ? 'text-yellow-400' : 'text-slate-400'}`}
                         >
-                            <Icon
-                                name={mode === 'dark' ? 'light_mode' : 'dark_mode'}
-                                className={mode === 'dark' ? 'text-yellow-400' : 'text-slate-400'}
-                            />
-                        </button>
+                            Toggle dark/light mode
+                        </Button>
                         {/* Language toggle visible on tablet+ (sm breakpoint) */}
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={toggleLanguage}
-                            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 transition-all bg-uefa-dark/50"
+                            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 hover:border-cyan-aura/50 bg-uefa-dark/50 hover:bg-uefa-dark/50 text-gray-300 hover:text-gray-300"
                         >
                             <Image
                                 src={flagUrl}
@@ -200,17 +199,19 @@ export default function Navbar() {
                                 style={{ width: 'auto', height: 'auto' }}
                                 unoptimized
                             />
-                            <span className="text-gray-300 text-xs font-bold">{language.toUpperCase()}</span>
-                        </button>
+                            <span className="text-xs font-bold">{language.toUpperCase()}</span>
+                        </Button>
 
                         {/* Hamburger button */}
-                        <button
-                            className="text-white text-xl w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+                        <Button
+                            variant="ghost"
+                            iconOnly
+                            icon={isMenuOpen ? 'close' : 'menu'}
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            aria-label="Toggle menu"
+                            className="text-white text-xl w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 active:scale-95"
                         >
-                            <Icon name={isMenuOpen ? 'close' : 'menu'} />
-                        </button>
+                            Toggle menu
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -232,9 +233,10 @@ export default function Navbar() {
                         <span className="text-white font-display text-xl font-bold tracking-wider">MENU</span>
                         <div className="flex items-center gap-3">
                             {/* Language Toggle in Mobile (shown only on xs screens — hidden on sm+ since it's in the navbar) */}
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={toggleLanguage}
-                                className="sm:hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10"
+                                className="sm:hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/5 border border-white/10 text-white hover:text-white"
                             >
                                 <Image
                                     src={flagUrl}
@@ -245,15 +247,18 @@ export default function Navbar() {
                                     style={{ width: 'auto', height: 'auto' }}
                                     unoptimized
                                 />
-                                <span className="text-xs font-bold text-white">{language.toUpperCase()}</span>
-                            </button>
+                                <span className="text-xs font-bold">{language.toUpperCase()}</span>
+                            </Button>
                             {/* Close Button */}
-                            <button
+                            <Button
+                                variant="ghost"
+                                iconOnly
+                                icon="close"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
+                                className="w-8 h-8 p-0 rounded-full bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white"
                             >
-                                <Icon name="close" />
-                            </button>
+                                ปิดเมนู
+                            </Button>
                         </div>
                     </div>
 

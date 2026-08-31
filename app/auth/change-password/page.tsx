@@ -3,6 +3,8 @@
 import Icon from '@/components/common/Icon';
 import { useState } from 'react';
 import { changePasswordAction } from '@/features/auth/student-actions';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 export default function ChangePasswordPage() {
     const [password, setPassword] = useState('');
@@ -57,12 +59,12 @@ export default function ChangePasswordPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label htmlFor="new-password" className="block text-gray-700 text-sm mb-2 font-medium">New Password</label>
-                        <input
+                        <Input
                             id="new-password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                             placeholder="••••••••"
                             required
                             disabled={loading}
@@ -71,29 +73,29 @@ export default function ChangePasswordPage() {
 
                     <div>
                         <label htmlFor="confirm-new-password" className="block text-gray-700 text-sm mb-2 font-medium">Confirm New Password</label>
-                        <input
+                        <Input
                             id="confirm-new-password"
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                             placeholder="••••••••"
                             required
                             disabled={loading}
                         />
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? (
                             <><Icon name="progress_activity" spin /> Updating...</>
                         ) : (
                             'Update Password & Continue'
                         )}
-                    </button>
+                    </Button>
                 </form>
             </div>
         </div>

@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { createClient } from '@/utils/supabase/client';
 import { completeOnboardingAction } from '@/features/auth/student-actions';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 const GRADES = [
     '1/1', '1/2', '1/3', '1/4',
@@ -77,9 +79,10 @@ export default function OnboardingPage() {
         <div className="max-w-2xl w-full mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden my-8 border border-gray-100 relative">
             {/* Language Toggle */}
             <div className="absolute top-4 right-4 z-10">
-                <button
+                <Button
+                    variant="ghost"
                     onClick={() => changeLanguage(language === 'th' ? 'en' : 'th')}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all group cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20"
                 >
                     <Image
                         src={language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png"}
@@ -90,7 +93,7 @@ export default function OnboardingPage() {
                         unoptimized
                     />
                     <span className="text-white text-xs font-bold uppercase">{language}</span>
-                </button>
+                </Button>
             </div>
 
             {/* Header */}
@@ -116,10 +119,10 @@ export default function OnboardingPage() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.email} (Google)</label>
-                        <input
+                        <Input
                             type="email"
                             value={user?.email || ''}
-                            className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 text-gray-500 cursor-not-allowed outline-none"
+                            className="w-full bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 text-gray-500 cursor-not-allowed focus-visible:ring-0 focus-visible:ring-offset-0"
                             disabled
                             readOnly
                         />
@@ -129,11 +132,11 @@ export default function OnboardingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.firstNameTh}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="firstNameTh"
                                 defaultValue={profile?.first_name_th || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder={t.register.placeholderNameTh}
                                 required
                                 disabled={loading}
@@ -141,11 +144,11 @@ export default function OnboardingPage() {
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.lastNameTh}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="lastNameTh"
                                 defaultValue={profile?.last_name_th || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder={t.register.placeholderLastNameTh}
                                 required
                                 disabled={loading}
@@ -157,11 +160,11 @@ export default function OnboardingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.firstNameEn}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="firstNameEn"
                                 defaultValue={profile?.first_name_en || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder="Somchai"
                                 required
                                 disabled={loading}
@@ -169,11 +172,11 @@ export default function OnboardingPage() {
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.lastNameEn}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="lastNameEn"
                                 defaultValue={profile?.last_name_en || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder="Jaidee"
                                 required
                                 disabled={loading}
@@ -185,12 +188,12 @@ export default function OnboardingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.studentId}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="studentId"
                                 pattern="[0-9]{5}"
                                 defaultValue={profile?.student_id || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder="12345"
                                 required
                                 disabled={loading}
@@ -198,10 +201,10 @@ export default function OnboardingPage() {
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.grade}</label>
-                            <select
+                            <Select
                                 name="grade"
                                 defaultValue={profile?.class_grade || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 required
                                 disabled={loading}
                             >
@@ -209,7 +212,7 @@ export default function OnboardingPage() {
                                 {GRADES.map(g => (
                                     <option key={g} value={g}>{g}</option>
                                 ))}
-                            </select>
+                            </Select>
                         </div>
                     </div>
 
@@ -217,11 +220,11 @@ export default function OnboardingPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.openId}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="openId"
                                 defaultValue={profile?.open_id || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder="OpenID"
                                 required
                                 disabled={loading}
@@ -229,11 +232,11 @@ export default function OnboardingPage() {
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.inGameName}</label>
-                            <input
+                            <Input
                                 type="text"
                                 name="inGameName"
                                 defaultValue={profile?.in_game_name || ''}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder="ProPlayer_RoV"
                                 required
                                 disabled={loading}
@@ -256,17 +259,17 @@ export default function OnboardingPage() {
                     </div>
 
                     <div className="pt-6 border-t border-gray-100">
-                        <button
+                        <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-gradient-to-r from-uefa-dark to-black text-white font-black py-4 rounded-xl shadow-lg hover:shadow-cyan-aura/20 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 text-lg"
+                            className="w-full bg-gradient-to-r from-uefa-dark to-black text-white font-black py-4 rounded-xl shadow-lg hover:shadow-cyan-aura/20 active:scale-95 flex items-center justify-center gap-3 text-lg"
                         >
                             {loading ? (
                                 <><Icon name="progress_activity" spin /> {t.register.processing}</>
                             ) : (
                                 <><Icon name="check_circle" /> {t.register.submit}</>
                             )}
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

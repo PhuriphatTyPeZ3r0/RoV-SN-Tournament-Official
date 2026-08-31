@@ -4,6 +4,7 @@ import Icon from '@/components/common/Icon';
 import { useState, useRef, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { verifyOTPAction, sendOTPAction } from '@/features/auth/student-actions';
+import Button from '@/components/ui/Button';
 
 function VerifyOTPContent() {
     const searchParams = useSearchParams();
@@ -165,6 +166,9 @@ function VerifyOTPContent() {
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="flex justify-between gap-2 max-w-xs mx-auto">
+                        {/* Raw <input>, not the Input primitive — needs a real
+                            DOM ref for the auto-focus-next-field behavior below,
+                            and components/ui/Input isn't forwardRef. */}
                         {otp.map((digit, index) => (
                             <input
                                 key={index}
@@ -183,29 +187,30 @@ function VerifyOTPContent() {
                         ))}
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading || otp.join('').length !== 6}
-                        className="w-full bg-uefa-dark text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-uefa-dark/90 hover:shadow-cyan-aura/10 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full bg-uefa-dark text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-uefa-dark/90 hover:shadow-cyan-aura/10 active:scale-[0.98] flex items-center justify-center gap-2"
                     >
                         {loading ? (
                             <><Icon name="progress_activity" spin /> Verifying...</>
                         ) : (
                             'Verify & Continue'
                         )}
-                    </button>
+                    </Button>
                 </form>
 
                 <div className="mt-8 pt-6 border-t border-gray-100">
                     <p className="text-sm text-gray-500">
                         Didn't receive the code?{' '}
-                        <button 
+                        <Button
+                            variant="ghost"
                             onClick={handleResend}
-                            className="text-cyan-600 font-bold hover:underline disabled:opacity-50 cursor-pointer"
+                            className="inline text-cyan-600 font-bold hover:underline hover:bg-transparent p-0 h-auto"
                             disabled={loading}
                         >
                             Resend Code
-                        </button>
+                        </Button>
                     </p>
                 </div>
             </div>
