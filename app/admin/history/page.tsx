@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { getResultHistoryAction } from '@/features/tournament/actions';
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 interface HistoryEntry {
     _id: string;
@@ -134,13 +136,14 @@ export default function AdminResultHistoryPage() {
                     </h1>
                     <p className="text-gray-500 mt-1">Found {history.length} records.</p>
                 </div>
-                <button
+                <Button
+                    variant="ghost"
                     onClick={fetchHistory}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-cyan-aura transition-colors shadow-sm w-full md:w-auto"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 hover:text-cyan-aura shadow-sm w-full md:w-auto"
                 >
                     <Icon name="refresh" />
                     <span>Refresh</span>
-                </button>
+                </Button>
             </div>
 
             {/* Filters */}
@@ -148,27 +151,27 @@ export default function AdminResultHistoryPage() {
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
                         <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input
+                        <Input
                             type="text"
                             placeholder="Search Match ID..."
                             value={searchMatch}
                             onChange={(e) => setSearchMatch(e.target.value)}
-                            className="w-full pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none"
+                            className="w-full pl-12 pr-4 py-2 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                         />
                     </div>
                     <div className="w-full md:w-64">
                         <div className="relative">
                             <Icon name="filter_list" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <select
+                            <Select
                                 value={filterAction}
                                 onChange={(e) => setFilterAction(e.target.value)}
-                                className="w-full pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none appearance-none bg-white cursor-pointer"
+                                className="w-full pl-12 pr-4 py-2 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 appearance-none bg-white"
                             >
                                 <option value="">All Actions</option>
                                 <option value="create">Created</option>
                                 <option value="update">Updated</option>
                                 <option value="delete">Deleted</option>
-                            </select>
+                            </Select>
                             <Icon name="expand_more" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs" />
                         </div>
                     </div>
@@ -239,13 +242,15 @@ export default function AdminResultHistoryPage() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <button
+                                            <Button
+                                                variant="ghost"
+                                                iconOnly
+                                                icon="code"
                                                 onClick={() => handleViewDetails(entry)}
-                                                className="text-gray-400 hover:text-cyan-aura transition-colors"
-                                                title="View JSON"
+                                                className="text-gray-400 hover:text-cyan-aura p-0 h-auto min-h-0 hover:bg-transparent"
                                             >
-                                                <Icon name="code" className="text-lg" />
-                                            </button>
+                                                View JSON
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))

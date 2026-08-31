@@ -5,6 +5,8 @@ import Swal from 'sweetalert2';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 interface Hero {
     _id: string;
@@ -218,13 +220,14 @@ export default function AdminHeroesPage() {
                     </label>
 
                     {heroes.length > 0 && (
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={handleClearAll}
-                            className="px-4 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition shadow-sm"
+                            className="px-4 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 shadow-sm"
                         >
                             <Icon name="delete" className="mr-2" />
                             Clear All
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
@@ -245,12 +248,12 @@ export default function AdminHeroesPage() {
             <div className="bg-white rounded-xl shadow-sm p-4">
                 <div className="relative">
                     <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
+                    <Input
                         type="text"
                         placeholder="Search heroes..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none"
+                        className="w-full pl-12 pr-4 py-2 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                     />
                 </div>
             </div>
@@ -293,20 +296,24 @@ export default function AdminHeroesPage() {
                             </div>
 
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
-                                <button
+                                <Button
+                                    variant="ghost"
+                                    iconOnly
+                                    icon="edit"
                                     onClick={() => handleEdit(hero)}
-                                    className="w-8 h-8 bg-white/90 text-blue-600 rounded-full hover:bg-white hover:scale-110 transition shadow-lg flex items-center justify-center"
-                                    title="Edit Name"
+                                    className="w-8 h-8 bg-white/90 text-blue-600 rounded-full hover:bg-white hover:scale-110 shadow-lg"
                                 >
-                                    <Icon name="edit" className="text-xs" />
-                                </button>
-                                <button
+                                    Edit Name
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    iconOnly
+                                    icon="delete"
                                     onClick={() => handleDelete(hero)}
-                                    className="w-8 h-8 bg-white/90 text-red-600 rounded-full hover:bg-white hover:scale-110 transition shadow-lg flex items-center justify-center"
-                                    title="Delete"
+                                    className="w-8 h-8 bg-white/90 text-red-600 rounded-full hover:bg-white hover:scale-110 shadow-lg"
                                 >
-                                    <Icon name="delete" className="text-xs" />
-                                </button>
+                                    Delete
+                                </Button>
                             </div>
                         </div>
                     ))}

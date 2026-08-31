@@ -13,6 +13,8 @@ import Swal from 'sweetalert2';
 import TeamLogo from '@/components/common/TeamLogo';
 import Image from 'next/image';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Select } from '@/components/ui/Input';
 
 export default function AdminDrawPage() {
     const { t, language } = useLanguage();
@@ -126,25 +128,26 @@ export default function AdminDrawPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-4 items-center">
-                    <select 
-                        value={selectedTournament} 
+                    <Select
+                        value={selectedTournament}
                         onChange={(e) => setSelectedTournament(e.target.value)}
-                        className="px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-cyan-aura outline-none text-sm"
+                        className="px-4 py-2 rounded-lg border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm"
                     >
                         {tournaments.map(t => (
                             <option key={t.id} value={t.id}>{t.name} (S{t.season})</option>
                         ))}
-                    </select>
+                    </Select>
 
                     <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
                         {[1, 2, 3, 4, 5].map(d => (
-                            <button
+                            <Button
+                                variant="ghost"
                                 key={d}
                                 onClick={() => setMatchDay(d)}
-                                className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${matchDay === d ? 'bg-white text-cyan-aura shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`px-4 py-1.5 rounded-md text-sm font-bold ${matchDay === d ? 'bg-white text-cyan-aura shadow-sm hover:bg-white' : 'text-gray-500 hover:text-gray-700'}`}
                             >
                                 Day {d}
-                            </button>
+                            </Button>
                         ))}
                     </div>
                 </div>
@@ -171,14 +174,14 @@ export default function AdminDrawPage() {
                             )}
                         </div>
                         
-                        <button
+                        <Button
                             onClick={handleGenerateDraw}
                             disabled={isPending || readyTeams.length < 2 || matches.length > 0}
-                            className="w-full mt-6 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-aura/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+                            className="w-full mt-6 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-aura/20 hover:scale-[1.02] active:scale-[0.98] disabled:scale-100"
                         >
                             {isPending ? <Icon name="progress_activity" spin className="mr-2" /> : <Icon name="casino" className="mr-2" />}
                             {t.admin.drawPage.randomDrawBtn.replace('{day}', matchDay.toString())}
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -191,13 +194,14 @@ export default function AdminDrawPage() {
                                 {t.admin.drawPage.matchResultsHeader.replace('{day}', matchDay.toString())}
                             </h3>
                             {matches.length > 0 && (
-                                <button 
+                                <Button
+                                    variant="ghost"
                                     onClick={handleClearDraw}
                                     disabled={isPending}
-                                    className="text-red-500 hover:text-red-600 text-sm font-bold flex items-center gap-1"
+                                    className="text-red-500 hover:text-red-600 hover:bg-transparent text-sm font-bold flex items-center gap-1 p-0 h-auto"
                                 >
                                     <Icon name="delete_outline" /> {t.admin.drawPage.clearAction}
-                                </button>
+                                </Button>
                             )}
                         </div>
 

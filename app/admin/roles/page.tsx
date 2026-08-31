@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { getAllUsersWithRolesAction, updateUserRoleAction } from '@/features/analytics/dashboard-actions';
 import Swal from 'sweetalert2';
+import { Input, Select } from '@/components/ui/Input';
 
 export default function RoleManagementPage() {
     const { t } = useLanguage();
@@ -75,12 +76,12 @@ export default function RoleManagementPage() {
                     <p className="text-sm text-gray-500">Manage user roles and permissions. Accessible only by <span className="font-bold text-red-500">Super Admins</span>.</p>
                     <div className="relative w-full md:w-64">
                         <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input
+                        <Input
                             type="text"
                             placeholder="Search users..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-cyan-aura outline-none"
+                            className="w-full pl-9 pr-4 py-2 text-sm focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                         />
                     </div>
                 </div>
@@ -117,15 +118,15 @@ export default function RoleManagementPage() {
                                             </span>
                                         </td>
                                         <td className="p-3 text-right">
-                                            <select 
-                                                value={user.role} 
+                                            <Select
+                                                value={user.role}
                                                 onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                                className="text-xs border rounded p-1 focus:ring-2 focus:ring-cyan-aura outline-none"
+                                                className="text-xs p-1 focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                                             >
                                                 {roles.map(r => (
                                                     <option key={r} value={r}>{r}</option>
                                                 ))}
-                                            </select>
+                                            </Select>
                                         </td>
                                     </tr>
                                 ))

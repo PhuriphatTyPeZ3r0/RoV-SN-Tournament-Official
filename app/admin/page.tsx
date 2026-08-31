@@ -11,6 +11,7 @@ import {
 } from '@/features/analytics/dashboard-actions';
 import Image from 'next/image';
 import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
 
 export default function AdminDashboard() {
     const { t, language } = useLanguage();
@@ -71,13 +72,15 @@ export default function AdminDashboard() {
                     <p className="text-gray-500 font-medium">{t.admin.dashboard.overviewText}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button 
+                    <Button
+                        variant="ghost"
                         onClick={() => startTransition(fetchDashboardData)}
-                        className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-cyan-aura transition-all shadow-sm"
+                        className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-400 hover:text-cyan-aura shadow-sm"
                         title={t.admin.dashboard.refreshData}
+                        aria-label={t.admin.dashboard.refreshData}
                     >
                         <Icon name="refresh" spin={isPending} />
-                    </button>
+                    </Button>
                     <div className="px-4 py-2 bg-uefa-dark text-white rounded-xl text-sm font-bold shadow-lg">
                         <Icon name="event" className="mr-2 text-cyan-aura" />
                         {new Date().toLocaleDateString(language === 'th' ? 'th-TH' : 'en-US', { day: 'numeric', month: 'long' })}

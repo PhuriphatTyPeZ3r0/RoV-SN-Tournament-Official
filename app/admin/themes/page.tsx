@@ -12,6 +12,9 @@ import {
     deleteThemeAction
 } from '@/features/tournament/actions';
 import Swal from 'sweetalert2';
+import Button from '@/components/ui/Button';
+import { Input, Textarea } from '@/components/ui/Input';
+import Modal, { ModalFooter } from '@/components/ui/Modal';
 
 interface Tournament {
     id: string;
@@ -287,13 +290,13 @@ export default function AdminThemesPage() {
                     </h1>
                     <p className="text-gray-500 text-sm">{t.admin.themesPage.pageSubtitle}</p>
                 </div>
-                <button
+                <Button
                     onClick={openCreateModal}
-                    className="bg-cyan-aura hover:bg-cyan-500 text-uefa-dark font-bold px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-2 text-sm"
+                    className="bg-cyan-aura hover:bg-cyan-500 text-uefa-dark font-bold px-4 py-2.5 rounded-xl shadow-md flex items-center gap-2 text-sm"
                 >
                     <Icon name="add" />
                     {t.admin.themesPage.newThemeBtn}
-                </button>
+                </Button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -307,12 +310,13 @@ export default function AdminThemesPage() {
                         
                         <div className="space-y-3">
                             {tournaments.map(tour => (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     key={tour.id}
                                     onClick={() => handleTournamentChange(tour.id)}
-                                    className={`w-full text-left p-4 rounded-xl border transition-all flex flex-col gap-1 ${
+                                    className={`w-full justify-start text-left p-4 rounded-xl border flex-col items-start gap-1 ${
                                         selectedTourId === tour.id
-                                            ? 'bg-gradient-to-r from-uefa-dark to-slate-800 text-white border-cyan-aura'
+                                            ? 'bg-gradient-to-r from-uefa-dark to-slate-800 text-white border-cyan-aura hover:from-uefa-dark hover:to-slate-800'
                                             : 'bg-gray-50 border-gray-100 hover:bg-gray-100 text-gray-800'
                                     }`}
                                 >
@@ -334,7 +338,7 @@ export default function AdminThemesPage() {
                                             Theme: {tour.theme_style || 'echo'}
                                         </span>
                                     </div>
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -383,27 +387,31 @@ export default function AdminThemesPage() {
                                                         </span>
                                                     )}
                                                     <div className="flex gap-1">
-                                                        <button
+                                                        <Button
+                                                            variant="ghost"
+                                                            iconOnly
+                                                            icon="edit"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 openEditModal(theme);
                                                             }}
-                                                            className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 hover:bg-cyan-100 hover:text-cyan-600 flex items-center justify-center transition-colors text-xs"
-                                                            title={t.admin.themesPage.editTheme}
+                                                            className="w-7 h-7 bg-gray-100 text-gray-600 hover:bg-cyan-100 hover:text-cyan-600 text-xs"
                                                         >
-                                                            <Icon name="edit" />
-                                                        </button>
+                                                            {t.admin.themesPage.editTheme}
+                                                        </Button>
                                                         {!theme.is_preset && (
-                                                            <button
+                                                            <Button
+                                                                variant="ghost"
+                                                                iconOnly
+                                                                icon="delete_outline"
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleDeleteTheme(theme.id, theme.name);
                                                                 }}
-                                                                className="w-7 h-7 rounded-lg bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition-colors text-xs"
-                                                                title={t.admin.themesPage.deleteTheme}
+                                                                className="w-7 h-7 bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600 text-xs"
                                                             >
-                                                                <Icon name="delete_outline" />
-                                                            </button>
+                                                                {t.admin.themesPage.deleteTheme}
+                                                            </Button>
                                                         )}
                                                     </div>
                                                     {isSelected && (
@@ -457,10 +465,10 @@ export default function AdminThemesPage() {
 
                         {/* Save Actions Button */}
                         <div className="mt-8 flex justify-end gap-3 border-t pt-5">
-                            <button
+                            <Button
                                 onClick={handleSaveTheme}
                                 disabled={isPending || !selectedTourId}
-                                className="bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-cyan-aura/25 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center gap-2"
+                                className="bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-cyan-aura/25 hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 flex items-center gap-2"
                             >
                                 {isPending ? (
                                     <>
@@ -473,44 +481,33 @@ export default function AdminThemesPage() {
                                         {t.admin.themesPage.saveThemeSettings}
                                     </>
                                 )}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Create/Edit Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col animate-fadeIn border border-gray-100">
-                        {/* Modal Header */}
-                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                            <h3 className="text-xl font-bold text-uefa-dark flex items-center gap-2">
-                                <Icon name="auto_fix_high" className="text-cyan-aura" />
-                                {modalMode === 'create' ? t.admin.themesPage.createThemeHeader : `${t.admin.themesPage.editThemeHeader}: ${formData.name}`}
-                            </h3>
-                            <button 
-                                onClick={() => setIsModalOpen(false)}
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                                <Icon name="close" className="text-lg" />
-                            </button>
-                        </div>
-
+            <Modal
+                open={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                title={modalMode === 'create' ? t.admin.themesPage.createThemeHeader : `${t.admin.themesPage.editThemeHeader}: ${formData.name}`}
+                size="lg"
+            >
                         {/* Modal Content / Form */}
-                        <form onSubmit={handleFormSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+                        <form onSubmit={handleFormSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-uefa-dark uppercase mb-1">
                                         {t.admin.themesPage.themeId}
                                     </label>
-                                    <input
+                                    <Input
                                         type="text"
                                         value={formData.id}
                                         onChange={e => setFormData(prev => ({ ...prev, id: e.target.value.toLowerCase() }))}
                                         disabled={modalMode === 'edit'}
                                         placeholder={t.admin.themesPage.themeIdPlaceholder}
-                                        className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-1 focus:ring-cyan-aura outline-none transition-all disabled:opacity-60"
+                                        className="w-full p-2.5 text-sm bg-gray-50 focus:bg-white focus-visible:ring-cyan-aura focus-visible:ring-offset-0 disabled:opacity-60"
                                         required
                                     />
                                     {modalMode === 'create' && (
@@ -523,12 +520,12 @@ export default function AdminThemesPage() {
                                     <label className="block text-xs font-bold text-uefa-dark uppercase mb-1">
                                         {t.admin.themesPage.themeName}
                                     </label>
-                                    <input
+                                    <Input
                                         type="text"
                                         value={formData.name}
                                         onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                                         placeholder={t.admin.themesPage.themeNamePlaceholder}
-                                        className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                        className="w-full p-2.5 text-sm bg-gray-50 focus:bg-white focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                                         required
                                     />
                                 </div>
@@ -538,12 +535,12 @@ export default function AdminThemesPage() {
                                 <label className="block text-xs font-bold text-uefa-dark uppercase mb-1">
                                     {t.admin.themesPage.themeDescription}
                                 </label>
-                                <textarea
+                                <Textarea
                                     value={formData.description}
                                     onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                                     placeholder={t.admin.themesPage.themeDescriptionPlaceholder}
                                     rows={2}
-                                    className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                    className="w-full p-2.5 text-sm bg-gray-50 focus:bg-white focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                                 />
                             </div>
 
@@ -553,14 +550,15 @@ export default function AdminThemesPage() {
                                     <h4 className="text-sm font-bold text-uefa-dark uppercase">
                                         {t.admin.themesPage.colorSettings}
                                     </h4>
-                                    <button
+                                    <Button
+                                        variant="ghost"
                                         type="button"
                                         onClick={handleAutoGenerateColors}
-                                        className="text-xs text-cyan-aura hover:text-cyan-500 font-bold flex items-center gap-1.5 transition-colors"
+                                        className="text-xs text-cyan-aura hover:text-cyan-500 hover:bg-transparent font-bold flex items-center gap-1.5 p-0 h-auto"
                                     >
                                         <Icon name="auto_fix_high" />
                                         {t.admin.themesPage.autoGenerate}
-                                    </button>
+                                    </Button>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -570,19 +568,19 @@ export default function AdminThemesPage() {
                                             {t.admin.themesPage.primaryColor}
                                         </label>
                                         <div className="flex gap-2">
-                                            <input
+                                            <Input
                                                 type="color"
                                                 value={formData.primary_color}
                                                 onChange={e => setFormData(prev => ({ ...prev, primary_color: e.target.value.toUpperCase() }))}
-                                                className="w-10 h-10 border rounded-lg cursor-pointer bg-transparent"
+                                                className="w-10 h-10 p-0 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer bg-transparent"
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
                                                 value={formData.primary_color}
                                                 onChange={e => setFormData(prev => ({ ...prev, primary_color: e.target.value.toUpperCase() }))}
                                                 placeholder="#15C8FF"
                                                 maxLength={7}
-                                                className="flex-1 p-2 border rounded-lg text-sm bg-gray-50 font-mono focus:bg-white outline-none"
+                                                className="flex-1 p-2 text-sm bg-gray-50 font-mono focus:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
                                         </div>
                                     </div>
@@ -593,19 +591,19 @@ export default function AdminThemesPage() {
                                             {t.admin.themesPage.secondaryColor}
                                         </label>
                                         <div className="flex gap-2">
-                                            <input
+                                            <Input
                                                 type="color"
                                                 value={formData.secondary_color}
                                                 onChange={e => setFormData(prev => ({ ...prev, secondary_color: e.target.value.toUpperCase() }))}
-                                                className="w-10 h-10 border rounded-lg cursor-pointer bg-transparent"
+                                                className="w-10 h-10 p-0 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer bg-transparent"
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
                                                 value={formData.secondary_color}
                                                 onChange={e => setFormData(prev => ({ ...prev, secondary_color: e.target.value.toUpperCase() }))}
                                                 placeholder="#E8F7FF"
                                                 maxLength={7}
-                                                className="flex-1 p-2 border rounded-lg text-sm bg-gray-50 font-mono focus:bg-white outline-none"
+                                                className="flex-1 p-2 text-sm bg-gray-50 font-mono focus:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
                                         </div>
                                     </div>
@@ -616,19 +614,19 @@ export default function AdminThemesPage() {
                                             {t.admin.themesPage.bgDeep}
                                         </label>
                                         <div className="flex gap-2">
-                                            <input
+                                            <Input
                                                 type="color"
                                                 value={formData.bg_deep}
                                                 onChange={e => setFormData(prev => ({ ...prev, bg_deep: e.target.value.toUpperCase() }))}
-                                                className="w-10 h-10 border rounded-lg cursor-pointer bg-transparent"
+                                                className="w-10 h-10 p-0 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer bg-transparent"
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
                                                 value={formData.bg_deep}
                                                 onChange={e => setFormData(prev => ({ ...prev, bg_deep: e.target.value.toUpperCase() }))}
                                                 placeholder="#0A1628"
                                                 maxLength={7}
-                                                className="flex-1 p-2 border rounded-lg text-sm bg-gray-50 font-mono focus:bg-white outline-none"
+                                                className="flex-1 p-2 text-sm bg-gray-50 font-mono focus:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
                                         </div>
                                     </div>
@@ -639,19 +637,19 @@ export default function AdminThemesPage() {
                                             {t.admin.themesPage.bgSurface}
                                         </label>
                                         <div className="flex gap-2">
-                                            <input
+                                            <Input
                                                 type="color"
                                                 value={formData.bg_surface}
                                                 onChange={e => setFormData(prev => ({ ...prev, bg_surface: e.target.value.toUpperCase() }))}
-                                                className="w-10 h-10 border rounded-lg cursor-pointer bg-transparent"
+                                                className="w-10 h-10 p-0 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer bg-transparent"
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
                                                 value={formData.bg_surface}
                                                 onChange={e => setFormData(prev => ({ ...prev, bg_surface: e.target.value.toUpperCase() }))}
                                                 placeholder="#0F1F35"
                                                 maxLength={7}
-                                                className="flex-1 p-2 border rounded-lg text-sm bg-gray-50 font-mono focus:bg-white outline-none"
+                                                className="flex-1 p-2 text-sm bg-gray-50 font-mono focus:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
                                         </div>
                                     </div>
@@ -662,19 +660,19 @@ export default function AdminThemesPage() {
                                             {t.admin.themesPage.primaryLight}
                                         </label>
                                         <div className="flex gap-2">
-                                            <input
+                                            <Input
                                                 type="color"
                                                 value={formData.primary_light}
                                                 onChange={e => setFormData(prev => ({ ...prev, primary_light: e.target.value.toUpperCase() }))}
-                                                className="w-10 h-10 border rounded-lg cursor-pointer bg-transparent"
+                                                className="w-10 h-10 p-0 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer bg-transparent"
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
                                                 value={formData.primary_light}
                                                 onChange={e => setFormData(prev => ({ ...prev, primary_light: e.target.value.toUpperCase() }))}
                                                 placeholder="#4DD9FF"
                                                 maxLength={7}
-                                                className="flex-1 p-2 border rounded-lg text-sm bg-gray-50 font-mono focus:bg-white outline-none"
+                                                className="flex-1 p-2 text-sm bg-gray-50 font-mono focus:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
                                         </div>
                                     </div>
@@ -685,19 +683,19 @@ export default function AdminThemesPage() {
                                             {t.admin.themesPage.primaryDark}
                                         </label>
                                         <div className="flex gap-2">
-                                            <input
+                                            <Input
                                                 type="color"
                                                 value={formData.primary_dark}
                                                 onChange={e => setFormData(prev => ({ ...prev, primary_dark: e.target.value.toUpperCase() }))}
-                                                className="w-10 h-10 border rounded-lg cursor-pointer bg-transparent"
+                                                className="w-10 h-10 p-0 rounded-lg focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer bg-transparent"
                                             />
-                                            <input
+                                            <Input
                                                 type="text"
                                                 value={formData.primary_dark}
                                                 onChange={e => setFormData(prev => ({ ...prev, primary_dark: e.target.value.toUpperCase() }))}
                                                 placeholder="#0099CC"
                                                 maxLength={7}
-                                                className="flex-1 p-2 border rounded-lg text-sm bg-gray-50 font-mono focus:bg-white outline-none"
+                                                className="flex-1 p-2 text-sm bg-gray-50 font-mono focus:bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
                                             />
                                         </div>
                                     </div>
@@ -705,25 +703,24 @@ export default function AdminThemesPage() {
                             </div>
 
                             {/* Actions Button */}
-                            <div className="mt-8 flex justify-end gap-3 border-t pt-5">
-                                <button
+                            <ModalFooter>
+                                <Button
+                                    variant="ghost"
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-5 py-2.5 rounded-lg border hover:bg-gray-50 font-bold text-sm text-gray-600 transition-colors"
+                                    className="px-5 py-2.5 rounded-lg border hover:bg-gray-50 font-bold text-sm text-gray-600"
                                 >
                                     {t.admin.themesPage.cancelBtn}
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     type="submit"
-                                    className="bg-cyan-aura hover:bg-cyan-500 text-uefa-dark font-bold px-6 py-2.5 rounded-lg shadow-md transition-colors text-sm"
+                                    className="bg-cyan-aura hover:bg-cyan-500 text-uefa-dark font-bold px-6 py-2.5 rounded-lg shadow-md text-sm"
                                 >
                                     {modalMode === 'create' ? t.admin.themesPage.createThemeBtn : t.admin.themesPage.saveChangesBtn}
-                                </button>
-                            </div>
+                                </Button>
+                            </ModalFooter>
                         </form>
-                    </div>
-                </div>
-            )}
+            </Modal>
         </div>
     );
 }

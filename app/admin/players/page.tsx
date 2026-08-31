@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 interface Player {
     _id?: string;
@@ -373,8 +375,8 @@ export default function AdminPlayersPage() {
                         <div className="flex justify-between items-center mb-3">
                             <h4 className="font-bold text-gray-700">Preview ({importPreview.length} Items)</h4>
                             <div className="flex gap-2">
-                                <button onClick={() => { setIsImporting(false); setImportPreview([]); }} className="px-3 py-1 bg-gray-300 rounded text-sm font-bold text-gray-600 hover:bg-gray-400">Cancel</button>
-                                <button onClick={confirmImport} className="px-3 py-1 bg-green-500 rounded text-sm font-bold text-white hover:bg-green-600">Confirm Import</button>
+                                <Button variant="ghost" onClick={() => { setIsImporting(false); setImportPreview([]); }} className="px-3 py-1 bg-gray-300 rounded text-sm font-bold text-gray-600 hover:bg-gray-400">Cancel</Button>
+                                <Button variant="ghost" onClick={confirmImport} className="px-3 py-1 bg-green-500 rounded text-sm font-bold text-white hover:bg-green-600">Confirm Import</Button>
                             </div>
                         </div>
                         <div className="overflow-x-auto max-h-60 rounded border border-gray-200 bg-white">
@@ -410,33 +412,33 @@ export default function AdminPlayersPage() {
                     {editingId ? 'Edit Player' : 'Add Single Player'}
                 </h3>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                    <input name="name" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
-                    <input name="grade" placeholder="Grade" value={formData.grade} onChange={(e) => setFormData({ ...formData, grade: e.target.value })} className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
+                    <Input name="name" placeholder="Name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="p-3 focus-visible:ring-cyan-aura focus-visible:ring-offset-0" />
+                    <Input name="grade" placeholder="Grade" value={formData.grade} onChange={(e) => setFormData({ ...formData, grade: e.target.value })} className="p-3 focus-visible:ring-cyan-aura focus-visible:ring-offset-0" />
                     <div className="relative">
-                        <input 
-                            name="team" 
-                            placeholder="Team" 
+                        <Input
+                            name="team"
+                            placeholder="Team"
                             list="team-list"
-                            value={formData.team} 
-                            onChange={(e) => setFormData({ ...formData, team: e.target.value })} 
-                            required 
-                            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" 
+                            value={formData.team}
+                            onChange={(e) => setFormData({ ...formData, team: e.target.value })}
+                            required
+                            className="w-full p-3 focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                         />
                         <datalist id="team-list">
                             {teams.map(t => <option key={t.id} value={t.name} />)}
                         </datalist>
                     </div>
-                    <input name="inGameName" placeholder="In-Game Name" value={formData.inGameName} onChange={(e) => setFormData({ ...formData, inGameName: e.target.value })} className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
-                    <input name="openId" placeholder="OpenID" value={formData.openId} onChange={(e) => setFormData({ ...formData, openId: e.target.value })} className="p-3 border rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none" />
+                    <Input name="inGameName" placeholder="In-Game Name" value={formData.inGameName} onChange={(e) => setFormData({ ...formData, inGameName: e.target.value })} className="p-3 focus-visible:ring-cyan-aura focus-visible:ring-offset-0" />
+                    <Input name="openId" placeholder="OpenID" value={formData.openId} onChange={(e) => setFormData({ ...formData, openId: e.target.value })} className="p-3 focus-visible:ring-cyan-aura focus-visible:ring-offset-0" />
 
                     <div className="flex gap-2">
-                        <button type="submit" className={`flex-1 rounded-lg font-bold text-white shadow-sm transition-transform active:scale-95 ${editingId ? 'bg-orange-500 hover:bg-orange-600' : 'bg-uefa-dark hover:bg-black'}`}>
+                        <Button type="submit" className={`flex-1 rounded-lg font-bold text-white shadow-sm active:scale-95 ${editingId ? 'bg-orange-500 hover:bg-orange-600' : 'bg-uefa-dark hover:bg-black'}`}>
                             {editingId ? 'Update' : 'Add'}
-                        </button>
+                        </Button>
                         {editingId && (
-                            <button type="button" onClick={() => { setEditingId(null); setFormData({ name: '', grade: '', team: '', inGameName: '', openId: '' }); }} className="px-3 bg-gray-300 rounded-lg hover:bg-gray-400 text-gray-700">
+                            <Button variant="ghost" type="button" onClick={() => { setEditingId(null); setFormData({ name: '', grade: '', team: '', inGameName: '', openId: '' }); }} className="px-3 bg-gray-300 rounded-lg hover:bg-gray-400 text-gray-700">
                                 Cancel
-                            </button>
+                            </Button>
                         )}
                     </div>
                 </form>
@@ -449,17 +451,17 @@ export default function AdminPlayersPage() {
                     <div className="flex gap-4">
                         <div className="relative">
                             <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input
+                            <Input
                                 type="text"
                                 placeholder="Search..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="pl-9 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-cyan-aura outline-none"
+                                className="pl-9 pr-4 py-2 text-sm focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                             />
                         </div>
-                        <button onClick={handleClearAll} className="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold text-xs hover:bg-red-200 transition-colors">
+                        <Button variant="ghost" onClick={handleClearAll} className="px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold text-xs hover:bg-red-200">
                             Clear All
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -486,12 +488,12 @@ export default function AdminPlayersPage() {
                                         <td className="p-3 text-cyan-600 font-mono">{p.inGameName}</td>
                                         <td className="p-3 text-center">
                                             <div className="flex justify-center gap-2">
-                                                <button onClick={() => handleEdit(p)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded transition-colors">
-                                                    <Icon name="edit" />
-                                                </button>
-                                                <button onClick={() => handleDelete(p._id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors">
-                                                    <Icon name="delete" />
-                                                </button>
+                                                <Button variant="ghost" iconOnly icon="edit" onClick={() => handleEdit(p)} className="p-1.5 text-blue-500 hover:bg-blue-50">
+                                                    Edit
+                                                </Button>
+                                                <Button variant="ghost" iconOnly icon="delete" onClick={() => handleDelete(p._id)} className="p-1.5 text-red-500 hover:bg-red-50">
+                                                    Delete
+                                                </Button>
                                             </div>
                                         </td>
                                     </tr>

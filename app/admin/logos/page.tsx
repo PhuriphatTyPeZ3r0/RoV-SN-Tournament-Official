@@ -6,6 +6,8 @@ import Swal from 'sweetalert2';
 import apiService from '@/lib/api-client';
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 export default function AdminLogosPage() {
     const { t } = useLanguage();
@@ -137,42 +139,44 @@ export default function AdminLogosPage() {
                             <label className="block text-sm font-bold text-gray-700 mb-2">
                                 {t.admin.logosPage?.selectTeam || 'Select Team'}
                             </label>
-                            <select
+                            <Select
                                 value={selectedTeam}
                                 onChange={(e) => setSelectedTeam(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-cyan-aura focus:ring-2 focus:ring-cyan-aura/20 outline-none transition-shadow"
+                                className="w-full px-4 py-3 border border-gray-300 focus-visible:ring-cyan-aura/20 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 required
                             >
                                 <option value="">Select a team...</option>
                                 {teams.map(team => (
                                     <option key={team} value={team}>{team}</option>
                                 ))}
-                            </select>
+                            </Select>
                         </div>
 
                         {/* Mode Toggle */}
                         <div className="md:col-span-2 flex justify-center md:justify-start">
                             <div className="bg-gray-100 p-1 rounded-lg inline-flex">
-                                <button
+                                <Button
+                                    variant="ghost"
                                     type="button"
                                     onClick={() => setUploadMode('file')}
-                                    className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${uploadMode === 'file'
-                                            ? 'bg-white text-cyan-aura shadow-sm'
+                                    className={`px-4 py-2 rounded-md text-sm font-bold ${uploadMode === 'file'
+                                            ? 'bg-white text-cyan-aura shadow-sm hover:bg-white'
                                             : 'text-gray-500 hover:text-gray-700'
                                         }`}
                                 >
                                     Upload File
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant="ghost"
                                     type="button"
                                     onClick={() => setUploadMode('url')}
-                                    className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${uploadMode === 'url'
-                                            ? 'bg-white text-cyan-aura shadow-sm'
+                                    className={`px-4 py-2 rounded-md text-sm font-bold ${uploadMode === 'url'
+                                            ? 'bg-white text-cyan-aura shadow-sm hover:bg-white'
                                             : 'text-gray-500 hover:text-gray-700'
                                         }`}
                                 >
                                     Image URL
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
@@ -199,7 +203,7 @@ export default function AdminLogosPage() {
                             ) : (
                                 <div>
                                     <label htmlFor="logo-image-url" className="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
-                                    <input
+                                    <Input
                                         id="logo-image-url"
                                         type="url"
                                         value={logoUrl}
@@ -208,7 +212,7 @@ export default function AdminLogosPage() {
                                             setLogoPreview(e.target.value);
                                         }}
                                         placeholder="https://example.com/logo.png"
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-cyan-aura outline-none"
+                                        className="w-full px-4 py-3 border border-gray-300 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                         required={uploadMode === 'url'}
                                     />
                                 </div>
@@ -246,17 +250,17 @@ export default function AdminLogosPage() {
                     )}
 
                     {/* Submit Button */}
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading || !selectedTeam || (uploadMode === 'url' && !logoUrl) || (uploadMode === 'file' && !logoFile)}
-                        className="mt-6 w-full py-3.5 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-cyan-aura/50 disabled:opacity-50 disabled:shadow-none transition-all transform active:scale-[0.99]"
+                        className="mt-6 w-full py-3.5 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-cyan-aura/50 disabled:shadow-none transform active:scale-[0.99]"
                     >
                         {loading ? (
                             <span><Icon name="progress_activity" spin className="mr-2" /> Uploading...</span>
                         ) : (
                             <span><Icon name="save" className="mr-2" /> Save Logo</span>
                         )}
-                    </button>
+                    </Button>
                 </form>
             </div>
 
@@ -287,13 +291,15 @@ export default function AdminLogosPage() {
                                                 {teamLogos[team] ? 'Has Logo' : 'No Logo'}
                                             </span>
                                             {teamLogos[team] && (
-                                                <button
+                                                <Button
+                                                    variant="ghost"
+                                                    iconOnly
+                                                    icon="delete_outline"
                                                     onClick={() => handleDelete(team)}
-                                                    className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors"
-                                                    title="Delete Logo"
+                                                    className="text-red-400 hover:text-red-600 hover:bg-red-50 p-1"
                                                 >
-                                                    <Icon name="delete_outline" />
-                                                </button>
+                                                    Delete Logo
+                                                </Button>
                                             )}
                                         </div>
                                     </div>

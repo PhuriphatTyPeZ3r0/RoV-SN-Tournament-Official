@@ -4,6 +4,8 @@ import Icon from '@/components/common/Icon';
 import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 interface Player {
     _id: string;
@@ -350,9 +352,9 @@ export default function GameStatsModal({
                         </div>
                     </div>
 
-                    <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition-colors">
-                        <Icon name="close" className="text-2xl" />
-                    </button>
+                    <Button variant="ghost" iconOnly icon="close" onClick={onClose} className="text-gray-400 hover:text-red-500 p-0 h-auto">
+                        {t.admin.gameStatsModal.cancel}
+                    </Button>
                 </div>
 
                 {/* Game Details: Winner, MVP, Duration */}
@@ -375,11 +377,11 @@ export default function GameStatsModal({
                     {/* MVP Selection (Only show if winner selected) */}
                     <div className={`flex items-center gap-2 transition-opacity ${winner ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
                         <span className="font-bold text-gray-700">MVP:</span>
-                        <select
+                        <Select
                             value={mvp}
                             onChange={(e) => setMvp(e.target.value)}
                             disabled={!winner}
-                            className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-cyan-aura focus:border-transparent outline-none bg-white min-w-[200px]"
+                            className="px-3 py-2 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-transparent bg-white min-w-[200px]"
                         >
                             <option value="">{t.admin.gameStatsModal.selectMvp}</option>
                             {(winner === 'blue' ? blueRoster : winner === 'red' ? redRoster : []).map((p) => (
@@ -389,18 +391,18 @@ export default function GameStatsModal({
                             ))}
                             {/* Fallback: If current inputs have names properly typed but not in roster? */}
                             {/* Normally Roster should cover it. Keeping it simple as requested. */}
-                        </select>
+                        </Select>
                     </div>
 
                     {/* Duration */}
                     <div className="flex items-center gap-2 ml-auto">
                         <span className="font-bold text-gray-700">{t.admin.gameStatsModal.duration}:</span>
-                        <input
+                        <Input
                             type="text"
                             placeholder="MM:SS"
                             value={duration}
                             onChange={(e) => setDuration(e.target.value)}
-                            className="border border-gray-300 rounded-lg px-3 py-2 w-24 text-center focus:ring-2 focus:ring-cyan-aura focus:border-transparent outline-none font-mono"
+                            className="px-3 py-2 w-24 text-center focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-transparent font-mono"
                         />
                     </div>
                 </div>
@@ -427,10 +429,11 @@ export default function GameStatsModal({
                                     {bluePlayers.map((player, i) => (
                                         <tr key={`blue-${i}`} className="border-b hover:bg-gray-50">
                                             <td className="p-2">
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     type="button"
                                                     onClick={() => openHeroPicker('blue', i)}
-                                                    className={`w-10 h-10 rounded-lg border-2 overflow-hidden transition-all hover:scale-105 ${player.hero ? 'border-cyan-aura' : 'border-gray-300 border-dashed bg-gray-100'}`}
+                                                    className={`w-10 h-10 p-0 rounded-lg border-2 overflow-hidden hover:scale-105 ${player.hero ? 'border-cyan-aura' : 'border-gray-300 border-dashed bg-gray-100'}`}
                                                     title={player.hero || t.admin.gameStatsModal.selectHero}
                                                 >
                                                     {player.hero && getHeroImage(player.hero) ? (
@@ -442,28 +445,28 @@ export default function GameStatsModal({
                                                     ) : (
                                                         <Icon name="add" className="text-gray-400 text-xs" />
                                                     )}
-                                                </button>
+                                                </Button>
                                             </td>
                                             <td className="p-2">
-                                                <input
+                                                <Input
                                                     type="text"
                                                     list="roster-blue"
                                                     placeholder={`${t.admin.gameStatsModal.playerPlaceholder} ${i + 1}`}
                                                     value={player.name}
                                                     onChange={(e) => handleBlueChange(i, 'name', e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-cyan-aura focus:outline-none"
+                                                    className="w-full px-2 py-1.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                 />
                                             </td>
                                             <td className="p-2">
-                                                <input type="number" min="0" className="w-14 px-1 py-1 border border-gray-300 rounded text-center focus:border-cyan-aura focus:outline-none"
+                                                <Input type="number" min="0" className="w-14 px-1 py-1 text-center focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                     value={player.k} onChange={(e) => handleBlueChange(i, 'k', parseInt(e.target.value) || 0)} />
                                             </td>
                                             <td className="p-2">
-                                                <input type="number" min="0" className="w-14 px-1 py-1 border border-gray-300 rounded text-center focus:border-cyan-aura focus:outline-none"
+                                                <Input type="number" min="0" className="w-14 px-1 py-1 text-center focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                     value={player.d} onChange={(e) => handleBlueChange(i, 'd', parseInt(e.target.value) || 0)} />
                                             </td>
                                             <td className="p-2">
-                                                <input type="number" min="0" className="w-14 px-1 py-1 border border-gray-300 rounded text-center focus:border-cyan-aura focus:outline-none"
+                                                <Input type="number" min="0" className="w-14 px-1 py-1 text-center focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                     value={player.a} onChange={(e) => handleBlueChange(i, 'a', parseInt(e.target.value) || 0)} />
                                             </td>
                                         </tr>
@@ -494,10 +497,11 @@ export default function GameStatsModal({
                                     {redPlayers.map((player, i) => (
                                         <tr key={`red-${i}`} className="border-b hover:bg-gray-50">
                                             <td className="p-2">
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     type="button"
                                                     onClick={() => openHeroPicker('red', i)}
-                                                    className={`w-10 h-10 rounded-lg border-2 overflow-hidden transition-all hover:scale-105 ${player.hero ? 'border-cyan-aura' : 'border-gray-300 border-dashed bg-gray-100'}`}
+                                                    className={`w-10 h-10 p-0 rounded-lg border-2 overflow-hidden hover:scale-105 ${player.hero ? 'border-cyan-aura' : 'border-gray-300 border-dashed bg-gray-100'}`}
                                                     title={player.hero || t.admin.gameStatsModal.selectHero}
                                                 >
                                                     {player.hero && getHeroImage(player.hero) ? (
@@ -509,28 +513,28 @@ export default function GameStatsModal({
                                                     ) : (
                                                         <Icon name="add" className="text-gray-400 text-xs" />
                                                     )}
-                                                </button>
+                                                </Button>
                                             </td>
                                             <td className="p-2">
-                                                <input
+                                                <Input
                                                     type="text"
                                                     list="roster-red"
                                                     placeholder={`${t.admin.gameStatsModal.playerPlaceholder} ${i + 1}`}
                                                     value={player.name}
                                                     onChange={(e) => handleRedChange(i, 'name', e.target.value)}
-                                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:border-cyan-aura focus:outline-none"
+                                                    className="w-full px-2 py-1.5 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                 />
                                             </td>
                                             <td className="p-2">
-                                                <input type="number" min="0" className="w-14 px-1 py-1 border border-gray-300 rounded text-center focus:border-cyan-aura focus:outline-none"
+                                                <Input type="number" min="0" className="w-14 px-1 py-1 text-center focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                     value={player.k} onChange={(e) => handleRedChange(i, 'k', parseInt(e.target.value) || 0)} />
                                             </td>
                                             <td className="p-2">
-                                                <input type="number" min="0" className="w-14 px-1 py-1 border border-gray-300 rounded text-center focus:border-cyan-aura focus:outline-none"
+                                                <Input type="number" min="0" className="w-14 px-1 py-1 text-center focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                     value={player.d} onChange={(e) => handleRedChange(i, 'd', parseInt(e.target.value) || 0)} />
                                             </td>
                                             <td className="p-2">
-                                                <input type="number" min="0" className="w-14 px-1 py-1 border border-gray-300 rounded text-center focus:border-cyan-aura focus:outline-none"
+                                                <Input type="number" min="0" className="w-14 px-1 py-1 text-center focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-cyan-aura"
                                                     value={player.a} onChange={(e) => handleRedChange(i, 'a', parseInt(e.target.value) || 0)} />
                                             </td>
                                         </tr>
@@ -542,19 +546,20 @@ export default function GameStatsModal({
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6 border-t pt-4">
-                                    <button
+                                    <Button
+                                        variant="ghost"
                                         onClick={onClose}
-                                        className="px-6 py-2.5 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-bold transition-colors"
+                                        className="px-6 py-2.5 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 font-bold"
                                     >
                                         {t.admin.gameStatsModal.cancel}
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         onClick={handleSave}
-                                        className="px-6 py-2.5 bg-gradient-to-r from-cyan-aura to-blue-600 text-white rounded-lg font-bold shadow-lg hover:shadow-cyan-aura/50 transition-all"
+                                        className="px-6 py-2.5 bg-gradient-to-r from-cyan-aura to-blue-600 text-white rounded-lg font-bold shadow-lg hover:shadow-cyan-aura/50"
                                     >
                                         <Icon name="save" className="mr-2" />
                                         {t.admin.gameStatsModal.saveConfirm}
-                                    </button>
+                                    </Button>
                                 </div>
             </div>
 
@@ -587,12 +592,15 @@ export default function GameStatsModal({
                                 <Icon name="sports_martial_arts" className="mr-2 text-cyan-aura" />
                                 {t.admin.gameStatsModal.selectHero}
                             </h4>
-                            <button
+                            <Button
+                                variant="ghost"
+                                iconOnly
+                                icon="close"
                                 onClick={() => setHeroPickerOpen({ open: false, team: null, index: null })}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="text-gray-400 hover:text-gray-600 p-0 h-auto"
                             >
-                                <Icon name="close" className="text-xl" />
-                            </button>
+                                {t.admin.gameStatsModal.cancel}
+                            </Button>
                         </div>
 
                         {/* Search */}
@@ -619,18 +627,21 @@ export default function GameStatsModal({
                             ) : (
                                 <div className="grid grid-cols-6 md:grid-cols-8 gap-2">
                                     {/* Clear selection option */}
-                                    <button
+                                    <Button
+                                        variant="ghost"
+                                        iconOnly
+                                        icon="close"
                                         onClick={() => selectHero('')}
-                                        className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-red-400 hover:bg-red-50 transition"
-                                        title={t.admin.gameStatsModal.noHeroSelected}
+                                        className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-red-400 hover:bg-red-50"
                                     >
-                                        <Icon name="close" className="text-gray-400" />
-                                    </button>
+                                        {t.admin.gameStatsModal.noHeroSelected}
+                                    </Button>
                                     {filteredHeroes.map(hero => (
-                                        <button
+                                        <Button
+                                            variant="ghost"
                                             key={hero._id}
                                             onClick={() => selectHero(hero.name)}
-                                            className="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-cyan-aura hover:scale-105 transition-all"
+                                            className="aspect-square p-0 rounded-lg overflow-hidden border-2 border-transparent hover:border-cyan-aura hover:scale-105"
                                             title={hero.name}
                                         >
                                             <img
@@ -642,7 +653,7 @@ export default function GameStatsModal({
                                                     target.src = 'https://via.placeholder.com/60?text=' + encodeURIComponent(hero.name);
                                                 }}
                                             />
-                                        </button>
+                                        </Button>
                                     ))}
                                 </div>
                             )}

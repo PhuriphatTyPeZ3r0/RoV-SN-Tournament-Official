@@ -6,6 +6,7 @@ import { getPendingRegistrations, updateRegistrationStatus } from '@/features/au
 import Swal from 'sweetalert2';
 import Image from 'next/image';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
 
 export default function AdminRegistrationsPage() {
     const { t, language } = useLanguage();
@@ -63,13 +64,14 @@ export default function AdminRegistrationsPage() {
 
                 <div className="flex bg-gray-100 p-1 rounded-lg">
                     {(['pending', 'approved', 'rejected', 'all'] as const).map(f => (
-                        <button
+                        <Button
+                            variant="ghost"
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${filter === f ? 'bg-white text-uefa-dark shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                            className={`px-4 py-1.5 rounded-md text-sm font-medium ${filter === f ? 'bg-white text-uefa-dark shadow-sm hover:bg-white' : 'text-gray-500 hover:text-gray-700'}`}
                         >
                             {f === 'pending' ? t.admin.registrationsPage.filterPending : f === 'approved' ? t.admin.registrationsPage.filterApproved : f === 'rejected' ? t.admin.registrationsPage.filterRejected : t.admin.registrationsPage.filterAll}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
@@ -141,18 +143,20 @@ export default function AdminRegistrationsPage() {
                             {/* Actions */}
                             {reg.status === 'pending' && (
                                 <div className="p-4 bg-gray-50 border-t border-gray-100 flex gap-3">
-                                    <button
+                                    <Button
+                                        variant="ghost"
                                         onClick={() => handleAction(reg.id, 'approved')}
-                                        className="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
+                                        className="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-green-700"
                                     >
                                         <Icon name="done" className="mr-2" /> {t.admin.registrationsPage.approveAction}
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
                                         onClick={() => handleAction(reg.id, 'rejected')}
-                                        className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-red-700 transition-colors"
+                                        className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-red-700"
                                     >
                                         <Icon name="close" className="mr-2" /> {t.admin.registrationsPage.rejectAction}
-                                    </button>
+                                    </Button>
                                 </div>
                             )}
                         </div>

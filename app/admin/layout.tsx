@@ -7,6 +7,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { AdminRealtimeListener } from '@/components/admin/AdminRealtimeListener';
 import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, loading, isAuthenticated } = useAuth();
@@ -122,9 +123,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="p-4 border-t border-gray-700">
                     {/* Language Switcher */}
                     <div className="flex justify-center mb-4">
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={() => changeLanguage(language === 'th' ? 'en' : 'th')}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-gray-200"
                         >
                             <div className="w-5 h-5 rounded-full overflow-hidden flex items-center justify-center bg-gray-700 text-[10px] font-bold">
                                 {language.toUpperCase()}
@@ -133,7 +135,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 {language === 'th' ? 'ภาษาไทย' : 'English'}
                             </span>
                             <Icon name="chevron_right" className="text-xs text-gray-500 ml-1" />
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="flex items-center gap-3 mb-4">
@@ -152,13 +154,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Icon name="home" />
                         {t.admin.dashboard.backToMain}
                     </Link>
-                    <button
+                    <Button
+                        variant="ghost"
                         onClick={handleLogout}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors text-sm"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 text-sm"
                     >
                         <Icon name="logout" />
                         {t.admin.dashboard.logout}
-                    </button>
+                    </Button>
                 </div>
             </aside>
 
@@ -167,12 +170,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Top Bar */}
                 <header className="bg-white shadow-sm px-4 lg:px-8 py-3 lg:py-4 flex items-center justify-between sticky top-0 z-30">
                     {/* Mobile Menu Button */}
-                    <button
+                    <Button
+                        variant="ghost"
+                        iconOnly
+                        icon="menu"
                         onClick={() => setSidebarOpen(true)}
-                        className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-cyan-aura transition-colors"
+                        className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-cyan-aura"
                     >
-                        <Icon name="menu" className="text-xl" />
-                    </button>
+                        {language === 'th' ? 'เปิดเมนู' : 'Open menu'}
+                    </Button>
 
                     <div className="flex-1 lg:flex-none">
                         <h1 className="text-lg lg:text-xl font-display font-bold text-uefa-dark uppercase text-center lg:text-left">

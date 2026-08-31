@@ -6,6 +6,8 @@ import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { apiService } from '@/lib/api-client';
 import { PlayerStat } from '@/types'; // Assuming types are consistent
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 export default function AdminGameStatsPage() {
     const { t } = useLanguage();
@@ -143,13 +145,13 @@ export default function AdminGameStatsPage() {
                     </h1>
                     <p className="text-gray-500 mt-1">{t.admin.playerStatsSubtitle.replace('{count}', String(filteredStats.length))}</p>
                 </div>
-                <button
+                <Button
                     onClick={fetchStats}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500 transition-colors w-full md:w-auto"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500 w-full md:w-auto"
                 >
                     <Icon name="refresh" />
                     {t.common.retry}
-                </button>
+                </Button>
             </div>
 
             {/* Filters */}
@@ -158,41 +160,41 @@ export default function AdminGameStatsPage() {
                     {/* Search */}
                     <div className="relative flex-1">
                         <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input
+                        <Input
                             type="text"
                             placeholder={t.admin.searchPlayer || 'Search players...'}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura focus:border-transparent"
+                            className="w-full pl-12 pr-4 py-3 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-transparent"
                         />
                     </div>
 
                     {/* Team Filter */}
                     <div className="w-full md:w-48">
-                        <select
+                        <Select
                             value={filterTeam}
                             onChange={(e) => setFilterTeam(e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-transparent"
                         >
                             <option value="">{t.admin.allTeams || 'All Teams'}</option>
                             {uniqueTeams.map(team => (
                                 <option key={team} value={team}>{team}</option>
                             ))}
-                        </select>
+                        </Select>
                     </div>
 
                     {/* Sort By */}
                     <div className="w-full md:w-48">
-                        <select
+                        <Select
                             value={sortBy}
                             onChange={(e) => setSortBy(e.target.value as any)}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-transparent"
                         >
                             <option value="kda">KDA</option>
                             <option value="kills">Kills</option>
                             <option value="mvp">MVP</option>
                             <option value="winRate">Win Rate</option>
-                        </select>
+                        </Select>
                     </div>
                 </div>
             </div>
@@ -266,12 +268,15 @@ export default function AdminGameStatsPage() {
                                         <span className="text-lg font-bold text-cyan-aura">{(player.kda || 0).toFixed(2)}</span>
                                     </td>
                                     <td className="px-4 py-3 text-center">
-                                        <button
+                                        <Button
+                                            variant="ghost"
+                                            iconOnly
+                                            icon="visibility"
                                             onClick={() => handleViewPlayerDetails(player)}
-                                            className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mx-auto text-gray-500 hover:bg-cyan-aura hover:text-white transition-all transform hover:scale-110 shadow-sm"
+                                            className="w-8 h-8 rounded-lg bg-gray-100 mx-auto text-gray-500 hover:bg-cyan-aura hover:text-white transform hover:scale-110 shadow-sm"
                                         >
-                                            <Icon name="visibility" />
-                                        </button>
+                                            View details
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -298,12 +303,15 @@ export default function AdminGameStatsPage() {
                                     <div className="text-xs text-gray-500">{player.teamName}</div>
                                 </div>
                             </div>
-                            <button
+                            <Button
+                                variant="ghost"
+                                iconOnly
+                                icon="visibility"
                                 onClick={() => handleViewPlayerDetails(player)}
-                                className="w-8 h-8 rounded-lg bg-gray-50 text-gray-500 flex items-center justify-center hover:bg-cyan-aura hover:text-white transition-colors"
+                                className="w-8 h-8 rounded-lg bg-gray-50 text-gray-500 hover:bg-cyan-aura hover:text-white"
                             >
-                                <Icon name="visibility" />
-                            </button>
+                                View details
+                            </Button>
                         </div>
 
                         <div className="grid grid-cols-3 gap-2 mb-3">
