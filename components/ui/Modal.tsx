@@ -29,7 +29,7 @@
 import { ReactNode } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
-import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
 
 interface ModalProps {
   open: boolean;
@@ -78,12 +78,15 @@ export default function Modal({ open, onOpenChange, title, description, children
               )}
             </div>
             <Dialog.Close asChild>
-              <button
-                aria-label="ปิด"
-                className="shrink-0 rounded-lg p-1 text-[var(--mode-text-subtle)] hover:bg-[var(--mode-bg-card-hover)] hover:text-[var(--mode-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-primary)]"
+              <Button
+                variant="ghost"
+                size="sm"
+                iconOnly
+                icon="close"
+                className="shrink-0 text-[var(--mode-text-subtle)] hover:text-[var(--mode-text-primary)]"
               >
-                <Icon name="close" />
-              </button>
+                ปิด
+              </Button>
             </Dialog.Close>
           </div>
           {children}

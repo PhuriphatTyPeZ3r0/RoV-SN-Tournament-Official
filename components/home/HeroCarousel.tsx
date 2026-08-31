@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
 
 interface HeroCarouselProps {
     activeSeason: number;
@@ -84,26 +85,28 @@ export default function HeroCarousel({ activeSeason }: HeroCarouselProps) {
             </div>
 
             {/* Left Control Arrow */}
-            <button
+            <Button
+                variant="ghost"
                 onClick={handlePrev}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/30 hover:bg-black/60 border border-white/10 hover:border-white/30 backdrop-blur-md text-white flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 z-30 cursor-pointer shadow-md"
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/30 hover:bg-black/60 border border-white/10 hover:border-white/30 backdrop-blur-md text-white p-0 opacity-0 group-hover:opacity-100 z-30 shadow-md"
                 aria-label="Previous Slide"
             >
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                 </svg>
-            </button>
+            </Button>
 
             {/* Right Control Arrow */}
-            <button
+            <Button
+                variant="ghost"
                 onClick={handleNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/30 hover:bg-black/60 border border-white/10 hover:border-white/30 backdrop-blur-md text-white flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100 z-30 cursor-pointer shadow-md"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/30 hover:bg-black/60 border border-white/10 hover:border-white/30 backdrop-blur-md text-white p-0 opacity-0 group-hover:opacity-100 z-30 shadow-md"
                 aria-label="Next Slide"
             >
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
-            </button>
+            </Button>
 
             {/* Indicator Dots */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center z-30">
@@ -111,10 +114,11 @@ export default function HeroCarousel({ activeSeason }: HeroCarouselProps) {
                     // Button itself is padded to a >=24x24px tap target (WCAG
                     // 2.5.8) — the visible pill is a smaller inner span so
                     // the design doesn't change, only the hit area.
-                    <button
+                    <Button
+                        variant="ghost"
                         key={idx}
                         onClick={() => setCurrentSlide(idx)}
-                        className="p-2.5 flex items-center justify-center cursor-pointer"
+                        className="p-2.5 rounded-full"
                         aria-label={`Go to slide ${idx + 1}`}
                     >
                         <span
@@ -124,7 +128,7 @@ export default function HeroCarousel({ activeSeason }: HeroCarouselProps) {
                                     : 'w-1.5 bg-white/40 hover:bg-white/70'
                             }`}
                         />
-                    </button>
+                    </Button>
                 ))}
             </div>
         </div>

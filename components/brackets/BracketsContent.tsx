@@ -6,6 +6,7 @@ import ShareButton from '@/components/common/ShareButton';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import SeasonSelector from '@/components/common/SeasonSelector';
 import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
 
 interface Match {
     id: string;
@@ -175,28 +176,30 @@ export default function BracketsContent({ matches, teamLogos, tournaments, curre
                     <>
                         {/* Mobile Tab Switcher */}
                         <div className="flex md:hidden bg-white/60 p-1.5 rounded-2xl mb-8 border border-gray-200/50 shadow-sm backdrop-blur-md max-w-md mx-auto">
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={() => setActiveStage('semi')}
-                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 ${
                                     activeStage === 'semi'
-                                        ? 'bg-uefa-dark text-white shadow-md shadow-uefa-dark/15 scale-100'
+                                        ? 'bg-uefa-dark text-white shadow-md shadow-uefa-dark/15 scale-100 hover:bg-uefa-dark'
                                         : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100/50'
                                 }`}
                             >
                                 <Icon name="account_tree" />
                                 {t.brackets.semiFinals}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="ghost"
                                 onClick={() => setActiveStage('finals')}
-                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                className={`flex-1 py-3 text-xs font-bold font-display uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 ${
                                     activeStage === 'finals'
-                                        ? 'bg-uefa-dark text-white shadow-md shadow-uefa-dark/15 scale-100'
+                                        ? 'bg-uefa-dark text-white shadow-md shadow-uefa-dark/15 scale-100 hover:bg-uefa-dark'
                                         : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100/50'
                                 }`}
                             >
                                 <Icon name="emoji_events" />
                                 {t.brackets.finals}
-                            </button>
+                            </Button>
                         </div>
 
                         <div className="w-full overflow-x-auto md:overflow-x-auto py-4 md:py-8 scrollbar-thin">

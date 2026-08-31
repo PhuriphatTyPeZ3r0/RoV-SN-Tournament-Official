@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ShareButton from '@/components/common/ShareButton';
 import Icon from '@/components/common/Icon';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
 
 export default function FormatContent() {
     const { t, language } = useLanguage();
@@ -37,30 +38,32 @@ export default function FormatContent() {
                 {/* Tab Switcher */}
                 <div className="flex justify-center mb-8">
                     <div className="inline-flex bg-gray-100 p-1 rounded-2xl border border-gray-200/50 shadow-inner gap-1">
-                        <button
+                        <Button
+                            variant="ghost"
                             type="button"
                             onClick={() => setActiveTab('format')}
-                            className={`py-2.5 px-5 md:px-6 rounded-xl font-display font-bold text-xs tracking-wide transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                            className={`py-2.5 px-5 md:px-6 rounded-xl font-display font-bold text-xs tracking-wide flex items-center gap-2 ${
                                 activeTab === 'format'
-                                    ? 'bg-uefa-dark text-white shadow-md'
+                                    ? 'bg-uefa-dark text-white shadow-md hover:bg-uefa-dark'
                                     : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'
                             }`}
                         >
                             <span>🏆</span>
                             <span>{isThai ? 'รูปแบบและกติกาแข่ง' : 'Format & Rules'}</span>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="ghost"
                             type="button"
                             onClick={() => setActiveTab('tutorial')}
-                            className={`py-2.5 px-5 md:px-6 rounded-xl font-display font-bold text-xs tracking-wide transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                            className={`py-2.5 px-5 md:px-6 rounded-xl font-display font-bold text-xs tracking-wide flex items-center gap-2 ${
                                 activeTab === 'tutorial'
-                                    ? 'bg-uefa-dark text-white shadow-md'
+                                    ? 'bg-uefa-dark text-white shadow-md hover:bg-uefa-dark'
                                     : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'
                             }`}
                         >
                             <span>📖</span>
                             <span>{isThai ? 'คู่มือสอนการใช้งานระบบ' : 'User Guide & Tutorial'}</span>
-                        </button>
+                        </Button>
                     </div>
                 </div>
 

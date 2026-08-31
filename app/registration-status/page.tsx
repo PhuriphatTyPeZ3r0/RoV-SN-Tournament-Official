@@ -6,6 +6,7 @@ import { createClient } from '@/utils/supabase/client';
 import { signOutAction } from '@/features/auth/actions';
 import Link from 'next/link';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
 
 export default function RegistrationStatusPage() {
     const { t } = useLanguage();
@@ -52,9 +53,9 @@ export default function RegistrationStatusPage() {
                             </p>
                             <div className="pt-4">
                                 <form action={signOutAction}>
-                                    <button type="submit" className="text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors">
+                                    <Button type="submit" variant="ghost" className="text-gray-400 hover:text-gray-600 hover:bg-transparent font-medium text-sm p-0 h-auto">
                                         <Icon name="logout" className="mr-2" /> {t.regStatus.logout}
-                                    </button>
+                                    </Button>
                                 </form>
                             </div>
                         </div>
@@ -74,9 +75,9 @@ export default function RegistrationStatusPage() {
                                     {t.regStatus.registerAgain}
                                 </Link>
                                 <form action={signOutAction}>
-                                    <button type="submit" className="text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors">
+                                    <Button type="submit" variant="ghost" className="text-gray-400 hover:text-gray-600 hover:bg-transparent font-medium text-sm p-0 h-auto">
                                         {t.regStatus.logout}
-                                    </button>
+                                    </Button>
                                 </form>
                             </div>
                         </div>

@@ -11,6 +11,8 @@
  *   <Button variant="outline" size="sm">Cancel</Button>
  *   <Button variant="destructive" loading>Deleting…</Button>
  *   <Button icon="save">Save changes</Button>
+ *   <Button iconOnly icon="close">ปิด</Button>   ← square button, icon only —
+ *     children stays required and becomes the accessible name (sr-only)
  */
 
 import { ButtonHTMLAttributes, forwardRef } from 'react';
@@ -27,6 +29,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   /** Leading icon, rendered via the shared Icon component. */
   icon?: IconName;
+  /**
+   * Renders as a square icon-only button (no visible label) — `icon` is
+   * required in this mode. `children` is still required and stays in the
+   * DOM as the accessible name via a visually-hidden span, so every
+   * icon-only button keeps a real screen-reader label instead of relying
+   * on callers to remember `aria-label`.
+   */
+  iconOnly?: boolean;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -48,8 +58,16 @@ const sizeClasses: Record<ButtonSize, string> = {
   lg: 'text-base px-6 py-3 gap-2.5 rounded-xl',
 };
 
+// Square padding sized so the rendered icon (default opsz 24) plus padding
+// clears WCAG 2.5.8's 24×24px touch-target minimum at every size.
+const iconOnlySizeClasses: Record<ButtonSize, string> = {
+  sm: 'p-1.5 rounded-lg',
+  md: 'p-2 rounded-lg',
+  lg: 'p-2.5 rounded-lg',
+};
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'md', loading = false, icon, disabled, className, children, ...rest },
+  { variant = 'primary', size = 'md', loading = false, icon, iconOnly = false, disabled, className, children, ...rest },
   ref,
 ) {
   return (
@@ -62,7 +80,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--mode-bg-page)]',
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none',
         variantClasses[variant],
-        sizeClasses[size],
+        iconOnly ? iconOnlySizeClasses[size] : sizeClasses[size],
         className,
       )}
       {...rest}
@@ -72,7 +90,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       ) : icon ? (
         <Icon name={icon} />
       ) : null}
-      {children}
+      {iconOnly ? <span className="sr-only">{children}</span> : children}
     </button>
   );
 });

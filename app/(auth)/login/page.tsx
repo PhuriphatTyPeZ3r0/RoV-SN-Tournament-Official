@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { loginStudentAction } from '@/features/auth/student-actions';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 export default function StudentLoginPage() {
     const { t, language, changeLanguage } = useLanguage();
@@ -60,20 +62,21 @@ export default function StudentLoginPage() {
             <div className="bg-uefa-dark p-6 text-center relative">
                 {/* Language Switcher */}
                 <div className="absolute top-4 right-4">
-                    <button
+                    <Button
+                        variant="ghost"
                         onClick={toggleLanguage}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all group cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20"
                     >
-                        <img 
-                            alt={language} 
-                            loading="lazy" 
-                            width="20" 
-                            height="15" 
-                            className="w-5 h-auto rounded shadow-sm" 
-                            src={language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png"} 
+                        <img
+                            alt={language}
+                            loading="lazy"
+                            width="20"
+                            height="15"
+                            className="w-5 h-auto rounded shadow-sm"
+                            src={language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png"}
                         />
                         <span className="text-white text-xs font-bold uppercase">{language}</span>
-                    </button>
+                    </Button>
                 </div>
 
                 <h1 className="text-white font-display text-2xl font-bold tracking-wider uppercase mt-4">
@@ -91,14 +94,15 @@ export default function StudentLoginPage() {
                 )}
 
                 {/* Google Login Button */}
-                <button 
+                <Button
+                    variant="ghost"
                     onClick={handleOAuthLogin}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl hover:bg-gray-50 hover:shadow-sm transition-all mb-6 disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl hover:bg-gray-50 hover:shadow-sm mb-6"
                 >
                     <img src="/images/icons/google.svg" className="w-5 h-5" alt="Google" />
                     {t.loginPage.googleBtn}
-                </button>
+                </Button>
 
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
@@ -109,10 +113,10 @@ export default function StudentLoginPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-gray-700 text-sm mb-2 font-medium">{t.loginPage.emailLabel}</label>
-                        <input
+                        <Input
                             type="email"
                             name="email"
-                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                             placeholder="student@school.edu"
                             required
                             disabled={loading}
@@ -121,27 +125,27 @@ export default function StudentLoginPage() {
 
                     <div>
                         <label className="block text-gray-700 text-sm mb-2 font-medium">{t.loginPage.passwordLabel}</label>
-                        <input
+                        <Input
                             type="password"
                             name="password"
-                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                             placeholder="••••••••"
                             required
                             disabled={loading}
                         />
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? (
                             <><Icon name="progress_activity" spin /> {t.loginPage.signingIn}</>
                         ) : (
                             t.loginPage.signInBtn
                         )}
-                    </button>
+                    </Button>
                 </form>
 
                 <p className="text-center text-sm text-gray-500 mt-6">

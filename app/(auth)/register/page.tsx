@@ -7,6 +7,8 @@ import Image from 'next/image';
 import { createClient } from '@/utils/supabase/client';
 import { registerStudentAction } from '@/features/auth/student-actions';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 const GRADES = [
     '1/1', '1/2', '1/3', '1/4',
@@ -67,9 +69,10 @@ export default function StudentRegisterPage() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl w-full mx-auto my-8 relative">
             {/* Language Toggle */}
             <div className="absolute top-4 right-4 z-10">
-                <button
+                <Button
+                    variant="ghost"
                     onClick={() => changeLanguage(language === 'th' ? 'en' : 'th')}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all group"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20"
                 >
                     <Image
                         src={language === 'th' ? "https://flagcdn.com/w40/th.png" : "https://flagcdn.com/w40/gb.png"}
@@ -80,7 +83,7 @@ export default function StudentRegisterPage() {
                         unoptimized
                     />
                     <span className="text-white text-xs font-bold uppercase">{language}</span>
-                </button>
+                </Button>
             </div>
 
             <div className="bg-uefa-dark p-6 text-center">
@@ -99,14 +102,15 @@ export default function StudentRegisterPage() {
                 )}
 
                 {/* Google Login Button */}
-                <button 
+                <Button
+                    variant="ghost"
                     onClick={handleOAuthLogin}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-50 mb-6"
+                    className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 font-medium py-3 px-4 rounded-xl hover:bg-gray-50 mb-6"
                 >
                     <img src="/images/icons/google.svg" className="w-5 h-5" alt="Google" />
                     {t.register.signUpGoogle}
-                </button>
+                </Button>
 
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
@@ -121,10 +125,10 @@ export default function StudentRegisterPage() {
                     <div className="space-y-4">
                         <div>
                             <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.email}</label>
-                            <input
+                            <Input
                                 type="email"
                                 name="email"
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                 placeholder="student@school.edu"
                                 required
                                 disabled={loading}
@@ -134,10 +138,10 @@ export default function StudentRegisterPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.password}</label>
-                                <input
+                                <Input
                                     type="password"
                                     name="password"
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                     placeholder="••••••••"
                                     required
                                     disabled={loading}
@@ -145,10 +149,10 @@ export default function StudentRegisterPage() {
                             </div>
                             <div>
                                 <label className="block text-gray-700 text-sm mb-2 font-medium">{t.register.confirmPassword}</label>
-                                <input
+                                <Input
                                     type="password"
                                     name="confirmPassword"
-                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus:border-cyan-aura focus:ring-1 focus:ring-cyan-aura outline-none transition-all"
+                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura"
                                     placeholder="••••••••"
                                     required
                                     disabled={loading}
@@ -157,17 +161,17 @@ export default function StudentRegisterPage() {
                         </div>
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-uefa-dark text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-uefa-dark/90 hover:shadow-lg flex items-center justify-center gap-2 mt-4"
                     >
                         {loading ? (
                             <><Icon name="progress_activity" spin /> {t.register.processing}</>
                         ) : (
                             t.register.submit
                         )}
-                    </button>
+                    </Button>
                 </form>
 
                 <p className="text-center text-sm text-gray-500 mt-6">

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import TeamLogo from '@/components/common/TeamLogo';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import type { PlayerStat, Hero, PlayerHeroStat } from '@/types';
+import Button from '@/components/ui/Button';
 
 interface PlayerStatsContentProps {
     playerStats: PlayerStat[];
@@ -383,12 +384,15 @@ export default function PlayerStatsContent({ playerStats, playerHeroStats, heroe
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm animate-fadeIn">
                     <div className="bg-uefa-dark text-white rounded-3xl border border-white/10 w-full max-w-lg overflow-hidden shadow-2xl relative">
                         {/* Close button */}
-                        <button
+                        <Button
+                            variant="ghost"
+                            iconOnly
+                            icon="close"
                             onClick={() => setSelectedPlayer(null)}
-                            className="absolute top-4 right-4 text-white/50 hover:text-white bg-white/5 hover:bg-white/15 w-8 h-8 rounded-full flex items-center justify-center transition-all z-10"
+                            className="absolute top-4 right-4 text-white/50 hover:text-white bg-white/5 hover:bg-white/15 w-8 h-8 rounded-full z-10"
                         >
-                            <Icon name="close" className="text-lg" />
-                        </button>
+                            {language === 'th' ? 'ปิด' : 'Close'}
+                        </Button>
 
                         {/* Modal Header */}
                         <div className="p-6 border-b border-white/10 bg-gradient-to-r from-deep-space to-uefa-dark flex items-center gap-4">

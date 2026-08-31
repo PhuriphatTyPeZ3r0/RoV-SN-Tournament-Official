@@ -20,6 +20,8 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { createClient } from '@/utils/supabase/client';
 import { compressImage } from '@/utils/image-compression';
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 const ROLE_OPTIONS = ['dark_slayer', 'abyssal_dragon', 'mid_lane', 'jungle', 'support'] as const;
 
@@ -529,13 +531,14 @@ export default function StudentInfoPage() {
                             )}
                         </div>
                         {registration.status === 'rejected' && (
-                            <button
+                            <Button
+                                variant="destructive"
                                 onClick={handleResubmit}
                                 disabled={submitting}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-all shadow cursor-pointer"
+                                className="px-4 py-2 rounded-xl text-xs shadow"
                             >
                                 {submitting ? t.team.loading : (language === 'th' ? 'ส่งใบสมัครใหม่' : 'Resubmit')}
-                            </button>
+                            </Button>
                         )}
                     </div>
                 )}
@@ -638,30 +641,36 @@ export default function StudentInfoPage() {
                             <div className="mt-4 bg-gray-50 p-3 rounded-2xl border border-gray-100">
                                 {isEditingStatus ? (
                                     <div className="flex gap-2 items-center">
-                                        <input
+                                        <Input
                                             type="text"
                                             value={customStatus}
                                             onChange={(e) => setCustomStatus(e.target.value)}
                                             placeholder={language === 'th' ? 'ทำอะไรอยู่ตอนนี้...' : 'What is your status...'}
-                                            className="flex-1 min-w-0 bg-white px-2.5 py-1.5 rounded-xl border border-gray-200 text-xs focus:ring-2 focus:ring-cyan-aura outline-none"
+                                            className="flex-1 min-w-0 bg-white px-2.5 py-1.5 rounded-xl border border-gray-200 text-xs focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                                             maxLength={50}
                                         />
-                                        <button 
+                                        <Button
+                                            variant="ghost"
+                                            iconOnly
+                                            icon="done"
                                             onClick={handleSaveStatus}
                                             disabled={savingStatus}
-                                            className="flex-shrink-0 p-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                                            className="flex-shrink-0 p-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg"
                                         >
-                                            <Icon name="done" className="text-xs" />
-                                        </button>
-                                        <button 
+                                            {language === 'th' ? 'บันทึกสถานะ' : 'Save status'}
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            iconOnly
+                                            icon="close"
                                             onClick={() => {
                                                 setCustomStatus(profile?.custom_status || '');
                                                 setIsEditingStatus(false);
                                             }}
-                                            className="flex-shrink-0 p-1.5 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-lg transition-colors cursor-pointer"
+                                            className="flex-shrink-0 p-1.5 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-lg"
                                         >
-                                            <Icon name="close" className="text-xs" />
-                                        </button>
+                                            {language === 'th' ? 'ยกเลิก' : 'Cancel'}
+                                        </Button>
                                     </div>
                                 ) : (
                                     <div className="flex justify-between items-center group/status">
@@ -671,12 +680,15 @@ export default function StudentInfoPage() {
                                                 {profile?.custom_status || (language === 'th' ? 'ไม่มีสถานะตั้งไว้' : 'No status set')}
                                             </span>
                                         </div>
-                                        <button 
+                                        <Button
+                                            variant="ghost"
+                                            iconOnly
+                                            icon="edit"
                                             onClick={() => setIsEditingStatus(true)}
-                                            className="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-600 transition-all cursor-pointer opacity-0 group-hover/status:opacity-100"
+                                            className="p-1 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-600 opacity-0 group-hover/status:opacity-100"
                                         >
-                                            <Icon name="edit" className="text-xs" />
-                                        </button>
+                                            {language === 'th' ? 'แก้ไขสถานะ' : 'Edit status'}
+                                        </Button>
                                     </div>
                                 )}
                             </div>
@@ -738,32 +750,35 @@ export default function StudentInfoPage() {
                     <div className="lg:col-span-2 space-y-6">
                         {/* Tab Switcher */}
                         <div className="flex bg-gray-100 p-1 rounded-2xl border border-gray-200/50 shadow-inner gap-0.5 sm:gap-0">
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={() => setActiveTab('reg')}
-                                className={`flex-1 py-3 px-2 sm:px-4 rounded-xl font-display font-bold text-xs tracking-wide transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${activeTab === 'reg' ? 'bg-uefa-dark text-white shadow-md' : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'}`}
+                                className={`flex-1 py-3 px-2 sm:px-4 rounded-xl font-display font-bold text-xs tracking-wide flex items-center justify-center gap-2 ${activeTab === 'reg' ? 'bg-uefa-dark text-white shadow-md hover:bg-uefa-dark' : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'}`}
                                 title={language === 'th' ? 'ข้อมูลนักเรียน' : 'Student Details'}
                             >
                                 <Icon name="badge" className="text-base" />
                                 <span className="hidden sm:inline">{language === 'th' ? 'ข้อมูลนักเรียน' : 'Student Details'}</span>
-                            </button>
+                            </Button>
                             {isVerified && gamingProfile && (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => setActiveTab('game')}
-                                    className={`flex-1 py-3 px-2 sm:px-4 rounded-xl font-display font-bold text-xs tracking-wide transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${activeTab === 'game' ? 'bg-uefa-dark text-white shadow-md' : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'}`}
+                                    className={`flex-1 py-3 px-2 sm:px-4 rounded-xl font-display font-bold text-xs tracking-wide flex items-center justify-center gap-2 ${activeTab === 'game' ? 'bg-uefa-dark text-white shadow-md hover:bg-uefa-dark' : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'}`}
                                     title={language === 'th' ? 'ข้อมูลโปรไฟล์เกม' : 'Esports Profile'}
                                 >
                                     <Icon name="sports_esports" className="text-base" />
                                     <span className="hidden sm:inline">{language === 'th' ? 'ข้อมูลโปรไฟล์เกม' : 'Esports Profile'}</span>
-                                </button>
+                                </Button>
                             )}
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={() => setActiveTab('settings')}
-                                className={`flex-1 py-3 px-2 sm:px-4 rounded-xl font-display font-bold text-xs tracking-wide transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${activeTab === 'settings' ? 'bg-uefa-dark text-white shadow-md' : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'}`}
+                                className={`flex-1 py-3 px-2 sm:px-4 rounded-xl font-display font-bold text-xs tracking-wide flex items-center justify-center gap-2 ${activeTab === 'settings' ? 'bg-uefa-dark text-white shadow-md hover:bg-uefa-dark' : 'text-gray-500 hover:text-uefa-dark hover:bg-gray-200/50'}`}
                                 title={language === 'th' ? 'ความปลอดภัย & บัญชี' : 'Security & Settings'}
                             >
                                 <Icon name="security" className="text-base" />
                                 <span className="hidden sm:inline">{language === 'th' ? 'ความปลอดภัย & บัญชี' : 'Security & Settings'}</span>
-                            </button>
+                            </Button>
                         </div>
 
                         {/* Tab Panel Content */}
@@ -800,20 +815,20 @@ export default function StudentInfoPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{language === 'th' ? 'ชื่อ (ภาษาไทย)' : 'First Name (TH)'}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editFirstNameTh}
                                                         onChange={(e) => setEditFirstNameTh(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{language === 'th' ? 'นามสกุล (ภาษาไทย)' : 'Last Name (TH)'}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editLastNameTh}
                                                         onChange={(e) => setEditLastNameTh(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                             </div>
@@ -821,20 +836,20 @@ export default function StudentInfoPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{language === 'th' ? 'ชื่อ (ภาษาอังกฤษ)' : 'First Name (EN)'}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editFirstNameEn}
                                                         onChange={(e) => setEditFirstNameEn(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{language === 'th' ? 'นามสกุล (ภาษาอังกฤษ)' : 'Last Name (EN)'}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editLastNameEn}
                                                         onChange={(e) => setEditLastNameEn(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                             </div>
@@ -842,21 +857,21 @@ export default function StudentInfoPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{t.studentInfo.studentIdLabel}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editStudentId}
                                                         onChange={(e) => setEditStudentId(e.target.value)}
                                                         maxLength={5}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{language === 'th' ? 'ระดับชั้น (เช่น ม.4/2)' : 'Grade (e.g. Grade 10/2)'}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editGrade}
                                                         onChange={(e) => setEditGrade(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                             </div>
@@ -864,43 +879,44 @@ export default function StudentInfoPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
                                                     <label htmlFor="edit-openid" className="block text-xs font-bold text-gray-700">OpenID</label>
-                                                    <input
+                                                    <Input
                                                         id="edit-openid"
                                                         type="text"
                                                         value={editOpenId}
                                                         onChange={(e) => setEditOpenId(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="block text-xs font-bold text-gray-700">{t.studentInfo.ignLabel}</label>
-                                                    <input
+                                                    <Input
                                                         type="text"
                                                         value={editInGameName}
                                                         onChange={(e) => setEditInGameName(e.target.value)}
-                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-cyan-aura focus:ring-4 focus:ring-cyan-aura/10 outline-none transition-all font-medium text-sm"
+                                                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-cyan-aura/10 focus-visible:ring-offset-0 focus:border-cyan-aura font-medium text-sm"
                                                     />
                                                 </div>
                                             </div>
 
                                             <div className="flex gap-3 pt-3 border-t border-gray-100">
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     onClick={handleCancelEditReg}
-                                                    className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-all text-sm cursor-pointer"
+                                                    className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 text-sm"
                                                 >
                                                     {t.studentInfo.cancelBtn}
-                                                </button>
-                                                <button
+                                                </Button>
+                                                <Button
                                                     onClick={handleSaveReg}
                                                     disabled={savingReg}
-                                                    className="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 text-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                                                    className="flex-1 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold shadow-md hover:shadow-lg active:scale-95 text-sm flex items-center justify-center gap-1.5"
                                                 >
                                                     {savingReg ? (
                                                         <><Icon name="progress_activity" spin /> {t.team.loading}</>
                                                     ) : (
                                                         <><Icon name="save" /> {t.studentInfo.saveBtn}</>
                                                     )}
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                     ) : (
@@ -918,14 +934,15 @@ export default function StudentInfoPage() {
                                                         <p className="text-gray-500 text-xs mt-0.5">{t.studentInfo.interestThanks}</p>
                                                     </div>
                                                 </div>
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     onClick={handleStartEditReg}
-                                                    className="px-2.5 sm:px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-700 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                                    className="px-2.5 sm:px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-700 flex items-center justify-center gap-1.5"
                                                     title={language === 'th' ? 'แก้ไขข้อมูล' : 'Edit Details'}
                                                 >
                                                     <Icon name="edit" className="text-xs sm:text-[10px]" />
                                                     <span className="hidden sm:inline">{language === 'th' ? 'แก้ไขข้อมูล' : 'Edit Details'}</span>
-                                                </button>
+                                                </Button>
                                             </div>
 
                                             <div className="space-y-4">
@@ -975,46 +992,46 @@ export default function StudentInfoPage() {
                                             {/* Rank */}
                                             <div className="space-y-1.5">
                                                 <label className="block text-xs font-bold text-gray-700">{t.studentInfo.rankLabel}</label>
-                                                <select
+                                                <Select
                                                     value={editRank || ''}
                                                     onChange={(e) => setEditRank(e.target.value || null)}
-                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none bg-white text-sm font-medium"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 bg-white text-sm font-medium"
                                                 >
                                                     <option value="">{t.studentInfo.rankPlaceholder}</option>
                                                     {ROV_RANKS.map(rank => (
                                                         <option key={rank} value={rank}>{rank}</option>
                                                     ))}
-                                                </select>
+                                                </Select>
                                             </div>
 
                                             {/* Primary Role (Main) */}
                                             <div className="space-y-1.5">
                                                 <label className="block text-xs font-bold text-gray-700">{t.studentInfo.mainRoleLabel}</label>
-                                                <select
+                                                <Select
                                                     value={editLineupRole || ''}
                                                     onChange={(e) => setEditLineupRole(e.target.value || null)}
-                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none bg-white text-sm font-medium"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 bg-white text-sm font-medium"
                                                 >
                                                     <option value="">{t.studentInfo.rolePlaceholder}</option>
                                                     {ROLE_OPTIONS.map(role => (
                                                         <option key={role} value={role}>{getRoleName(role)}</option>
                                                     ))}
-                                                </select>
+                                                </Select>
                                             </div>
 
                                             {/* Secondary Role */}
                                             <div className="space-y-1.5">
                                                 <label className="block text-xs font-bold text-gray-700">{t.studentInfo.secondaryRoleLabel}</label>
-                                                <select
+                                                <Select
                                                     value={editSecondaryRole || ''}
                                                     onChange={(e) => setEditSecondaryRole(e.target.value || null)}
-                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none bg-white text-sm font-medium"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 bg-white text-sm font-medium"
                                                 >
                                                     <option value="">{t.studentInfo.rolePlaceholder}</option>
                                                     {ROLE_OPTIONS.map(role => (
                                                         <option key={role} value={role}>{getRoleName(role)}</option>
                                                     ))}
-                                                </select>
+                                                </Select>
                                             </div>
 
                                             {/* Top Heroes */}
@@ -1024,15 +1041,21 @@ export default function StudentInfoPage() {
                                                     {editTopHeroes.map(hero => (
                                                         <span key={hero} className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold shadow-sm">
                                                             {hero}
-                                                            <button onClick={() => handleRemoveHero(hero)} className="hover:text-red-500 transition-colors cursor-pointer">
-                                                                <Icon name="close" className="text-[10px]" />
-                                                            </button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                iconOnly
+                                                                icon="close"
+                                                                onClick={() => handleRemoveHero(hero)}
+                                                                className="p-0 h-auto min-h-0 min-w-0 rounded-none hover:bg-transparent hover:text-red-500"
+                                                            >
+                                                                {language === 'th' ? `นำ ${hero} ออก` : `Remove ${hero}`}
+                                                            </Button>
                                                         </span>
                                                     ))}
                                                 </div>
                                                 {editTopHeroes.length < 3 && (
                                                     <div className="relative">
-                                                        <input
+                                                        <Input
                                                             type="text"
                                                             value={heroSearch}
                                                             onChange={(e) => {
@@ -1050,34 +1073,36 @@ export default function StudentInfoPage() {
                                                                 }
                                                             }}
                                                             placeholder={t.studentInfo.topHeroesPlaceholder}
-                                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none text-sm font-medium"
+                                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 text-sm font-medium"
                                                         />
                                                         {showHeroDropdown && heroSearch.trim() && (
                                                             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
                                                                 {filteredHeroes.slice(0, 10).map(hero => (
-                                                                    <button
+                                                                    <Button
                                                                         key={hero.id}
+                                                                        variant="ghost"
                                                                         type="button"
                                                                         onMouseDown={(e) => {
                                                                             e.preventDefault();
                                                                             handleAddHero(hero.name);
                                                                         }}
-                                                                        className="w-full text-left px-4 py-2.5 hover:bg-purple-50 text-sm transition-colors cursor-pointer"
+                                                                        className="w-full justify-start text-left rounded-none px-4 py-2.5 hover:bg-purple-50 text-sm"
                                                                     >
                                                                         {hero.name}
-                                                                    </button>
+                                                                    </Button>
                                                                 ))}
-                                                                <button
+                                                                <Button
+                                                                    variant="ghost"
                                                                     type="button"
                                                                     onMouseDown={(e) => {
                                                                         e.preventDefault();
                                                                         handleAddHero(heroSearch.trim());
                                                                     }}
-                                                                    className="w-full text-left px-4 py-2.5 hover:bg-purple-50 text-sm font-semibold text-purple-600 border-t border-gray-100 transition-colors flex items-center justify-between cursor-pointer"
+                                                                    className="w-full text-left rounded-none px-4 py-2.5 hover:bg-purple-50 text-sm font-semibold text-purple-600 border-t border-gray-100 flex items-center justify-between"
                                                                 >
                                                                     <span>{language === 'th' ? `เพิ่ม "${heroSearch.trim()}"` : `Add "${heroSearch.trim()}"`}</span>
                                                                     <Icon name="add" className="text-xs" />
-                                                                </button>
+                                                                </Button>
                                                             </div>
                                                         )}
                                                     </div>
@@ -1090,14 +1115,15 @@ export default function StudentInfoPage() {
                                                     <label className="block text-xs font-bold text-gray-700">
                                                         {language === 'th' ? 'ประสบการณ์การแข่งขัน' : 'Competition Experience'}
                                                     </label>
-                                                    <button
+                                                    <Button
+                                                        variant="ghost"
                                                         type="button"
                                                         onClick={() => setExperiences([...experiences, { id: Math.random().toString(), role: '', startYear: '', endYear: '' }])}
-                                                        className="text-xs font-bold text-purple-600 hover:text-purple-700 transition-colors flex items-center gap-1 cursor-pointer"
+                                                        className="text-xs font-bold text-purple-600 hover:text-purple-700 hover:bg-transparent flex items-center gap-1 p-0 h-auto"
                                                     >
                                                         <Icon name="add" className="text-xs" />
                                                         {language === 'th' ? 'เพิ่มประสบการณ์' : 'Add Experience'}
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                                 
                                                 <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
@@ -1105,7 +1131,7 @@ export default function StudentInfoPage() {
                                                         <div key={exp.id} className="flex gap-2 items-start bg-gray-50 p-3 rounded-xl border border-gray-100 relative group/exp">
                                                             <div className="flex-1 space-y-2">
                                                                 {/* Role Input */}
-                                                                <input
+                                                                <Input
                                                                     type="text"
                                                                     value={exp.role}
                                                                     onChange={(e) => {
@@ -1114,12 +1140,12 @@ export default function StudentInfoPage() {
                                                                         setExperiences(updated);
                                                                     }}
                                                                     placeholder={language === 'th' ? 'บทบาท / รายการแข่งขัน (เช่น RoV SN Tournament Producer)' : 'Role / Tournament (e.g. RoV SN Tournament Producer)'}
-                                                                    className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none text-xs font-medium bg-white"
+                                                                    className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 text-xs font-medium bg-white"
                                                                 />
                                                                 
                                                                 {/* Years Inputs */}
                                                                 <div className="grid grid-cols-2 gap-2">
-                                                                    <input
+                                                                    <Input
                                                                         type="text"
                                                                         value={exp.startYear}
                                                                         onChange={(e) => {
@@ -1128,9 +1154,9 @@ export default function StudentInfoPage() {
                                                                             setExperiences(updated);
                                                                         }}
                                                                         placeholder={language === 'th' ? 'ปีเริ่มต้น (ค.ศ.) เช่น 2023' : 'Start Year (e.g. 2023)'}
-                                                                        className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none text-xs font-medium bg-white"
+                                                                        className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 text-xs font-medium bg-white"
                                                                     />
-                                                                    <input
+                                                                    <Input
                                                                         type="text"
                                                                         value={exp.endYear}
                                                                         onChange={(e) => {
@@ -1139,24 +1165,26 @@ export default function StudentInfoPage() {
                                                                             setExperiences(updated);
                                                                         }}
                                                                         placeholder={language === 'th' ? 'ปีสิ้นสุด (ค.ศ. - ไม่บังคับ)' : 'End Year (e.g. 2024 - Optional)'}
-                                                                        className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/10 outline-none text-xs font-medium bg-white"
+                                                                        className="w-full px-3 py-1.5 rounded-lg border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 text-xs font-medium bg-white"
                                                                     />
                                                                 </div>
                                                             </div>
                                                             
                                                             {/* Remove Button */}
                                                             {experiences.length > 1 && (
-                                                                <button
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    iconOnly
+                                                                    icon="delete"
                                                                     type="button"
                                                                     onClick={() => {
                                                                         const updated = experiences.filter(item => item.id !== exp.id);
                                                                         setExperiences(updated);
                                                                     }}
-                                                                    className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors cursor-pointer self-start"
-                                                                    title="Remove"
+                                                                    className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg self-start"
                                                                 >
-                                                                    <Icon name="delete" className="text-sm" />
-                                                                </button>
+                                                                    Remove
+                                                                </Button>
                                                             )}
                                                         </div>
                                                     ))}
@@ -1172,45 +1200,46 @@ export default function StudentInfoPage() {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="space-y-1.5">
                                                         <label className="block text-xs font-bold text-gray-700">{t.team.playerNicknameLabel}</label>
-                                                        <input
+                                                        <Input
                                                             type="text"
                                                             value={editNickname || ''}
                                                             onChange={(e) => setEditNickname(e.target.value || null)}
                                                             placeholder={t.team.playerNicknamePlaceholder}
-                                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none bg-white text-sm font-medium"
+                                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 bg-white text-sm font-medium"
                                                         />
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <label className="block text-xs font-bold text-gray-700">{t.team.playerPhoneLabel}</label>
-                                                        <input
+                                                        <Input
                                                             type="text"
                                                             value={editPhone || ''}
                                                             onChange={(e) => setEditPhone(e.target.value || null)}
                                                             placeholder={t.team.playerPhonePlaceholder}
-                                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 outline-none bg-white text-sm font-medium"
+                                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus-visible:ring-purple-500/10 focus-visible:ring-offset-0 focus:border-purple-500 bg-white text-sm font-medium"
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className="flex gap-3 pt-3 border-t border-gray-100">
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     onClick={handleCancelEdit}
-                                                    className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-all text-sm cursor-pointer"
+                                                    className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 text-sm"
                                                 >
                                                     {t.studentInfo.cancelBtn}
-                                                </button>
-                                                <button
+                                                </Button>
+                                                <Button
                                                     onClick={handleSaveProfile}
                                                     disabled={savingProfile}
-                                                    className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 text-sm flex items-center justify-center gap-2 cursor-pointer"
+                                                    className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold shadow-md hover:shadow-lg active:scale-95 text-sm flex items-center justify-center gap-2"
                                                 >
                                                     {savingProfile ? (
                                                         <><Icon name="progress_activity" spin /> {t.team.loading}</>
                                                     ) : (
                                                         <><Icon name="save" /> {t.studentInfo.saveBtn}</>
                                                     )}
-                                                </button>
+                                                </Button>
                                             </div>
                                         </div>
                                     ) : (
@@ -1228,14 +1257,15 @@ export default function StudentInfoPage() {
                                                         <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{t.studentInfo.gamingProfileDesc}</p>
                                                     </div>
                                                 </div>
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     onClick={handleStartEdit}
-                                                    className="px-2.5 sm:px-4 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                                    className="px-2.5 sm:px-4 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center justify-center gap-1.5"
                                                     title={t.studentInfo.editBtn}
                                                 >
                                                     <Icon name="edit" className="text-xs sm:text-[10px]" />
                                                     <span className="hidden sm:inline">{t.studentInfo.editBtn}</span>
-                                                </button>
+                                                </Button>
                                             </div>
 
                                             <div className="grid grid-cols-3 gap-3">
@@ -1295,14 +1325,14 @@ export default function StudentInfoPage() {
                                             </div>
 
                                             {/* CTA: Go to Team */}
-                                            <button
+                                            <Button
                                                 onClick={() => router.push('/team')}
-                                                className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-black shadow-lg shadow-cyan-500/10 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm cursor-pointer"
+                                                className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-black shadow-lg shadow-cyan-500/10 hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
                                             >
                                                 <Icon name="groups" />
                                                 {t.studentInfo.goToTeamBtn}
                                                 <Icon name="arrow_forward" className="text-xs ml-1" />
-                                            </button>
+                                            </Button>
                                         </div>
                                     )}
                                 </>
@@ -1348,13 +1378,14 @@ export default function StudentInfoPage() {
 
                                     {/* Logout Button placed at the very bottom of Settings Card */}
                                     <div className="pt-6 border-t border-gray-100">
-                                        <button
+                                        <Button
+                                            variant="ghost"
                                             onClick={handleLogout}
-                                            className="w-full py-4 rounded-2xl border-2 border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 font-black transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm cursor-pointer shadow-sm"
+                                            className="w-full py-4 rounded-2xl border-2 border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 font-black active:scale-[0.98] flex items-center justify-center gap-2 text-sm shadow-sm"
                                         >
                                             <Icon name="logout" />
                                             {language === 'th' ? 'ออกจากระบบบัญชี' : 'Logout from Account'}
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             )}
@@ -1377,21 +1408,22 @@ export default function StudentInfoPage() {
                 <p className="text-gray-500 text-sm mb-6">
                     {language === 'th' ? 'กรุณากรอกข้อมูลส่วนตัวและอัปโหลดหลักฐานเพื่อเข้าสู่การแข่งขัน' : 'Please complete onboarding and upload verification document to participate.'}
                 </p>
-                <button
+                <Button
                     onClick={() => router.push('/register/onboarding')}
-                    className="w-full py-3 rounded-lg bg-cyan-aura hover:bg-cyan-aura/90 text-uefa-dark font-bold transition-all hover:scale-105 shadow-md shadow-cyan-aura/20"
+                    className="w-full py-3 rounded-lg bg-cyan-aura hover:bg-cyan-aura/90 text-uefa-dark font-bold hover:scale-105 shadow-md shadow-cyan-aura/20"
                 >
                     {language === 'th' ? 'ไปหน้าลงทะเบียน' : 'Go to Onboarding'}
-                </button>
+                </Button>
             </div>
 
-            <button
+            <Button
+                variant="ghost"
                 onClick={handleLogout}
-                className="w-full py-3.5 rounded-xl border border-red-200 hover:border-red-300 bg-red-50/50 hover:bg-red-50 text-red-600 hover:text-red-700 font-bold transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-sm cursor-pointer"
+                className="w-full py-3.5 rounded-xl border border-red-200 hover:border-red-300 bg-red-50/50 hover:bg-red-50 text-red-600 hover:text-red-700 font-bold active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
             >
                 <Icon name="logout" />
                 {language === 'th' ? 'ออกจากระบบ' : 'Logout'}
-            </button>
+            </Button>
         </div>
     );
 }

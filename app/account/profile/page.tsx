@@ -6,6 +6,8 @@ import { createClient } from '@/utils/supabase/client';
 import { updateProfileAction } from '@/features/auth/profile-actions';
 import Link from 'next/link';
 import Image from 'next/image';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 export default function UserProfilePage() {
     const [profile, setProfile] = useState<any>(null);
@@ -62,24 +64,24 @@ export default function UserProfilePage() {
                                 )}
                             </div>
                             <input type="hidden" name="avatarUrl" value={profile?.avatar_url || ''} />
-                            <button type="button" className="text-xs font-bold text-cyan-600 hover:underline uppercase tracking-widest">Change Photo</button>
+                            <Button type="button" variant="ghost" className="text-xs font-bold text-cyan-600 hover:underline hover:bg-transparent uppercase tracking-widest p-0 h-auto">Change Photo</Button>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="fullName" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Full Name</label>
-                                <input id="fullName" name="fullName" type="text" defaultValue={profile?.full_name || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <Input id="fullName" name="fullName" type="text" defaultValue={profile?.full_name || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-visible:ring-cyan-aura/20 focus-visible:ring-offset-0 focus:border-cyan-aura" />
                             </div>
                             <div>
                                 <label htmlFor="nickname" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Nickname</label>
-                                <input id="nickname" name="nickname" type="text" defaultValue={profile?.nickname || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <Input id="nickname" name="nickname" type="text" defaultValue={profile?.nickname || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-visible:ring-cyan-aura/20 focus-visible:ring-offset-0 focus:border-cyan-aura" />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="phone" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Phone Number</label>
-                                <input id="phone" name="phone" type="tel" defaultValue={profile?.phone || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <Input id="phone" name="phone" type="tel" defaultValue={profile?.phone || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-visible:ring-cyan-aura/20 focus-visible:ring-offset-0 focus:border-cyan-aura" />
                             </div>
                             <div>
                                 {/* Not a <label> — this isn't a form control, just a read-only value */}
@@ -92,9 +94,9 @@ export default function UserProfilePage() {
 
                         <div className="pt-6 flex gap-4">
                             <Link href="/settings" className="flex-1 bg-gray-100 text-gray-600 text-center py-4 rounded-xl font-bold hover:bg-gray-200 transition-all">Account Settings</Link>
-                            <button type="submit" disabled={updating} className="flex-[2] bg-uefa-dark text-white py-4 rounded-xl font-bold hover:bg-black transition-all disabled:opacity-50">
+                            <Button type="submit" disabled={updating} className="flex-[2] bg-uefa-dark text-white py-4 rounded-xl font-bold hover:bg-black">
                                 {updating ? 'Saving...' : 'Save Changes'}
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>

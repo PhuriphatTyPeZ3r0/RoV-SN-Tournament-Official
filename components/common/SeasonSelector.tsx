@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Icon from '@/components/common/Icon';
+import Button from '@/components/ui/Button';
 
 interface Tournament {
     id: string;
@@ -36,14 +37,15 @@ export default function SeasonSelector({ tournaments, currentSeason }: SeasonSel
     return (
         <div className="relative inline-block text-left z-30 font-sans">
             <div>
-                <button
+                <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => setIsOpen(!isOpen)}
                     // px-3/py-1.5/rounded-lg match ShareButton and the
                     // "Qualifies" badge that sit next to this in the page
                     // header toolbar — was px-3.5/py-2.5/rounded-xl, a
                     // visibly taller button than its siblings.
-                    className="inline-flex justify-between items-center w-32 rounded-lg border border-white/15 bg-white/10 backdrop-blur-md px-3 py-1.5 text-sm font-semibold text-white shadow-md hover:bg-white/15 hover:border-cyan-aura/40 focus:outline-none focus:ring-2 focus:ring-cyan-aura focus:ring-offset-2 focus:ring-offset-uefa-dark transition-all duration-300 cursor-pointer"
+                    className="inline-flex justify-between items-center w-32 rounded-lg border border-white/15 bg-white/10 backdrop-blur-md px-3 py-1.5 text-sm font-semibold text-white shadow-md hover:bg-white/15 hover:border-cyan-aura/40 focus-visible:ring-cyan-aura focus-visible:ring-offset-uefa-dark"
                     aria-expanded="true"
                     aria-haspopup="true"
                 >
@@ -52,7 +54,7 @@ export default function SeasonSelector({ tournaments, currentSeason }: SeasonSel
                         <span className="truncate max-w-[70px]">{selectedTournament ? selectedTournament.season : currentSeason}</span>
                     </div>
                     <Icon name="expand_more" className={`ml-1 text-xs transition-transform duration-300 ${isOpen ? 'rotate-180 text-cyan-aura' : 'text-white/60'}`} />
-                </button>
+                </Button>
             </div>
 
             {isOpen && (
@@ -71,12 +73,13 @@ export default function SeasonSelector({ tournaments, currentSeason }: SeasonSel
                     >
                         <div className="py-1 bg-gradient-to-b from-white/5 to-transparent" role="none">
                             {tournaments.map((t) => (
-                                <button
+                                <Button
                                     key={t.id}
+                                    variant="ghost"
                                     onClick={() => handleSelect(t.season)}
-                                    className={`w-full text-left px-4 py-3 text-sm transition-all flex items-center justify-between cursor-pointer ${
-                                        t.season === currentSeason 
-                                            ? 'bg-cyan-aura/15 text-cyan-aura font-bold border-l-2 border-cyan-aura pl-3' 
+                                    className={`w-full text-left px-4 py-3 text-sm rounded-none justify-between ${
+                                        t.season === currentSeason
+                                            ? 'bg-cyan-aura/15 text-cyan-aura font-bold border-l-2 border-cyan-aura pl-3'
                                             : 'text-white/80 hover:bg-white/5 hover:text-white pl-4'
                                     }`}
                                     role="menuitem"
@@ -85,7 +88,7 @@ export default function SeasonSelector({ tournaments, currentSeason }: SeasonSel
                                     {t.season === currentSeason && (
                                         <Icon name="done" className="text-xs text-cyan-aura" />
                                     )}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
