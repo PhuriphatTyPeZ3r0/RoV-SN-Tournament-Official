@@ -8,6 +8,8 @@ import GameStatsModal from '@/components/admin/GameStatsModal';
 import { getMatchesAction } from '@/features/tournament/actions';
 import { updateMatchResultAction, saveGameStatsAction, getMatchStatsAction } from '@/features/tournament/result-actions';
 import { apiService } from '@/lib/api-client';
+import Button from '@/components/ui/Button';
+import { Input, Select } from '@/components/ui/Input';
 
 // Types
 interface PlayerStats {
@@ -250,19 +252,20 @@ export default function AdminResultsPage() {
                         <label className="block text-sm font-bold text-uefa-dark mb-3 uppercase tracking-wider">{t.admin.resultsPage.selectDay}</label>
                         <div className="flex flex-wrap gap-2">
                             {days.map(d => (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     key={d}
                                     onClick={() => {
                                         setSelectedDay(d);
                                         setSelectedMatch(null);
                                     }}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedDay === d
-                                        ? 'bg-uefa-dark text-white shadow-lg'
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold ${selectedDay === d
+                                        ? 'bg-uefa-dark text-white shadow-lg hover:bg-uefa-dark'
                                         : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                                         }`}
                                 >
                                     DAY {d}
-                                </button>
+                                </Button>
                             ))}
                             {days.length === 0 && <p className="text-gray-400 text-xs italic">{t.admin.resultsPage.noSchedule}</p>}
                         </div>
@@ -272,16 +275,17 @@ export default function AdminResultsPage() {
                         <h3 className="font-bold text-uefa-dark mb-4 uppercase tracking-wider text-sm">{t.admin.resultsPage.selectMatch}</h3>
                         <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
                             {currentMatches.map((match) => (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     key={match.id}
                                     onClick={() => handleMatchSelect(match)}
-                                    className={`w-full p-4 rounded-2xl border transition-all text-left relative overflow-hidden group ${selectedMatch?.id === match.id
-                                        ? 'border-cyan-aura bg-cyan-50/50'
+                                    className={`w-full p-4 rounded-2xl border justify-start text-left relative overflow-hidden group ${selectedMatch?.id === match.id
+                                        ? 'border-cyan-aura bg-cyan-50/50 hover:bg-cyan-50/50'
                                         : 'border-gray-100 hover:bg-gray-50'
                                         }`}
                                 >
                                     {selectedMatch?.id === match.id && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-cyan-aura"></div>}
-                                    <div className="flex flex-col gap-1">
+                                    <div className="flex flex-col gap-1 w-full">
                                         <div className="flex justify-between items-center text-xs font-bold uppercase tracking-tighter">
                                             <span className={selectedMatch?.id === match.id ? 'text-blue-600' : 'text-gray-600'}>{match.team_blue_name}</span>
                                             <span className="text-gray-300">VS</span>
@@ -292,7 +296,7 @@ export default function AdminResultsPage() {
                                             {match.winner_name && <span className="text-green-500"><Icon name="check_circle" /> Result Set</span>}
                                         </div>
                                     </div>
-                                </button>
+                                </Button>
                             ))}
                             {currentMatches.length === 0 && (
                                 <p className="text-center text-gray-400 py-8 text-sm italic">{t.admin.resultsPage.noMatchesToday}</p>
@@ -331,25 +335,25 @@ export default function AdminResultsPage() {
                                 <div className="flex justify-center items-center gap-6 bg-gray-50 p-8 rounded-3xl border border-gray-100">
                                     <div className="text-center">
                                         <label htmlFor="score-blue" className="block text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Score Blue</label>
-                                        <input
+                                        <Input
                                             id="score-blue"
                                             type="number"
                                             min="0"
                                             value={formData.scoreBlue}
                                             onChange={(e) => setFormData({ ...formData, scoreBlue: parseInt(e.target.value) || 0 })}
-                                            className="w-24 h-24 text-5xl font-black text-center bg-white border-2 border-blue-100 rounded-3xl text-uefa-dark focus:border-blue-500 outline-none transition-all shadow-sm"
+                                            className="w-24 h-24 text-5xl font-black text-center bg-white border-2 border-blue-100 rounded-3xl text-uefa-dark focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500 shadow-sm"
                                         />
                                     </div>
                                     <div className="text-3xl font-black text-gray-300 mt-6">-</div>
                                     <div className="text-center">
                                         <label htmlFor="score-red" className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-3">Score Red</label>
-                                        <input
+                                        <Input
                                             id="score-red"
                                             type="number"
                                             min="0"
                                             value={formData.scoreRed}
                                             onChange={(e) => setFormData({ ...formData, scoreRed: parseInt(e.target.value) || 0 })}
-                                            className="w-24 h-24 text-5xl font-black text-center bg-white border-2 border-red-100 rounded-3xl text-uefa-dark focus:border-red-500 outline-none transition-all shadow-sm"
+                                            className="w-24 h-24 text-5xl font-black text-center bg-white border-2 border-red-100 rounded-3xl text-uefa-dark focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-red-500 shadow-sm"
                                         />
                                     </div>
                                 </div>
@@ -382,29 +386,30 @@ export default function AdminResultsPage() {
                                     
                                     <div className="flex gap-4 overflow-x-auto pb-4">
                                         {[0, 1, 2, 3, 4].map((i) => (
-                                            <button
+                                            <Button
+                                                variant="ghost"
                                                 key={i}
                                                 type="button"
                                                 onClick={() => openStatsModal(i)}
-                                                className={`flex-shrink-0 w-28 h-20 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${gameStats[i]
-                                                    ? 'bg-green-50 border-green-500 text-green-700'
+                                                className={`flex-shrink-0 w-28 h-20 rounded-2xl border-2 flex-col gap-1 ${gameStats[i]
+                                                    ? 'bg-green-50 border-green-500 text-green-700 hover:bg-green-50'
                                                     : 'bg-white border-dashed border-gray-200 text-gray-400 hover:border-cyan-aura hover:text-cyan-aura'
                                                     }`}
                                             >
                                                 <span className="text-[10px] font-black uppercase">Game {i + 1}</span>
                                                 <Icon name={gameStats[i] ? 'check_circle' : 'add_circle'} className="text-lg" />
                                                 {gameStats[i]?.winner && <span className="text-[8px] font-bold uppercase">{gameStats[i].winner} Win</span>}
-                                            </button>
+                                            </Button>
                                         ))}
                                     </div>
 
                                     {/* MVP Selection for Match */}
                                     <div className="mt-6 bg-gray-50 p-5 rounded-2xl border border-gray-100">
                                         <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.admin.resultsPage.matchMvpLabel}</label>
-                                        <select
+                                        <Select
                                             value={formData.mvp}
                                             onChange={(e) => setFormData({ ...formData, mvp: e.target.value })}
-                                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura text-sm font-bold text-uefa-dark"
+                                            className="w-full bg-white border border-gray-200 px-4 py-3 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm font-bold text-uefa-dark"
                                         >
                                             <option value="">{t.admin.resultsPage.selectMvpPlaceholder}</option>
                                             {allPlayers.filter(p => p.team === selectedMatch.team_blue_name || p.team === selectedMatch.team_red_name).map((p) => (
@@ -412,26 +417,27 @@ export default function AdminResultsPage() {
                                                     {p.name} {p.inGameName ? `(${p.inGameName})` : ''} [{p.team}]
                                                 </option>
                                             ))}
-                                        </select>
+                                        </Select>
                                     </div>
                                 </div>
 
                                 {/* Actions */}
                                 <div className="flex gap-4">
-                                    <button
+                                    <Button
+                                        variant="ghost"
                                         type="button"
                                         onClick={() => setSelectedMatch(null)}
-                                        className="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition-all uppercase text-sm tracking-widest"
+                                        className="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 uppercase text-sm tracking-widest"
                                     >
                                         {t.admin.resultsPage.cancelBtn}
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         type="submit"
                                         disabled={isPending}
-                                        className="flex-[2] py-4 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-black rounded-2xl shadow-xl shadow-cyan-aura/20 hover:shadow-cyan-aura/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase text-sm tracking-widest disabled:opacity-50"
+                                        className="flex-[2] py-4 bg-gradient-to-r from-cyan-aura to-blue-600 text-white font-black rounded-2xl shadow-xl shadow-cyan-aura/20 hover:shadow-cyan-aura/40 hover:scale-[1.02] active:scale-[0.98] uppercase text-sm tracking-widest"
                                     >
                                         {isPending ? <><Icon name="progress_activity" spin className="mr-2" /> {t.admin.resultsPage.saving}</> : t.admin.resultsPage.saveAllBtn}
-                                    </button>
+                                    </Button>
                                 </div>
                             </form>
                         </div>
