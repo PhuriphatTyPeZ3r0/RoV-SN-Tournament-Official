@@ -6,6 +6,8 @@ import { createClient } from '@/utils/supabase/client';
 import { updateAccountSettingsAction } from '@/features/auth/profile-actions';
 import { signOutAction } from '@/features/auth/actions';
 import Link from 'next/link';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 export default function UserSettingsPage() {
     const [profile, setProfile] = useState<any>(null);
@@ -59,7 +61,7 @@ export default function UserSettingsPage() {
                             <h3 className="text-uefa-dark font-bold text-sm uppercase tracking-wider">Email & Security</h3>
                             <div>
                                 <label htmlFor="email" className="block text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Email Address</label>
-                                <input id="email" name="email" type="email" defaultValue={user?.email || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-aura/20 focus:border-cyan-aura transition-all" />
+                                <Input id="email" name="email" type="email" defaultValue={user?.email || ''} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-visible:ring-cyan-aura/20 focus-visible:ring-offset-0 focus:border-cyan-aura" />
                                 <p className="text-[10px] text-gray-400 mt-2 italic">* Changing email requires verification</p>
                             </div>
                         </div>
@@ -83,16 +85,16 @@ export default function UserSettingsPage() {
 
                         <div className="space-y-4 pt-4 border-t border-gray-100">
                             <h3 className="text-red-600 font-bold text-sm uppercase tracking-wider">Danger Zone</h3>
-                            <button type="button" className="w-full text-left text-red-600 font-bold text-sm hover:underline">Delete Account</button>
+                            <Button type="button" variant="ghost" className="w-full justify-start text-left text-red-600 font-bold text-sm hover:underline hover:bg-transparent p-0 h-auto">Delete Account</Button>
                         </div>
 
                         <div className="pt-6 flex gap-4">
                             <form action={signOutAction} className="flex-1">
-                                <button type="submit" className="w-full bg-red-50 text-red-600 py-4 rounded-xl font-bold hover:bg-red-100 transition-all">Sign Out</button>
+                                <Button type="submit" variant="ghost" className="w-full bg-red-50 text-red-600 py-4 rounded-xl font-bold hover:bg-red-100">Sign Out</Button>
                             </form>
-                            <button type="submit" disabled={updating} className="flex-[2] bg-uefa-dark text-white py-4 rounded-xl font-bold hover:bg-black transition-all disabled:opacity-50">
+                            <Button type="submit" disabled={updating} className="flex-[2] bg-uefa-dark text-white py-4 rounded-xl font-bold hover:bg-black">
                                 {updating ? 'Saving...' : 'Save Settings'}
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>
