@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import TeamLogo from '@/components/common/TeamLogo';
 import Image from 'next/image';
 import { useLanguage } from '@/components/providers/LanguageProvider';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 export default function AdminTeamsPage() {
     const { t, language } = useLanguage();
@@ -86,12 +88,12 @@ export default function AdminTeamsPage() {
 
                 <div className="relative w-full sm:w-64">
                     <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
-                    <input
+                    <Input
                         type="text"
                         placeholder={t.admin.teamsPage.search}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura outline-none text-sm transition-all"
+                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm"
                     />
                 </div>
             </div>
@@ -100,12 +102,13 @@ export default function AdminTeamsPage() {
             {tournaments.length > 0 && (
                 <div className="flex border-b border-gray-200 gap-6 px-2">
                     {tournaments.slice().reverse().map((t) => (
-                        <button
+                        <Button
+                            variant="ghost"
                             key={t.id}
                             onClick={() => setSelectedSeason(t.season)}
-                            className={`pb-3 text-sm font-display font-bold relative transition-all cursor-pointer flex items-center gap-2 ${
-                                selectedSeason === t.season 
-                                    ? 'text-cyan-aura font-black' 
+                            className={`pb-3 rounded-none text-sm font-display font-bold relative hover:bg-transparent flex items-center gap-2 ${
+                                selectedSeason === t.season
+                                    ? 'text-cyan-aura font-black'
                                     : 'text-gray-400 hover:text-uefa-dark'
                             }`}
                         >
@@ -118,7 +121,7 @@ export default function AdminTeamsPage() {
                             {selectedSeason === t.season && (
                                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-aura rounded-full" />
                             )}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             )}
@@ -181,30 +184,36 @@ export default function AdminTeamsPage() {
                         <div className="p-4 bg-gray-50/50 border-t border-gray-50 flex items-center justify-between gap-2">
                             {team.tournamentStatus !== 'completed' ? (
                                 <div className="flex gap-1">
-                                    <button 
+                                    <Button
+                                        variant="ghost"
+                                        iconOnly
+                                        icon="hourglass_top"
                                         onClick={() => handleUpdateStatus(team.id, 'incomplete')}
-                                        className={`p-2 rounded-lg text-xs font-bold transition-all ${team.status === 'incomplete' ? 'bg-yellow-500 text-white shadow-sm' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
-                                        title="Set Incomplete"
+                                        className={`p-2 text-xs font-bold ${team.status === 'incomplete' ? 'bg-yellow-500 text-white shadow-sm hover:bg-yellow-500' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
                                         disabled={isPending}
                                     >
-                                        <Icon name="hourglass_top" />
-                                    </button>
-                                    <button 
+                                        Set Incomplete
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        iconOnly
+                                        icon="check_circle"
                                         onClick={() => handleUpdateStatus(team.id, 'ready')}
-                                        className={`p-2 rounded-lg text-xs font-bold transition-all ${team.status === 'ready' ? 'bg-blue-500 text-white shadow-sm' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
-                                        title="Set Ready"
+                                        className={`p-2 text-xs font-bold ${team.status === 'ready' ? 'bg-blue-500 text-white shadow-sm hover:bg-blue-500' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
                                         disabled={isPending}
                                     >
-                                        <Icon name="check_circle" />
-                                    </button>
-                                    <button 
+                                        Set Ready
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        iconOnly
+                                        icon="security"
                                         onClick={() => handleUpdateStatus(team.id, 'approved')}
-                                        className={`p-2 rounded-lg text-xs font-bold transition-all ${team.status === 'approved' ? 'bg-green-500 text-white shadow-sm' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
-                                        title="Approve Team"
+                                        className={`p-2 text-xs font-bold ${team.status === 'approved' ? 'bg-green-500 text-white shadow-sm hover:bg-green-500' : 'bg-white text-gray-400 hover:bg-gray-100 border border-gray-200'}`}
                                         disabled={isPending}
                                     >
-                                        <Icon name="security" />
-                                    </button>
+                                        Approve Team
+                                    </Button>
                                 </div>
                             ) : (
                                 <div className="text-[11px] text-gray-400 font-bold italic flex items-center gap-1.5 px-3 py-1.5 bg-gray-100/80 border border-gray-200/50 rounded-xl">
@@ -213,7 +222,8 @@ export default function AdminTeamsPage() {
                                 </div>
                             )}
 
-                            <button 
+                            <Button
+                                variant="ghost"
                                 onClick={() => {
                                     Swal.fire({
                                         title: team.name,
@@ -242,10 +252,10 @@ export default function AdminTeamsPage() {
                                         showCloseButton: true
                                     });
                                 }}
-                                className="px-4 py-2 bg-white hover:bg-uefa-dark hover:text-white border border-gray-200 rounded-lg text-xs font-bold transition-all"
+                                className="px-4 py-2 bg-white hover:bg-uefa-dark hover:text-white border border-gray-200 rounded-lg text-xs font-bold"
                             >
                                 <Icon name="info" className="mr-1" /> {t.admin.teamsPage.viewDetails}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 ))}
