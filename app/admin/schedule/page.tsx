@@ -6,6 +6,8 @@ import Swal from 'sweetalert2';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import { apiService } from '@/lib/api-client';
 import { ScheduleItem, MatchResult } from '@/types'; // Adjust imports
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 // Helper function to convert day number to display label
 const getDayLabel = (day: number): string => {
@@ -162,25 +164,25 @@ export default function AdminSchedulePage() {
                         {schedule.length} {t.admin.schedulePage.matchDays} • {schedule.reduce((acc, d) => acc + (d.matches?.length || 0), 0)} {t.admin.schedulePage.totalMatches}
                     </p>
                 </div>
-                <button
+                <Button
                     onClick={handleRefresh}
-                    className="px-4 py-2 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500 transition-colors"
+                    className="px-4 py-2 bg-cyan-aura text-white rounded-lg hover:bg-cyan-500"
                 >
                     <Icon name="refresh" className="mr-2" />
                     {t.admin.schedulePage.refresh}
-                </button>
+                </Button>
             </div>
 
             {/* Search */}
             <div className="bg-white rounded-xl shadow-sm p-4">
                 <div className="relative">
                     <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
+                    <Input
                         type="text"
                         placeholder={t.admin.teamsPage.search}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-aura focus:border-transparent"
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-transparent"
                     />
                 </div>
             </div>
@@ -199,15 +201,16 @@ export default function AdminSchedulePage() {
                                 const isCompleted = stats.completed === stats.total && stats.total > 0;
 
                                 return (
-                                    <button
+                                    <Button
+                                        variant="ghost"
                                         key={day.day}
                                         onClick={() => setSelectedDay(day.day)}
-                                        className={`w-full p-3 rounded-lg text-left transition-all ${selectedDay === day.day
-                                            ? 'bg-cyan-aura text-white shadow-md'
+                                        className={`w-full p-3 rounded-lg justify-start flex-col items-start ${selectedDay === day.day
+                                            ? 'bg-cyan-aura text-white shadow-md hover:bg-cyan-aura'
                                             : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
                                             }`}
                                     >
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between w-full">
                                             <span className="font-bold">{getDayLabel(day.day)}</span>
                                             {isCompleted ? (
                                                 <Icon name="check_circle" className={selectedDay === day.day ? 'text-white' : 'text-green-500'} />
@@ -220,7 +223,7 @@ export default function AdminSchedulePage() {
                                         <div className={`text-xs mt-1 ${selectedDay === day.day ? 'text-white/70' : 'text-gray-400'}`}>
                                             {stats.total} {t.admin.schedulePage.matches}
                                         </div>
-                                    </button>
+                                    </Button>
                                 );
                             })}
                         </div>
