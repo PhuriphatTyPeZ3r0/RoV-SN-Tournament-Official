@@ -1,6 +1,7 @@
 import { BaseService } from './BaseService';
 import { DatabaseError } from '../errors';
 import { TeamService } from './TeamService';
+import { withTimeout, SERVICE_TIMEOUT_MS } from '@/lib/utils';
 
 export interface ScheduleMatch {
     blue: string;
@@ -38,124 +39,136 @@ export class MatchService extends BaseService {
      * Get brackets data for the knockout stage (match_day >= 10)
      */
     public static async getBracketsPageData(season?: number) {
-        try {
-            const supabase = this.getPublicClient();
-            const [tournamentId, teamLogos] = await Promise.all([
-                this.getActiveTournamentId(season),
-                TeamService.getTeamLogos()
-            ]);
+        return withTimeout(
+            (async () => {
+                try {
+                    const supabase = this.getPublicClient();
+                    const [tournamentId, teamLogos] = await Promise.all([
+                        this.getActiveTournamentId(season),
+                        TeamService.getTeamLogos()
+                    ]);
 
-            let matches: any[] = [];
-            if (tournamentId) {
-                const { data, error } = await supabase
-                    .from('tbl_mch_matches')
-                    .select('*')
-                    .eq('tournament_id', tournamentId)
-                    .gte('match_day', 10)
-                    .order('match_day', { ascending: true })
-                    .order('created_at', { ascending: true });
+                    let matches: any[] = [];
+                    if (tournamentId) {
+                        const { data, error } = await supabase
+                            .from('tbl_mch_matches')
+                            .select('*')
+                            .eq('tournament_id', tournamentId)
+                            .gte('match_day', 10)
+                            .order('match_day', { ascending: true })
+                            .order('created_at', { ascending: true });
 
-                if (error) throw error;
-                matches = data || [];
-            }
+                        if (error) throw error;
+                        matches = data || [];
+                    }
 
-            return { matches, teamLogos };
-        } catch (error: any) {
-            console.error(`Failed to fetch brackets page data: ${error.message}`);
-            return { matches: [], teamLogos: {} };
-        }
+                    return { matches, teamLogos };
+                } catch (error: any) {
+                    console.error(`Failed to fetch brackets page data: ${error.message}`);
+                    return { matches: [], teamLogos: {} };
+                }
+            })(),
+            SERVICE_TIMEOUT_MS,
+            { matches: [], teamLogos: {} },
+        );
     }
 
     /**
      * Get fixtures and results page data for a season
      */
     public static async getFixturesPageData(season?: number) {
-        try {
-            const supabase = this.getPublicClient();
-            const [tournamentId, teamLogos] = await Promise.all([
-                this.getActiveTournamentId(season),
-                TeamService.getTeamLogos()
-            ]);
+        return withTimeout(
+            (async () => {
+                try {
+                    const supabase = this.getPublicClient();
+                    const [tournamentId, teamLogos] = await Promise.all([
+                        this.getActiveTournamentId(season),
+                        TeamService.getTeamLogos()
+                    ]);
 
-            let schedule: ScheduleRound[] = [];
-            let results: Record<string, unknown>[] = [];
+                    let schedule: ScheduleRound[] = [];
+                    let results: Record<string, unknown>[] = [];
 
-            if (tournamentId) {
-                // 1. Fetch all matches for the tournament
-                const { data: matchData, error: matchError } = await supabase
-                    .from('tbl_mch_matches')
-                    .select('*')
-                    .eq('tournament_id', tournamentId)
-                    .order('match_day', { ascending: true })
-                    .order('created_at', { ascending: true });
+                    if (tournamentId) {
+                        // 1. Fetch all matches for the tournament
+                        const { data: matchData, error: matchError } = await supabase
+                            .from('tbl_mch_matches')
+                            .select('*')
+                            .eq('tournament_id', tournamentId)
+                            .order('match_day', { ascending: true })
+                            .order('created_at', { ascending: true });
 
-                if (matchError) throw matchError;
+                        if (matchError) throw matchError;
 
-                if (matchData && matchData.length > 0) {
-                    const roundsMap = new Map<number, ScheduleRound>();
-                    
-                    matchData.forEach(m => {
-                        if (!roundsMap.has(m.match_day)) {
-                            roundsMap.set(m.match_day, {
-                                day: m.match_day,
-                                matches: []
+                        if (matchData && matchData.length > 0) {
+                            const roundsMap = new Map<number, ScheduleRound>();
+
+                            matchData.forEach(m => {
+                                if (!roundsMap.has(m.match_day)) {
+                                    roundsMap.set(m.match_day, {
+                                        day: m.match_day,
+                                        matches: []
+                                    });
+                                }
+                                roundsMap.get(m.match_day)!.matches.push({
+                                    blue: m.team_blue_name,
+                                    red: m.team_red_name,
+                                });
                             });
+
+                            schedule = Array.from(roundsMap.values()).sort((a, b) => a.day - b.day);
+
+                            results = matchData
+                                .filter(m => m.score_blue !== 0 || m.score_red !== 0 || m.is_bye_win || m.winner_name)
+                                .map((m) => ({
+                                    _id: m.id,
+                                    matchId: m.match_key,
+                                    matchDay: m.match_day,
+                                    teamBlue: m.team_blue_name,
+                                    teamRed: m.team_red_name,
+                                    scoreBlue: m.score_blue,
+                                    scoreRed: m.score_red,
+                                    winner: m.winner_name,
+                                    loser: m.loser_name,
+                                    isByeWin: m.is_bye_win,
+                                    createdAt: m.created_at,
+                                }));
+                        } else {
+                            // Fallback to legacy schedules table
+                            const { data: schedData, error: schedError } = await supabase
+                                .from('tbl_trn_schedules')
+                                .select('*')
+                                .eq('tournament_id', tournamentId)
+                                .order('created_at', { ascending: false })
+                                .limit(1)
+                                .maybeSingle();
+
+                            if (schedError) throw schedError;
+
+                            if (schedData?.schedule_data) {
+                                const rawData = typeof schedData.schedule_data === 'string' ? JSON.parse(schedData.schedule_data) : schedData.schedule_data;
+                                const raw = Array.isArray(rawData) ? rawData : [];
+
+                                schedule = (raw as any[]).map((round) => ({
+                                    day: round.day,
+                                    date: round.date,
+                                    matches: (round.matches || []).map((m: any) => ({
+                                        blue: m.teamA || m.blue || 'Unknown',
+                                        red: m.teamB || m.red || 'Unknown',
+                                        date: m.date,
+                                    })),
+                                })).sort((a, b) => a.day - b.day);
+                            }
                         }
-                        roundsMap.get(m.match_day)!.matches.push({
-                            blue: m.team_blue_name,
-                            red: m.team_red_name,
-                        });
-                    });
-
-                    schedule = Array.from(roundsMap.values()).sort((a, b) => a.day - b.day);
-
-                    results = matchData
-                        .filter(m => m.score_blue !== 0 || m.score_red !== 0 || m.is_bye_win || m.winner_name)
-                        .map((m) => ({
-                            _id: m.id,
-                            matchId: m.match_key,
-                            matchDay: m.match_day,
-                            teamBlue: m.team_blue_name,
-                            teamRed: m.team_red_name,
-                            scoreBlue: m.score_blue,
-                            scoreRed: m.score_red,
-                            winner: m.winner_name,
-                            loser: m.loser_name,
-                            isByeWin: m.is_bye_win,
-                            createdAt: m.created_at,
-                        }));
-                } else {
-                    // Fallback to legacy schedules table
-                    const { data: schedData, error: schedError } = await supabase
-                        .from('tbl_trn_schedules')
-                        .select('*')
-                        .eq('tournament_id', tournamentId)
-                        .order('created_at', { ascending: false })
-                        .limit(1)
-                        .maybeSingle();
-
-                    if (schedError) throw schedError;
-
-                    if (schedData?.schedule_data) {
-                        const rawData = typeof schedData.schedule_data === 'string' ? JSON.parse(schedData.schedule_data) : schedData.schedule_data;
-                        const raw = Array.isArray(rawData) ? rawData : [];
-                        
-                        schedule = (raw as any[]).map((round) => ({
-                            day: round.day,
-                            date: round.date,
-                            matches: (round.matches || []).map((m: any) => ({
-                                blue: m.teamA || m.blue || 'Unknown',
-                                red: m.teamB || m.red || 'Unknown',
-                                date: m.date,
-                            })),
-                        })).sort((a, b) => a.day - b.day);
                     }
+                    return { schedule, results, teamLogos };
+                } catch (error: any) {
+                    console.error(`Failed to fetch fixtures page data: ${error.message}`);
+                    return { schedule: [], results: [], teamLogos: {} };
                 }
-            }
-            return { schedule, results, teamLogos };
-        } catch (error: any) {
-            console.error(`Failed to fetch fixtures page data: ${error.message}`);
-            return { schedule: [], results: [], teamLogos: {} };
-        }
+            })(),
+            SERVICE_TIMEOUT_MS,
+            { schedule: [], results: [], teamLogos: {} },
+        );
     }
 }
