@@ -6,6 +6,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Shared ceiling for page-load-blocking Supabase calls (app/layout.tsx and
+ * every lib/services/*.ts page-data method) — an unreachable or degraded
+ * Supabase must never hang page render past this.
+ */
+export const SERVICE_TIMEOUT_MS = 5000;
+
+/**
  * Races a promise against a timeout, resolving to `fallback` only if the
  * promise doesn't settle in time — for request-blocking server-side data
  * fetches (e.g. layout/metadata calls that gate every page render) where
