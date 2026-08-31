@@ -23,6 +23,9 @@ import { useLanguage } from '@/components/providers/LanguageProvider';
 import { getRankImageUrl, getPositionImageUrl } from '@/features/teams/constants';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
+import Button from '@/components/ui/Button';
+import { Input, Textarea } from '@/components/ui/Input';
+import Modal, { ModalFooter } from '@/components/ui/Modal';
 
 export default function TeamPage() {
     const { t, language } = useLanguage();
@@ -374,22 +377,22 @@ export default function TeamPage() {
                     <form onSubmit={handleCreateTeam} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">{t.team.teamNameLabel}</label>
-                            <input
+                            <Input
                                 type="text"
                                 value={teamName}
                                 onChange={(e) => setTeamName(e.target.value)}
                                 placeholder={t.team.teamNamePlaceholder}
                                 required
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none"
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
                             />
                         </div>
-                        <button
+                        <Button
                             type="submit"
                             disabled={actionLoading || !teamName}
-                            className="w-full bg-uefa-dark text-white font-bold py-3 rounded-lg hover:bg-uefa-dark/90 transition-all disabled:opacity-50"
+                            className="w-full bg-uefa-dark text-white font-bold py-3 rounded-lg hover:bg-uefa-dark/90"
                         >
                             {actionLoading ? t.team.loading : t.team.createBtn}
-                        </button>
+                        </Button>
                     </form>
                 </div>
 
@@ -404,22 +407,22 @@ export default function TeamPage() {
                     <form onSubmit={handleJoinTeam} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">{t.team.inviteCodeLabel}</label>
-                            <input
+                            <Input
                                 type="text"
                                 value={inviteCode}
                                 onChange={(e) => setInviteCode(e.target.value)}
                                 placeholder={t.team.inviteCodePlaceholder}
                                 required
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none uppercase"
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus-visible:ring-blue-500 focus-visible:ring-offset-0 uppercase"
                             />
                         </div>
-                        <button
+                        <Button
                             type="submit"
                             disabled={actionLoading || !inviteCode}
-                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50"
+                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700"
                         >
                             {actionLoading ? t.team.loading : t.team.joinBtn}
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>
@@ -508,44 +511,47 @@ export default function TeamPage() {
                     {isCaptain && (
                         <div className="flex flex-col gap-3 w-full md:w-auto">
                             {!isLocked && (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => {
                                         setEditTeamName(teamData.name || '');
                                         setEditDescription(teamData.description || '');
                                         setEditLogoUrl(teamData.logo_url || '');
                                         setIsEditModalOpen(true);
                                     }}
-                                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/40 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/40 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm"
                                 >
                                     <Icon name="edit" />
                                     {t.team.editTeamInfo}
-                                </button>
+                                </Button>
                             )}
 
                             {/* Submit Ready or Unlock Ready button */}
                             {teamData.status === 'incomplete' ? (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => handleToggleReadyStatus('ready')}
                                     disabled={actionLoading}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md ${
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md ${
                                         teamData.members.length >= 5
-                                            ? 'bg-cyan-aura text-uefa-dark hover:bg-cyan-aura/90 cursor-pointer'
-                                            : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                                            ? 'bg-cyan-aura text-uefa-dark hover:bg-cyan-aura/90'
+                                            : 'bg-gray-700 text-gray-500'
                                     }`}
                                     title={teamData.members.length < 5 ? t.team.minPlayersRequired : ''}
                                 >
                                     <Icon name="send" />
                                     {t.team.markReadyBtn}
-                                </button>
+                                </Button>
                             ) : teamData.status === 'ready' ? (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => handleToggleReadyStatus('incomplete')}
                                     disabled={actionLoading}
-                                    className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                                    className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md"
                                 >
                                     <Icon name="lock_open" />
                                     {t.team.markIncompleteBtn}
-                                </button>
+                                </Button>
                             ) : null}
                         </div>
                     )}
@@ -563,7 +569,8 @@ export default function TeamPage() {
                                 {t.team.contactHeader}
                             </h3>
                             {isCaptain && (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => {
                                         setEditContactPhone(teamData.contact_phone || '');
                                         setEditContactLine(teamData.contact_line || '');
@@ -571,11 +578,11 @@ export default function TeamPage() {
                                         setIsContactModalOpen(true);
                                     }}
                                     disabled={teamData.status === 'approved'}
-                                    className="text-xs text-cyan-aura hover:underline flex items-center gap-1 font-bold disabled:opacity-30 disabled:hover:no-underline cursor-pointer"
+                                    className="text-xs text-cyan-aura hover:underline hover:bg-transparent flex items-center gap-1 font-bold disabled:opacity-30 disabled:hover:no-underline p-0 h-auto"
                                 >
                                     <Icon name="edit" />
                                     {t.team.editContactInfo}
-                                </button>
+                                </Button>
                             )}
                         </div>
 
@@ -627,7 +634,8 @@ export default function TeamPage() {
                                 <Icon name="id_card" className="text-cyan-aura" />
                                 {t.team.personalDetailsHeader}
                             </h3>
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={() => {
                                     const currentPlayer = teamData.members?.find((m: any) => m.id === teamData.currentPlayerId);
                                     if (currentPlayer) {
@@ -637,11 +645,11 @@ export default function TeamPage() {
                                     }
                                     setIsPersonalModalOpen(true);
                                 }}
-                                className="text-xs text-cyan-aura hover:underline flex items-center gap-1 font-bold cursor-pointer"
+                                className="text-xs text-cyan-aura hover:underline hover:bg-transparent flex items-center gap-1 font-bold p-0 h-auto"
                             >
                                 <Icon name="person_edit" />
                                 {t.team.editPersonalDetails}
-                            </button>
+                            </Button>
                         </div>
 
                         {(() => {
@@ -686,16 +694,19 @@ export default function TeamPage() {
                         {teamData.invite_code ? (
                             <div className="bg-gray-50 border border-gray-200 px-4 py-2 rounded-xl flex items-center gap-3 w-full sm:w-auto justify-between">
                                 <span className="text-xl font-mono font-bold text-cyan-aura tracking-widest">{teamData.invite_code}</span>
-                                <button 
+                                <Button
+                                    variant="ghost"
+                                    iconOnly
+                                    icon="content_copy"
                                     onClick={() => {
                                         navigator.clipboard.writeText(teamData.invite_code);
                                         Swal.fire({ title: t.team.copiedToast, toast: true, position: 'top-end', timer: 2000, showConfirmButton: false, icon: 'success' });
                                     }}
                                     disabled={isLocked}
-                                    className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors text-gray-400 hover:text-uefa-dark disabled:opacity-30 cursor-pointer"
+                                    className="p-1.5 hover:bg-gray-200 rounded-lg text-gray-400 hover:text-uefa-dark disabled:opacity-30"
                                 >
-                                    <Icon name="content_copy" />
-                                </button>
+                                    {language === 'th' ? 'คัดลอกรหัสเชิญ' : 'Copy invite code'}
+                                </Button>
                             </div>
                         ) : (
                             <div className="bg-red-50 border border-red-200/50 px-4 py-2 rounded-xl text-red-500 font-bold text-sm tracking-wide w-full sm:w-auto text-center">
@@ -704,28 +715,30 @@ export default function TeamPage() {
                         )}
 
                         <div className="flex gap-2 w-full sm:w-auto">
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={handleToggleRecruitment}
                                 disabled={isLocked || actionLoading}
-                                className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border ${
-                                    teamData.invite_code 
-                                        ? 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200' 
+                                className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm border ${
+                                    teamData.invite_code
+                                        ? 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200'
                                         : 'bg-cyan-aura/10 hover:bg-cyan-aura/20 text-cyan-aura border-cyan-aura/30'
                                 } disabled:opacity-40 disabled:hover:bg-transparent`}
                             >
                                 <Icon name={teamData.invite_code ? "visibility_off" : "visibility"} />
                                 {teamData.invite_code ? t.team.closeRecruitmentBtn : t.team.openRecruitmentBtn}
-                            </button>
+                            </Button>
 
                             {teamData.invite_code && (
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={handleRegenerateInviteCode}
                                     disabled={isLocked || actionLoading}
-                                    className="flex-1 sm:flex-none px-4 py-2 bg-white hover:bg-gray-50 text-uefa-dark border border-gray-300 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-40 disabled:hover:bg-white"
+                                    className="flex-1 sm:flex-none px-4 py-2 bg-white hover:bg-gray-50 text-uefa-dark border border-gray-300 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm disabled:opacity-40 disabled:hover:bg-white"
                                 >
                                     <Icon name="sync" />
                                     {t.team.regenerateInviteCodeBtn}
-                                </button>
+                                </Button>
                             )}
                         </div>
                     </div>
@@ -766,14 +779,16 @@ export default function TeamPage() {
                                         {/* Mobile Kick Button */}
                                         <div className="sm:hidden flex-shrink-0">
                                             {isCaptain && member.id !== teamData.captain_id ? (
-                                                <button 
+                                                <Button
+                                                    variant="ghost"
+                                                    iconOnly
+                                                    icon="person_remove"
                                                     onClick={() => handleKickPlayer(member.id, member.name)}
                                                     disabled={isLocked || actionLoading}
-                                                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
-                                                    title={t.team.kickTooltip}
+                                                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent"
                                                 >
-                                                    <Icon name="person_remove" className="text-sm" />
-                                                </button>
+                                                    {t.team.kickTooltip}
+                                                </Button>
                                             ) : null}
                                         </div>
                                     </div>
@@ -794,11 +809,12 @@ export default function TeamPage() {
                                         {isCaptain && !isLocked ? (
                                             <div className="relative">
                                                 {/* Toggle Button */}
-                                                <button
+                                                <Button
+                                                    variant="ghost"
                                                     type="button"
                                                     onClick={() => setOpenDropdownMemberId(openDropdownMemberId === member.id ? null : member.id)}
                                                     disabled={actionLoading}
-                                                    className="text-xs bg-gray-50 dark:bg-zinc-800/40 border border-gray-200 dark:border-zinc-700/50 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-cyan-aura focus:border-cyan-aura outline-none w-full text-uefa-dark dark:text-zinc-300 font-medium cursor-pointer flex items-center justify-between gap-2 min-h-[34px] text-left"
+                                                    className="text-xs bg-gray-50 dark:bg-zinc-800/40 border border-gray-200 dark:border-zinc-700/50 rounded-lg px-2.5 py-1.5 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 focus:border-cyan-aura w-full text-uefa-dark dark:text-zinc-300 font-medium flex items-center justify-between gap-2 min-h-[34px] text-left"
                                                 >
                                                     <span className="flex items-center gap-1.5 truncate">
                                                         {getPositionImageUrl(member.lineup_role) ? (
@@ -811,7 +827,7 @@ export default function TeamPage() {
                                                         <span className="truncate">{getRoleLabelTextOnly(member.lineup_role)}</span>
                                                     </span>
                                                     <Icon name="expand_more" className="text-gray-400 flex-shrink-0" />
-                                                </button>
+                                                </Button>
 
                                                 {/* Dropdown Options List */}
                                                 {openDropdownMemberId === member.id && (
@@ -828,26 +844,28 @@ export default function TeamPage() {
                                                                 ? 'bottom-full mb-1'
                                                                 : 'top-full mt-1'
                                                         }`}>
-                                                            <button
+                                                            <Button
+                                                                variant="ghost"
                                                                 type="button"
                                                                 onClick={() => {
                                                                     handleRoleChange(member.id, 'not_set');
                                                                     setOpenDropdownMemberId(null);
                                                                 }}
-                                                                className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-zinc-800/50 text-gray-500 dark:text-gray-400 flex items-center gap-2 cursor-pointer transition-colors"
+                                                                className="w-full justify-start text-left rounded-none px-3 py-2 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-zinc-800/50 text-gray-500 dark:text-gray-400 flex items-center gap-2"
                                                             >
                                                                 <span className="flex-shrink-0">📍</span>
                                                                 <span className="truncate">{t.team.rolePlaceholder}</span>
-                                                            </button>
+                                                            </Button>
                                                             {lineupRoles.map((role) => (
-                                                                <button
+                                                                <Button
                                                                     key={role.value}
+                                                                    variant="ghost"
                                                                     type="button"
                                                                     onClick={() => {
                                                                         handleRoleChange(member.id, role.value);
                                                                         setOpenDropdownMemberId(null);
                                                                     }}
-                                                                    className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-zinc-800/50 text-uefa-dark dark:text-zinc-300 flex items-center gap-2 cursor-pointer transition-colors"
+                                                                    className="w-full justify-start text-left rounded-none px-3 py-2 text-xs font-semibold hover:bg-gray-50 dark:hover:bg-zinc-800/50 text-uefa-dark dark:text-zinc-300 flex items-center gap-2"
                                                                 >
                                                                     {getPositionImageUrl(role.value) ? (
                                                                         <img src={getPositionImageUrl(role.value) || undefined} alt="" className="w-4 h-4 object-contain flex-shrink-0" />
@@ -857,7 +875,7 @@ export default function TeamPage() {
                                                                         <span className="flex-shrink-0">📍</span>
                                                                     )}
                                                                     <span className="truncate">{role.label}</span>
-                                                                </button>
+                                                                </Button>
                                                             ))}
                                                         </div>
                                                     </>
@@ -883,14 +901,16 @@ export default function TeamPage() {
 
                                     <div className="hidden sm:flex w-10 justify-center items-center flex-shrink-0">
                                         {isCaptain && member.id !== teamData.captain_id ? (
-                                            <button 
+                                            <Button
+                                                variant="ghost"
+                                                iconOnly
+                                                icon="person_remove"
                                                 onClick={() => handleKickPlayer(member.id, member.name)}
                                                 disabled={isLocked || actionLoading}
-                                                className="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
-                                                title={t.team.kickTooltip}
+                                                className="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg disabled:opacity-30 disabled:hover:bg-transparent"
                                             >
-                                                <Icon name="person_remove" className="text-sm" />
-                                            </button>
+                                                {t.team.kickTooltip}
+                                            </Button>
                                         ) : null}
                                     </div>
                                 </div>
@@ -902,255 +922,207 @@ export default function TeamPage() {
                 {/* Actions Bar */}
                 <div className="p-6 bg-gray-50 flex justify-end">
                     {!isCaptain && (
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={handleLeaveTeam}
                             disabled={isLocked || actionLoading}
-                            className="px-6 py-2 bg-red-500/10 text-red-600 rounded-lg font-bold hover:bg-red-500/20 transition-all text-sm disabled:opacity-40 disabled:hover:bg-red-500/10 cursor-pointer"
+                            className="px-6 py-2 bg-red-500/10 text-red-600 rounded-lg font-bold hover:bg-red-500/20 text-sm disabled:opacity-40 disabled:hover:bg-red-500/10"
                         >
                             <Icon name="logout" className="mr-2" /> {t.team.leaveBtn}
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
 
             {/* Edit Team Info Modal */}
-            {isEditModalOpen && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <Icon name="edit" className="text-cyan-aura" />
-                                {t.team.editTeamInfo}
-                            </h3>
-                            <button 
-                                onClick={() => setIsEditModalOpen(false)}
-                                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                            >
-                                <Icon name="close" className="text-lg" />
-                            </button>
-                        </div>
-                        
-                        <form onSubmit={handleUpdateTeamInfo} className="p-6 space-y-6">
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.teamNameLabel}</label>
-                                <input
-                                    type="text"
-                                    value={editTeamName}
-                                    onChange={(e) => setEditTeamName(e.target.value)}
-                                    required
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.teamDescriptionLabel}</label>
-                                <textarea
-                                    value={editDescription}
-                                    onChange={(e) => setEditDescription(e.target.value)}
-                                    placeholder={t.team.teamDescriptionPlaceholder}
-                                    rows={3}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none resize-none text-sm text-uefa-dark"
-                                    maxLength={200}
-                                />
-                                <p className="text-right text-[10px] text-gray-400 mt-1">{editDescription.length}/200</p>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.teamLogoLabel}</label>
-                                <div className="flex items-center gap-4 mt-2">
-                                    <div className="w-20 h-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative">
-                                        {editLogoUrl ? (
-                                            <img src={editLogoUrl} alt="Preview" className="w-full h-full object-contain p-1" />
-                                        ) : (
-                                            <Icon name="image" className="text-2xl text-gray-300" />
-                                        )}
-                                    </div>
-                                    <div className="flex-1 space-y-2">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleLogoChange}
-                                            id="logo-upload"
-                                            className="hidden"
-                                        />
-                                        <label
-                                            htmlFor="logo-upload"
-                                            className="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-uefa-dark font-bold text-sm rounded-lg cursor-pointer transition-colors"
-                                        >
-                                            <Icon name="upload" className="mr-2" /> {language === 'th' ? 'เลือกรูปภาพ' : 'Choose Image'}
-                                        </label>
-                                        {editLogoUrl && (
-                                            <button
-                                                type="button"
-                                                onClick={() => setEditLogoUrl('')}
-                                                className="block text-xs text-red-500 hover:underline"
-                                            >
-                                                {language === 'th' ? 'ลบรูปภาพ' : 'Remove Image'}
-                                            </button>
-                                        )}
-                                        <p className="text-[10px] text-gray-400">PNG, JPG ไม่เกิน 2MB</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex gap-3 justify-end pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsEditModalOpen(false)}
-                                    className="px-5 py-2.5 bg-gray-100 text-uefa-dark font-bold rounded-lg hover:bg-gray-200 transition-colors text-sm"
-                                >
-                                    {language === 'th' ? 'ยกเลิก' : 'Cancel'}
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={actionLoading}
-                                    className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 transition-colors text-sm shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                                >
-                                    {actionLoading && <Icon name="progress_activity" spin />}
-                                    {t.team.saveBtn}
-                                </button>
-                            </div>
-                        </form>
+            <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} title={t.team.editTeamInfo}>
+                <form onSubmit={handleUpdateTeamInfo} className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.teamNameLabel}</label>
+                        <Input
+                            type="text"
+                            value={editTeamName}
+                            onChange={(e) => setEditTeamName(e.target.value)}
+                            required
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0"
+                        />
                     </div>
-                </div>
-            )}
+
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.teamDescriptionLabel}</label>
+                        <Textarea
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                            placeholder={t.team.teamDescriptionPlaceholder}
+                            rows={3}
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 resize-none text-sm text-uefa-dark"
+                            maxLength={200}
+                        />
+                        <p className="text-right text-[10px] text-gray-400 mt-1">{editDescription.length}/200</p>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.teamLogoLabel}</label>
+                        <div className="flex items-center gap-4 mt-2">
+                            <div className="w-20 h-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative">
+                                {editLogoUrl ? (
+                                    <img src={editLogoUrl} alt="Preview" className="w-full h-full object-contain p-1" />
+                                ) : (
+                                    <Icon name="image" className="text-2xl text-gray-300" />
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-2">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleLogoChange}
+                                    id="logo-upload"
+                                    className="hidden"
+                                />
+                                <label
+                                    htmlFor="logo-upload"
+                                    className="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-uefa-dark font-bold text-sm rounded-lg cursor-pointer transition-colors"
+                                >
+                                    <Icon name="upload" className="mr-2" /> {language === 'th' ? 'เลือกรูปภาพ' : 'Choose Image'}
+                                </label>
+                                {editLogoUrl && (
+                                    <Button
+                                        variant="ghost"
+                                        type="button"
+                                        onClick={() => setEditLogoUrl('')}
+                                        className="block text-xs text-red-500 hover:underline hover:bg-transparent p-0 h-auto"
+                                    >
+                                        {language === 'th' ? 'ลบรูปภาพ' : 'Remove Image'}
+                                    </Button>
+                                )}
+                                <p className="text-[10px] text-gray-400">PNG, JPG ไม่เกิน 2MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ModalFooter>
+                        <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => setIsEditModalOpen(false)}
+                            className="px-5 py-2.5 bg-gray-100 text-uefa-dark font-bold rounded-lg hover:bg-gray-200 text-sm"
+                        >
+                            {language === 'th' ? 'ยกเลิก' : 'Cancel'}
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={actionLoading}
+                            className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 text-sm shadow-md flex items-center gap-2"
+                        >
+                            {actionLoading && <Icon name="progress_activity" spin />}
+                            {t.team.saveBtn}
+                        </Button>
+                    </ModalFooter>
+                </form>
+            </Modal>
 
             {/* Team Contact Info Modal */}
-            {isContactModalOpen && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <Icon name="contacts" className="text-cyan-aura" />
-                                {t.team.editContactInfo}
-                            </h3>
-                            <button 
-                                onClick={() => setIsContactModalOpen(false)}
-                                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                            >
-                                <Icon name="close" className="text-lg" />
-                            </button>
-                        </div>
-                        
-                        <form onSubmit={handleUpdateContactInfo} className="p-6 space-y-6">
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.contactPhoneLabel}</label>
-                                <input
-                                    type="text"
-                                    value={editContactPhone}
-                                    onChange={(e) => setEditContactPhone(e.target.value)}
-                                    placeholder={t.team.contactPhonePlaceholder}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none text-sm text-uefa-dark"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.contactLineLabel}</label>
-                                <input
-                                    type="text"
-                                    value={editContactLine}
-                                    onChange={(e) => setEditContactLine(e.target.value)}
-                                    placeholder={t.team.contactLinePlaceholder}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none text-sm text-uefa-dark"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.contactDiscordLabel}</label>
-                                <input
-                                    type="url"
-                                    value={editContactDiscord}
-                                    onChange={(e) => setEditContactDiscord(e.target.value)}
-                                    placeholder={t.team.contactDiscordPlaceholder}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none text-sm text-uefa-dark"
-                                />
-                            </div>
-
-                            <div className="flex gap-3 justify-end pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsContactModalOpen(false)}
-                                    className="px-5 py-2.5 bg-gray-100 text-uefa-dark font-bold rounded-lg hover:bg-gray-200 transition-colors text-sm"
-                                >
-                                    {language === 'th' ? 'ยกเลิก' : 'Cancel'}
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={actionLoading}
-                                    className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 transition-colors text-sm shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                                >
-                                    {actionLoading && <Icon name="progress_activity" spin />}
-                                    {t.team.saveBtn}
-                                </button>
-                            </div>
-                        </form>
+            <Modal open={isContactModalOpen} onOpenChange={setIsContactModalOpen} title={t.team.editContactInfo}>
+                <form onSubmit={handleUpdateContactInfo} className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.contactPhoneLabel}</label>
+                        <Input
+                            type="text"
+                            value={editContactPhone}
+                            onChange={(e) => setEditContactPhone(e.target.value)}
+                            placeholder={t.team.contactPhonePlaceholder}
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm text-uefa-dark"
+                        />
                     </div>
-                </div>
-            )}
+
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.contactLineLabel}</label>
+                        <Input
+                            type="text"
+                            value={editContactLine}
+                            onChange={(e) => setEditContactLine(e.target.value)}
+                            placeholder={t.team.contactLinePlaceholder}
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm text-uefa-dark"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.contactDiscordLabel}</label>
+                        <Input
+                            type="url"
+                            value={editContactDiscord}
+                            onChange={(e) => setEditContactDiscord(e.target.value)}
+                            placeholder={t.team.contactDiscordPlaceholder}
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm text-uefa-dark"
+                        />
+                    </div>
+
+                    <ModalFooter>
+                        <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => setIsContactModalOpen(false)}
+                            className="px-5 py-2.5 bg-gray-100 text-uefa-dark font-bold rounded-lg hover:bg-gray-200 text-sm"
+                        >
+                            {language === 'th' ? 'ยกเลิก' : 'Cancel'}
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={actionLoading}
+                            className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 text-sm shadow-md flex items-center gap-2"
+                        >
+                            {actionLoading && <Icon name="progress_activity" spin />}
+                            {t.team.saveBtn}
+                        </Button>
+                    </ModalFooter>
+                </form>
+            </Modal>
 
             {/* Personal Profile Modal */}
-            {isPersonalModalOpen && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 animate-fadeIn">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <h3 className="text-xl font-bold text-uefa-dark uppercase flex items-center gap-2">
-                                <Icon name="person_edit" className="text-cyan-aura" />
-                                {t.team.editPersonalDetails}
-                            </h3>
-                            <button 
-                                onClick={() => setIsPersonalModalOpen(false)}
-                                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                            >
-                                <Icon name="close" className="text-lg" />
-                            </button>
-                        </div>
-                        
-                        <form onSubmit={handleUpdatePersonalDetails} className="p-6 space-y-6">
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.playerNicknameLabel}</label>
-                                <input
-                                    type="text"
-                                    value={editNickname}
-                                    onChange={(e) => setEditNickname(e.target.value)}
-                                    placeholder={t.team.playerNicknamePlaceholder}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none text-sm text-uefa-dark"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.playerPhoneLabel}</label>
-                                <input
-                                    type="text"
-                                    value={editPersonalPhone}
-                                    onChange={(e) => setEditPersonalPhone(e.target.value)}
-                                    placeholder={t.team.playerPhonePlaceholder}
-                                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-aura outline-none text-sm text-uefa-dark"
-                                />
-                            </div>
-
-
-
-                            <div className="flex gap-3 justify-end pt-4 border-t border-gray-100">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsPersonalModalOpen(false)}
-                                    className="px-5 py-2.5 bg-gray-100 text-uefa-dark font-bold rounded-lg hover:bg-gray-200 transition-colors text-sm"
-                                >
-                                    {language === 'th' ? 'ยกเลิก' : 'Cancel'}
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={actionLoading}
-                                    className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 transition-colors text-sm shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                                >
-                                    {actionLoading && <Icon name="progress_activity" spin />}
-                                    {t.team.saveBtn}
-                                </button>
-                            </div>
-                        </form>
+            <Modal open={isPersonalModalOpen} onOpenChange={setIsPersonalModalOpen} title={t.team.editPersonalDetails}>
+                <form onSubmit={handleUpdatePersonalDetails} className="space-y-6">
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.playerNicknameLabel}</label>
+                        <Input
+                            type="text"
+                            value={editNickname}
+                            onChange={(e) => setEditNickname(e.target.value)}
+                            placeholder={t.team.playerNicknamePlaceholder}
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm text-uefa-dark"
+                        />
                     </div>
-                </div>
-            )}
+
+                    <div>
+                        <label className="block text-sm font-bold text-uefa-dark mb-1">{t.team.playerPhoneLabel}</label>
+                        <Input
+                            type="text"
+                            value={editPersonalPhone}
+                            onChange={(e) => setEditPersonalPhone(e.target.value)}
+                            placeholder={t.team.playerPhonePlaceholder}
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus-visible:ring-cyan-aura focus-visible:ring-offset-0 text-sm text-uefa-dark"
+                        />
+                    </div>
+
+                    <ModalFooter>
+                        <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => setIsPersonalModalOpen(false)}
+                            className="px-5 py-2.5 bg-gray-100 text-uefa-dark font-bold rounded-lg hover:bg-gray-200 text-sm"
+                        >
+                            {language === 'th' ? 'ยกเลิก' : 'Cancel'}
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={actionLoading}
+                            className="px-5 py-2.5 bg-cyan-aura text-uefa-dark font-bold rounded-lg hover:bg-cyan-aura/90 text-sm shadow-md flex items-center gap-2"
+                        >
+                            {actionLoading && <Icon name="progress_activity" spin />}
+                            {t.team.saveBtn}
+                        </Button>
+                    </ModalFooter>
+                </form>
+            </Modal>
         </div>
     );
 }
