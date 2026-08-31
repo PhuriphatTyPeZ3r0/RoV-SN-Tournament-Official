@@ -8,6 +8,7 @@ import { completeOnboardingAction } from '@/features/auth/student-actions';
 import { useLanguage } from '@/components/providers/LanguageProvider';
 import Button from '@/components/ui/Button';
 import { Input, Select } from '@/components/ui/Input';
+import { compressImage } from '@/utils/image-compression';
 
 const GRADES = [
     '1/1', '1/2', '1/3', '1/4',
@@ -25,6 +26,8 @@ export default function OnboardingPage() {
     const [error, setError] = useState<string | null>(null);
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
+    const [docFile, setDocFile] = useState<File | null>(null);
+    const [docPreview, setDocPreview] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,14 +58,49 @@ export default function OnboardingPage() {
         fetchData();
     }, []);
 
+    const handleDocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            setError(language === 'th' ? 'ขนาดไฟล์ห้ามเกิน 5MB' : 'File size must not exceed 5MB');
+            e.target.value = '';
+            return;
+        }
+
+        setError(null);
+        setDocFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => setDocPreview(reader.result as string);
+        reader.readAsDataURL(file);
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
         setError(null);
-        
+
+        if (!docFile) {
+            setError(language === 'th' ? 'กรุณาอัปโหลดรูปภาพหลักฐานแสดงตัวตน' : 'Please upload an identity verification photo');
+            return;
+        }
+
+        setLoading(true);
+
         const formData = new FormData(e.currentTarget);
+
+        let uploadPayload: File = docFile;
+        if (docFile.type.startsWith('image/') && docFile.type !== 'image/gif') {
+            try {
+                const compressed = await compressImage(docFile);
+                uploadPayload = new File([compressed], `${docFile.name.replace(/\.[^/.]+$/, '')}.jpg`, { type: 'image/jpeg' });
+            } catch (compressionErr) {
+                console.warn('Compression failed, uploading original:', compressionErr);
+            }
+        }
+        formData.set('verificationDoc', uploadPayload, uploadPayload.name);
+
         const result = await completeOnboardingAction(formData);
-        
+
         if (result?.error) {
             setError(result.error);
             setLoading(false);
@@ -244,10 +282,48 @@ export default function OnboardingPage() {
                         </div>
                     </div>
 
+                    {/* Identity Verification Document */}
+                    <div className="border-t border-gray-100 pt-4">
+                        <label className="block text-gray-700 text-sm mb-2 font-medium">
+                            {language === 'th' ? 'รูปภาพหลักฐานแสดงตัวตน' : 'Identity Verification Photo'}
+                            <span className="text-red-500 ml-0.5" aria-hidden="true">*</span>
+                        </label>
+                        <div className="flex items-center gap-4">
+                            <div className="w-20 h-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden relative flex-shrink-0">
+                                {docPreview ? (
+                                    <img src={docPreview} alt="Preview" className="w-full h-full object-cover" />
+                                ) : (
+                                    <Icon name="badge" className="text-2xl text-gray-300" />
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-2">
+                                <input
+                                    type="file"
+                                    name="verificationDoc"
+                                    accept="image/*"
+                                    onChange={handleDocChange}
+                                    id="verification-doc-upload"
+                                    className="hidden"
+                                    disabled={loading}
+                                />
+                                <label
+                                    htmlFor="verification-doc-upload"
+                                    className="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-uefa-dark font-bold text-sm rounded-lg cursor-pointer transition-colors"
+                                >
+                                    <Icon name="upload" className="mr-2" />
+                                    {docFile ? (language === 'th' ? 'เปลี่ยนรูปภาพ' : 'Change Image') : (language === 'th' ? 'เลือกรูปภาพ' : 'Choose Image')}
+                                </label>
+                                <p className="text-[10px] text-gray-400">
+                                    {language === 'th' ? 'บัตรนักเรียนหรือบัตรประชาชน — JPG, PNG ไม่เกิน 5MB' : 'Student or national ID card — JPG, PNG, up to 5MB'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="flex flex-col gap-2 py-2 border-t border-gray-100 mt-4 pt-4">
                         <div className="flex items-center gap-2">
-                            <input 
-                                type="checkbox" 
+                            <input
+                                type="checkbox"
                                 id="applyForAdmin" 
                                 name="applyForAdmin" 
                                 className="w-4 h-4 text-uefa-dark rounded border-gray-300 focus:ring-uefa-dark"
