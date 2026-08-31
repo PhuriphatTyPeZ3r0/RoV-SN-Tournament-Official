@@ -274,17 +274,59 @@ export async function sendOTPAction() {
   const smtpPass = process.env.SMTP_PASSWORD;
   const smtpFrom = process.env.SMTP_FROM_EMAIL || smtpUser;
 
+  // "Beyond the Fate" (Season 2027) palette — Gold #FFC700 / Dawn White
+  // #FFF8E7 / Deep Dark #121212. Hardcoded since email clients can't read
+  // CSS variables.
   const htmlContent = `
-    <div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-      <h2 style="color: #06b6d4; text-align: center;">RoV-SN Tournament</h2>
-      <p>Your verification code is:</p>
-      <div style="background: #f4f4f4; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #333;">
-        ${otpCode}
-      </div>
-      <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">
-        This code expires in 5 minutes.
-      </p>
-    </div>
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8" /></head>
+    <body style="margin:0;padding:0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f0e6; padding: 32px 16px; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 440px; background-color: #FFF8E7; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px rgba(18,18,18,0.15);">
+            <tr>
+              <td style="background-color: #121212; padding: 28px 24px; text-align: center;">
+                <div style="font-size: 20px; font-weight: 800; letter-spacing: 2px; color: #FFF8E7; text-transform: uppercase;">
+                  RoV SN <span style="color: #FFC700;">Tournament</span>
+                </div>
+                <div style="margin-top: 4px; font-size: 11px; letter-spacing: 3px; color: #FFC700; text-transform: uppercase;">
+                  Beyond the Fate
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 32px 28px;">
+                <p style="margin: 0 0 4px; font-size: 15px; color: #121212; font-weight: 700;">
+                  รหัสยืนยันตัวตนของคุณ
+                </p>
+                <p style="margin: 0 0 20px; font-size: 13px; color: #8a8067;">
+                  Your verification code
+                </p>
+                <div style="background-color: #121212; border: 1px solid #FFC700; border-radius: 14px; padding: 20px; text-align: center;">
+                  <span style="font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #FFC700;">
+                    ${otpCode}
+                  </span>
+                </div>
+                <p style="margin: 20px 0 0; font-size: 12px; color: #8a8067; text-align: center;">
+                  รหัสนี้จะหมดอายุใน 5 นาที · This code expires in 5 minutes
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 16px 28px 24px; border-top: 1px solid rgba(18,18,18,0.08); text-align: center;">
+                <p style="margin: 0; font-size: 11px; color: #a39a80;">
+                  หากคุณไม่ได้ร้องขอรหัสนี้ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    </body>
+    </html>
   `;
 
   if (smtpHost && smtpUser && smtpPass) {
